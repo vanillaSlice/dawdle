@@ -1,8 +1,4 @@
-# macOS
+.coverage
 .DS_Store
-
-# VSCode
-.vscode/*
-
-# Python
+.vscode
 __pycache__
