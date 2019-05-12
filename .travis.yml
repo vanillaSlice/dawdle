@@ -1,14 +1,21 @@
 language: python
-python: 3.7
-dist: xenial
 branches:
   only:
     - master
+python: 3.7
+dist: xenial
+services:
+  - docker
 install:
   - pip install -r requirements.txt
   - pip install -r requirements-test.txt
 script:
   - ./scripts/lint.sh
   - ./scripts/test.sh
+deploy:
+  provider: script
+  script: ./scripts/deploy.sh
+  on:
+    branch: master
 after_success:
   - coveralls

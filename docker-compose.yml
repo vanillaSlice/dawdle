@@ -1,0 +1,15 @@
+version: '3'
+services:
+  dawdle:
+    build:
+      context: .
+      dockerfile: ./docker/local.Dockerfile
+    ports:
+      - 5000:8000
+    environment:
+      - DEBUG=True
+      - ENV=local
+    volumes:
+      - ./dawdle:/opt/app/dawdle
+      - ./config.py:/opt/app/config.py
+      - ./run.py:/opt/app/run.py
