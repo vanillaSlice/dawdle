@@ -12,6 +12,11 @@ class Default:
 
     DEBUG = False
     ENV = 'production'
+    MONGODB_DB = 'dawdle'
+    MONGODB_HOST = '127.0.0.1'
+    MONGODB_PASSWORD = None
+    MONGODB_PORT = 27017
+    MONGODB_USERNAME = None
     SECRET_KEY = 'default secret key'
     SERVER_NAME = '127.0.0.1:5000'
     SESSION_COOKIE_DOMAIN = '127.0.0.1:5000'
@@ -23,3 +28,4 @@ class Test:
 
     DEBUG = True
     ENV = 'test'
+    MONGODB_HOST = 'mongomock://localhost'
