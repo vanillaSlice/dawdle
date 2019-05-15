@@ -17,38 +17,40 @@ def create_app(testing=False):
     """
 
     app = Flask(__name__, instance_relative_config=True)
+    config = app.config
+    environ = os.environ
+    logger = app.logger
 
-    # load default config
-    app.config.from_object('config.Default')
+    logger.info('Loading default config')
+    config.from_object('config.Default')
 
-    # load instance config (if present)
-    app.config.from_pyfile('config.py', silent=True)
+    logger.info('Loading instance config')
+    config.from_pyfile('config.py', silent=True)
 
-    # load test config (if testing)
     if testing:
-        app.config.from_object('config.Test')
+        logger.info('Loading test config')
+        config.from_object('config.Test')
 
-    app.config.update({'TESTING': testing})
-
-    # load environment variables (if present)
-    app.config.update({
-        'DEBUG': os.environ.get('DEBUG', str(app.config.get('DEBUG'))).lower() == 'true',
-        'ENV': os.environ.get('ENV', app.config.get('ENV')),
-        'MONGODB_DB': os.environ.get('MONGODB_DB', app.config.get('MONGODB_DB')),
-        'MONGODB_HOST': os.environ.get('MONGODB_HOST', app.config.get('MONGODB_HOST')),
-        'MONGODB_PASSWORD': os.environ.get('MONGODB_PASSWORD', app.config.get('MONGODB_PASSWORD')),
-        'MONGODB_PORT': os.environ.get('MONGODB_PORT', app.config.get('MONGODB_PORT')),
-        'MONGODB_USERNAME': os.environ.get('MONGODB_USERNAME', app.config.get('MONGODB_USERNAME')),
-        'SECRET_KEY': os.environ.get('SECRET_KEY', app.config.get('SECRET_KEY')),
-        'SERVER_NAME': os.environ.get('SERVER_NAME', app.config.get('SERVER_NAME')),
-        'SESSION_COOKIE_DOMAIN':
-            os.environ.get('SESSION_COOKIE_DOMAIN', app.config.get('SESSION_COOKIE_DOMAIN')),
+    logger.info('Loading environment variables')
+    config.update({
+        'DEBUG': environ.get('DEBUG', str(config.get('DEBUG'))).lower() == 'true',
+        'ENV': environ.get('ENV', config.get('ENV')),
+        'MONGODB_DB': environ.get('MONGODB_DB', config.get('MONGODB_DB')),
+        'MONGODB_HOST': environ.get('MONGODB_HOST', config.get('MONGODB_HOST')),
+        'MONGODB_PASSWORD': environ.get('MONGODB_PASSWORD', config.get('MONGODB_PASSWORD')),
+        'MONGODB_PORT': environ.get('MONGODB_PORT', config.get('MONGODB_PORT')),
+        'MONGODB_USERNAME': environ.get('MONGODB_USERNAME', config.get('MONGODB_USERNAME')),
+        'SECRET_KEY': environ.get('SECRET_KEY', config.get('SECRET_KEY')),
+        'SERVER_NAME': environ.get('SERVER_NAME', config.get('SERVER_NAME')),
+        'SESSION_COOKIE_DOMAIN': environ.get('SESSION_COOKIE_DOMAIN', config.get('SESSION_COOKIE_DOMAIN')),
     })
 
-    # set version
-    app.config.update({'VERSION': __version__})
+    config.update({
+        'TESTING': testing,
+        'VERSION': __version__,
+    })
 
-    # init extensions
+    logger.info('Initialising extensions')
     mongoengine.init_app(app)
 
     @app.route('/')
@@ -56,6 +58,6 @@ def create_app(testing=False):
         """
         Home route.
         """
-        return 'v{}'.format(app.config['VERSION'])
+        return 'v{}'.format(config['VERSION'])
 
     return app
