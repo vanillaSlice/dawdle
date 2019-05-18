@@ -14,10 +14,17 @@ services:
     environment:
       - DEBUG=True
       - ENV=local
+      - MONGODB_DB=dawdle
       - MONGODB_HOST=mongodb
       - MONGODB_PASSWORD=local-user-password
+      - MONGODB_PORT=27017
       - MONGODB_USERNAME=local-user
+      - SECRET_KEY=super-secret-key
+      - SERVER_NAME=127.0.0.1:5000
+      - SESSION_COOKIE_DOMAIN=127.0.0.1:5000
+      - WTF_CSRF_ENABLED=True
     volumes:
       - ./dawdle:/opt/app/dawdle
       - ./config.py:/opt/app/config.py
       - ./run.py:/opt/app/run.py
+      - ./instance:/opt/app/instance

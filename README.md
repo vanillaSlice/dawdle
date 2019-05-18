@@ -14,16 +14,29 @@ TODO
 
 ## Getting Started
 
-* [With Docker](#with-docker)
-* [Without Docker](#without-docker)
+### Prerequisites
 
-### With Docker
+#### Sending Emails
 
-#### Prerequisites
+The app requires an email address to send messages from e.g. for user verification.
+You don't need your own mail server for this. You can use a Gmail account with the following settings:
 
-* [Docker](https://www.docker.com/)
+```
+MAIL_DEFAULT_SENDER = <Gmail address>
+MAIL_PASSWORD = <Gmail password>
+MAIL_PORT = 587
+MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_USE_TLS = True
+MAIL_USERNAME = <Gmail address>
+```
 
-#### Running
+Make sure to add these to your `instance/config.py` file in order to run locally.
+
+### Running With or Without Docker
+
+The app can be run [with Docker](#with-docker) or [without Docker](#without-docker).
+
+#### With Docker
 
 From your terminal/command prompt run:
 
@@ -33,15 +46,15 @@ docker-compose up
 
 Then point your browser to [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
 
-### Without Docker
+#### Without Docker
 
-#### Installing Requirements
+##### Installing Requirements
 
 1. (Optional) Install [virtualenv](https://pypi.org/project/virtualenv/) and
 [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/) and create a new environment.
 2. Run `pip install -r requirements.txt`.
 
-#### Setting up MongoDB
+##### Setting up MongoDB
 
 You can either:
 
@@ -51,7 +64,7 @@ or:
 
 * Create a database in the cloud using [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
 
-#### Configuration
+##### Configuration
 
 The following properties can be configured:
 
@@ -83,7 +96,7 @@ that any environment variables take precedence).
 URI style connections are also supported for connecting to MongoDB, just supply the URI as `MONGODB_HOST` (note that
 URI properties will take precedence).
 
-#### Running
+##### Running
 
 From your terminal/command prompt run:
 
@@ -99,9 +112,8 @@ For those of you that are interested, the technology used in this project includ
 
 * [Python 3.7](https://www.python.org/downloads/release/python-373/)
 * [Flask](http://flask.pocoo.org/) (Microframework)
-* [MongoDB](https://www.mongodb.com/) and
-[Flask-MongoEngine](http://docs.mongoengine.org/projects/flask-mongoengine/en/latest/) (Database)
-* [pytest](https://docs.pytest.org/en/latest/) and [Mongomock](https://github.com/mongomock/mongomock) (Testing)
+* [MongoDB](https://www.mongodb.com/) (Database)
+* [pytest](https://docs.pytest.org/en/latest/) (Testing)
 * [Docker](https://www.docker.com/)
 
 ## License
