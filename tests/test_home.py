@@ -5,3 +5,7 @@ class TestHome(TestBase):
     def test_index(self):
         response = self.client.get('/')
         assert response.status_code == 200
+
+    def test_404(self):
+        response = self.client.get('/this/page/does/not/exist')
+        assert response.status_code == 404

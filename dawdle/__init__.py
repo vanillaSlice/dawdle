@@ -4,7 +4,7 @@ Exports a function to create an instance of the Dawdle app.
 
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 from flask_assets import Environment
 from flask_mongoengine import MongoEngine
 
@@ -66,6 +66,16 @@ def create_app(testing=False):
 
     # register asset bundles
     assets.register(bundles)
+
+    # attach 404 error handler
+    @app.errorhandler(404)
+    def handle_404(error):
+        return render_template('404.html', error=error), 404
+
+    # attach 500 error handler
+    @app.errorhandler(500)
+    def handle_500(error):
+        return render_template('500.html', error=error), 500
 
     # disable caching when debugging
     if app.debug:
