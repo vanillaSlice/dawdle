@@ -90,7 +90,9 @@ For those of you that are interested, the technology used in this project includ
 
 * [Python 3.7](https://www.python.org/downloads/release/python-373/)
 * [Flask](http://flask.pocoo.org/) (Microframework)
-* [pytest](https://docs.pytest.org/en/latest/) (Testing)
+* [MongoDB](https://www.mongodb.com/) and
+[Flask-MongoEngine](http://docs.mongoengine.org/projects/flask-mongoengine/en/latest/) (Database)
+* [pytest](https://docs.pytest.org/en/latest/) and [Mongomock](https://github.com/mongomock/mongomock) (Testing)
 * [Docker](https://www.docker.com/)
 
 ## License
