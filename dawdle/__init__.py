@@ -21,6 +21,8 @@ def create_app(testing=False):
     environ = os.environ
     logger = app.logger
 
+    logger.setLevel('INFO')
+
     logger.info('Loading default config')
     config.from_object('config.Default')
 

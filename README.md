@@ -59,7 +59,7 @@ The following properties can be configured:
 | ----------------------- | ---------------------------------------------------------------- | -------------------- |
 | `DEBUG`                 | If debug mode is enabled.                                        | `False`              |
 | `ENV`                   | Environment the app is running in.                               | `production`         |
-| `MONGODB_DB`            | The MongoDB database name.                                       | `urlshortener`       |
+| `MONGODB_DB`            | The MongoDB database name.                                       | `dawdle`             |
 | `MONGODB_HOST`          | The MongoDB host name.                                           | `127.0.0.1`          |
 | `MONGODB_PASSWORD`      | The MongoDB password.                                            | `None`               |
 | `MONGODB_PORT`          | The MongoDB port.                                                | `27017`              |
