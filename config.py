@@ -14,11 +14,11 @@ class Default:
     ENV = 'production'
     MAIL_DEFAULT_SENDER = None
     MAIL_PASSWORD = None
-    MAIL_PORT = 25
-    MAIL_SERVER = '127.0.0.1'
+    MAIL_PORT = 587
+    MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_SUPPRESS_SEND = False
     MAIL_USE_SSL = False
-    MAIL_USE_TLS = False
+    MAIL_USE_TLS = True
     MAIL_USERNAME = None
     MONGODB_DB = 'dawdle'
     MONGODB_HOST = '127.0.0.1'

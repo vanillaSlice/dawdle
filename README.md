@@ -16,27 +16,27 @@ TODO
 
 The following properties can be configured:
 
-| Name                    | Purpose                                                          | Default              |
-| ----------------------- | ---------------------------------------------------------------- | -------------------- |
-| `DEBUG`                 | If debug mode is enabled.                                        | `False`              |
-| `ENV`                   | Environment the app is running in.                               | `production`         |
-| `MAIL_DEFAULT_SENDER`   | The default address to send emails from.                         | `None`               |
-| `MAIL_PASSWORD`         | The mail sender's password.                                      | `None`               |
-| `MAIL_PORT`             | The mail server port.                                            | `25`                 |
-| `MAIL_SERVER`           | The mail server host name.                                       | `127.0.0.1`          |
-| `MAIL_SUPPRESS_SEND`    | If mail sending should be suppressed.                            | `False`              |
-| `MAIL_USE_SSL`          | If using mail SSL.                                               | `False`              |
-| `MAIL_USE_TLS`          | If using mail TLS.                                               | `False`              |
-| `MAIL_USERNAME`         | The mail sender's username.                                      | `None`               |
-| `MONGODB_DB`            | The MongoDB database name.                                       | `dawdle`             |
-| `MONGODB_HOST`          | The MongoDB host name.                                           | `127.0.0.1`          |
-| `MONGODB_PASSWORD`      | The MongoDB password.                                            | `None`               |
-| `MONGODB_PORT`          | The MongoDB port.                                                | `27017`              |
-| `MONGODB_USERNAME`      | The MongoDB username.                                            | `None`               |
-| `SECRET_KEY`            | A secret key used for security.                                  | `default secret key` |
-| `SERVER_NAME`           | The host and port of the server.                                 | `127.0.0.1:5000`     |
-| `SESSION_COOKIE_DOMAIN` | The domain match rule that the session cookie will be valid for. | `127.0.0.1:5000`     |
-| `WTF_CSRF_ENABLED`      | If CSRF protection is enabled.                                   | `True`               |
+| Name                    | Purpose                                                          | Default               |
+| ----------------------- | ---------------------------------------------------------------- | --------------------- |
+| `DEBUG`                 | If debug mode is enabled.                                        | `False`               |
+| `ENV`                   | Environment the app is running in.                               | `production`          |
+| `MAIL_DEFAULT_SENDER`   | The default address to send emails from.                         | `None`                |
+| `MAIL_PASSWORD`         | The mail sender's password.                                      | `None`                |
+| `MAIL_PORT`             | The mail server port.                                            | `587`                 |
+| `MAIL_SERVER`           | The mail server host name.                                       | `smtp.googlemail.com` |
+| `MAIL_SUPPRESS_SEND`    | If mail sending should be suppressed.                            | `False`               |
+| `MAIL_USE_SSL`          | If using mail SSL.                                               | `False`               |
+| `MAIL_USE_TLS`          | If using mail TLS.                                               | `True`                |
+| `MAIL_USERNAME`         | The mail sender's username.                                      | `None`                |
+| `MONGODB_DB`            | The MongoDB database name.                                       | `dawdle`              |
+| `MONGODB_HOST`          | The MongoDB host name.                                           | `127.0.0.1`           |
+| `MONGODB_PASSWORD`      | The MongoDB password.                                            | `None`                |
+| `MONGODB_PORT`          | The MongoDB port.                                                | `27017`               |
+| `MONGODB_USERNAME`      | The MongoDB username.                                            | `None`                |
+| `SECRET_KEY`            | A secret key used for security.                                  | `default secret key`  |
+| `SERVER_NAME`           | The host and port of the server.                                 | `127.0.0.1:5000`      |
+| `SESSION_COOKIE_DOMAIN` | The domain match rule that the session cookie will be valid for. | `127.0.0.1:5000`      |
+| `WTF_CSRF_ENABLED`      | If CSRF protection is enabled.                                   | `True`                |
 
 To change these properties you can export them as environment variables or create a file `instance/config.py` (note
 that any environment variables take precedence).
@@ -58,6 +58,8 @@ MAIL_DEFAULT_SENDER = <Gmail address>
 MAIL_PASSWORD = <Gmail password>
 MAIL_PORT = 587
 MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_SUPPRESS_SEND = False
+MAIL_USE_SSL = False
 MAIL_USE_TLS = True
 MAIL_USERNAME = <Gmail address>
 ```
