@@ -10,31 +10,17 @@
     integrity="sha256-OweaP/Ic6rsV+lysfyS4h+LM6sRwuO3euTYfr6M124g=" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   {% assets 'app_css' %}
-    <link rel="stylesheet" href="{{ ASSET_URL }}">
+    <link href="{{ ASSET_URL }}" rel="stylesheet">
   {% endassets %}
   {% block styles %}{% endblock %}
 </head>
 
 <body class="body">
-  <header>
-    <nav>
-      <div class="nav-wrapper deep-purple">
-        <a class="brand-logo center" href="{{ url_for('home.index') }}">Dawdle</a>
-      </div>
-    </nav>
-  </header>
+  {% include 'shared/header.html' %}
   <main class="main container">
     {% block content %}{% endblock %}
   </main>
-  <footer class="footer page-footer deep-purple">
-    <div class="footer-copyright">
-      <div class="container right-align">
-        v{{ config['VERSION'] }} |
-        <a href="https://github.com/vanillaSlice/dawdle">GitHub</a> |
-        Made with 🎧 by <a href="https://www.mikelowe.xyz/">Mike</a>
-      </div>
-    </div>
-  </footer>
+  {% include 'shared/footer.html' %}
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"
     integrity="sha256-U/cHDMTIHCeMcvehBv1xQ052bPSbJtbuiw4QA9cTKz0=" crossorigin="anonymous"></script>
