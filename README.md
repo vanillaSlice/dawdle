@@ -5,7 +5,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/vanillaSlice/dawdle/master.svg)](https://coveralls.io/github/vanillaSlice/dawdle?branch=master)
 [![License](https://img.shields.io/github/license/vanillaSlice/dawdle.svg)](LICENSE)
 
-A [Trello](https://trello.com/) clone built with [Flask](http://flask.pocoo.org/).
+A project organisation tool built with [Flask](http://flask.pocoo.org/).
 A deployed version can be viewed [here](https://dawdle.mikelowe.xyz/).
 
 ## Screenshot
