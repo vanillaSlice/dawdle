@@ -37,3 +37,33 @@ class SignUpForm(FlaskForm):
             return False
 
         return True
+
+class VerifyResendForm(FlaskForm):
+    """
+    Verify Resend form.
+    """
+
+    email = StringField('Email', validators=[
+        DataRequired(message='Please enter an email'),
+        Email(message='Please enter a valid email'),
+    ])
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = None
+
+    def validate_on_submit(self):
+        if not super().validate_on_submit():
+            return False
+
+        self.user = User.objects(email=self.email.data).first()
+
+        if self.user is None:
+            self.email.errors.append('There is no account with this email')
+            return False
+
+        if self.user.is_active:
+            self.email.errors.append('This account has already been verified')
+            return False
+
+        return True

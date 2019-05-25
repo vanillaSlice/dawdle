@@ -37,14 +37,14 @@ class Test:
 
     DEBUG = True
     ENV = 'test'
-    MAIL_DEFAULT_SENDER = 'test'
-    MAIL_PASSWORD = 'test'
-    MAIL_PORT = 25
-    MAIL_SERVER = '127.0.0.1'
+    MAIL_DEFAULT_SENDER = 'dawdle'
+    MAIL_PASSWORD = None
+    MAIL_PORT = 587
+    MAIL_SERVER = 'smtp.googlemail.com'
     MAIL_SUPPRESS_SEND = True
     MAIL_USE_SSL = False
-    MAIL_USE_TLS = False
-    MAIL_USERNAME = 'test'
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = None
     MONGODB_DB = 'dawdle'
     MONGODB_HOST = 'mongomock://localhost'
     MONGODB_PASSWORD = None

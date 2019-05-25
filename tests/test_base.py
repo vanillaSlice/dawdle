@@ -18,14 +18,14 @@ class TestBase:
 
     def create_user(self,
                     active=True,
-                    email=fake.email(),
-                    name=fake.name(),
-                    password=fake.password()):
+                    email=fake.email,
+                    name=fake.name,
+                    password=fake.password):
         user = User()
         user.active = active
-        user.email = email
-        user.name = name
-        user.password = User.encrypt_password(password)
+        user.email = email() if callable(email) else email
+        user.name = name() if callable(name) else name
+        user.password = User.encrypt_password(password() if callable(password) else password)
         return user.save()
 
     def get_random_string(self, length):

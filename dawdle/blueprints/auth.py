@@ -6,7 +6,7 @@ from flask import Blueprint, current_app, flash, redirect, render_template, requ
 from flask_mail import Message
 from itsdangerous import URLSafeSerializer
 
-from dawdle.forms.auth import SignUpForm
+from dawdle.forms.auth import SignUpForm, VerifyResendForm
 from dawdle.models.user import User
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
@@ -63,10 +63,25 @@ def sign_up():
 @auth.route('/verify/resend', methods=['GET', 'POST'])
 def verify_resend():
     """
-    Verify Resend Route.
+    Verify Resend route.
     """
 
-    return render_template('auth/verify-resend.html')
+    # parse the form
+    form = VerifyResendForm(request.form)
+
+    # render form if GET request
+    if request.method == 'GET':
+        return render_template('auth/verify-resend.html', form=form)
+
+    # render form again if submitted form is invalid
+    if not form.validate_on_submit():
+        return render_template('auth/verify-resend.html', form=form), 400
+
+    # send verification email
+    send_verification_email(form.user)
+
+    # redirect to verify resend page again
+    return redirect(url_for('auth.verify_resend'))
 
 @auth.route('/verify/<token>', methods=['GET'])
 def verify(token):

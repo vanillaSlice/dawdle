@@ -17,8 +17,11 @@ class TestAuth(TestBase):
             'password': password,
         }
 
+    def get_mock_verify_resend_data(self, email=fake.email()):
+        return {'email': email}
+
     #
-    # /auth/sign-up Tests.
+    # /auth/sign-up tests.
     #
 
     def assert_sign_up_successful(self, data):
@@ -92,3 +95,44 @@ class TestAuth(TestBase):
     def test_sign_up_success(self):
         data = self.get_mock_sign_up_data()
         self.assert_sign_up_successful(data)
+
+    #
+    # /auth/verify/resend tests.
+    #
+
+    def assert_verify_resend_successful(self, data):
+        response = self.client.post('/auth/verify/resend', data=data)
+        assert response.status_code == 302
+
+    def assert_verify_resend_unsuccessful(self, data):
+        response = self.client.post('/auth/verify/resend', data=data)
+        assert response.status_code == 400
+
+    def test_verify_resend_GET(self):
+        response = self.client.get('/auth/verify/resend')
+        assert response.status_code == 200
+
+    def test_verify_resend_no_email(self):
+        email = None
+        data = self.get_mock_verify_resend_data(email=email)
+        self.assert_verify_resend_unsuccessful(data)
+
+    def test_verify_resend_invalid_email(self):
+        email = fake.sentence()
+        data = self.get_mock_verify_resend_data(email=email)
+        self.assert_verify_resend_unsuccessful(data)
+
+    def test_verify_resend_account_does_not_exist(self):
+        user = self.create_user()
+        user.delete()
+        data = self.get_mock_verify_resend_data(email=user.email)
+        self.assert_verify_resend_unsuccessful(data)
+
+    def test_verify_resend_account_already_verified(self):
+        data = self.get_mock_verify_resend_data(email=self.user.email)
+        self.assert_verify_resend_unsuccessful(data)
+
+    def test_verify_resend_success(self):
+        user = self.create_user(active=False)
+        data = self.get_mock_verify_resend_data(email=user.email)
+        self.assert_verify_resend_successful(data)
