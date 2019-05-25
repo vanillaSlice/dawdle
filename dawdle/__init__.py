@@ -12,6 +12,8 @@ from flask_mongoengine import MongoEngine
 from flask_wtf.csrf import CSRFProtect
 
 from dawdle.assets import bundles
+from dawdle.models.user import User
+from dawdle.utils import to_ObjectId
 from dawdle.version import __version__
 
 assets = Environment()
@@ -91,11 +93,18 @@ def create_app(testing=False):
     # register blueprints
     from dawdle.blueprints.auth import auth
     from dawdle.blueprints.home import home
+    from dawdle.blueprints.user import user
     app.register_blueprint(auth)
     app.register_blueprint(home)
+    app.register_blueprint(user)
 
     # register asset bundles
     assets.register(bundles)
+
+    # attach login handler
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.objects(auth_id=to_ObjectId(user_id)).first()
 
     # attach 404 error handler
     @app.errorhandler(404)

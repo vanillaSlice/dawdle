@@ -2,12 +2,14 @@
 Exports Auth routes.
 """
 
-from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
+from flask import abort, Blueprint, current_app, flash, redirect, render_template, request, url_for
+from flask_login import login_user
 from flask_mail import Message
-from itsdangerous import URLSafeSerializer
+from itsdangerous import BadSignature, URLSafeSerializer
 
 from dawdle.forms.auth import SignUpForm, VerifyResendForm
 from dawdle.models.user import User
+from dawdle.utils import to_ObjectId
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -86,10 +88,36 @@ def verify_resend():
 @auth.route('/verify/<token>', methods=['GET'])
 def verify(token):
     """
-    Verify Route.
+    Verify route.
     """
 
-    return token
+    # make sure we have a valid token
+    try:
+        user_id = URLSafeSerializer(current_app.secret_key).loads(token)
+    except BadSignature:
+        return abort(404)
+
+    # make sure the user with the given id exists
+    user = User.objects(id=to_ObjectId(user_id)).first()
+    if user is None:
+        abort(404)
+
+    # user is already active so redirect to user's boards page
+    if user.is_active:
+        return redirect(url_for('user.boards', user_id=str(user.id)))
+
+    # activate the user
+    user.active = True
+    user.save()
+
+    # login the new user
+    login_user(user, remember=True)
+
+    # notify the user
+    flash('Your user registration was successful.', 'success')
+
+    # redirect to user's boards page
+    return redirect(url_for('user.boards', user_id=str(user.id)))
 
 @auth.route('/login')
 def login():

@@ -1,3 +1,5 @@
+from itsdangerous import URLSafeSerializer
+
 from dawdle.models.user import User
 from tests.test_base import fake, TestBase
 
@@ -20,6 +22,9 @@ class TestAuth(TestBase):
     def get_mock_verify_resend_data(self, email=fake.email()):
         return {'email': email}
 
+    def get_verify_token(self, user_id):
+        return URLSafeSerializer(self.app.secret_key).dumps(user_id)
+
     #
     # /auth/sign-up tests.
     #
@@ -28,15 +33,15 @@ class TestAuth(TestBase):
         response = self.client.post('/auth/sign-up', data=data)
         user = User.objects(email=data['email']).first()
         assert response.status_code == 302
-        assert user.is_active is False
+        assert not user.is_active
         assert user.name == data['name']
-        assert user.verify_password(data['password']) is True
+        assert user.verify_password(data['password'])
 
     def assert_sign_up_unsuccessful(self, data):
         response = self.client.post('/auth/sign-up', data=data)
         user = User.objects(email=data['email']).first()
         assert response.status_code == 400
-        assert len(User.objects()) == 1
+        assert not user or user == self.user
 
     def test_sign_up_GET(self):
         response = self.client.get('/auth/sign-up')
@@ -136,3 +141,39 @@ class TestAuth(TestBase):
         user = self.create_user(active=False)
         data = self.get_mock_verify_resend_data(email=user.email)
         self.assert_verify_resend_successful(data)
+
+    #
+    # /auth/verify/<token> tests.
+    #
+
+    def assert_verify_successful(self, token, email):
+        response = self.client.get('/auth/verify/{}'.format(token))
+        user = User.objects(email=email).first()
+        assert response.status_code == 302
+        assert user.is_active
+
+    def assert_verify_unsuccessful(self, token, email):
+        response = self.client.get('/auth/verify/{}'.format(token))
+        user = User.objects(email=email).first()
+        assert response.status_code == 404
+        assert user is None or not user.is_active
+
+    def test_verify_invalid_token(self):
+        user = self.create_user(active=False)
+        token = self.get_verify_token('invalid token')
+        self.assert_verify_unsuccessful(token, user.email)
+
+    def test_verify_account_does_not_exist(self):
+        user = self.create_user(active=False)
+        user.delete()
+        token = self.get_verify_token(str(user.id))
+        self.assert_verify_unsuccessful(token, user.email)
+
+    def test_verify_account_already_active(self):
+        token = self.get_verify_token(str(self.user.id))
+        self.assert_verify_successful(token, self.user.email)
+
+    def test_verify_success(self):
+        user = self.create_user(active=False)
+        token = self.get_verify_token(str(user.id))
+        self.assert_verify_successful(token, user.email)
