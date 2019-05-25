@@ -3,7 +3,7 @@ Exports Auth forms.
 """
 
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField
+from wtforms import BooleanField, PasswordField, StringField
 from wtforms.validators import DataRequired, Email, Length
 
 from dawdle.models.user import User
@@ -64,6 +64,43 @@ class VerifyResendForm(FlaskForm):
 
         if self.user.is_active:
             self.email.errors.append('This account has already been verified')
+            return False
+
+        return True
+
+class LoginForm(FlaskForm):
+    """
+    Login form.
+    """
+
+    email = StringField('Email', validators=[
+        DataRequired(message='Please enter an email'),
+        Email(message='Please enter a valid email'),
+    ])
+
+    password = PasswordField('Password', validators=[
+        DataRequired(message='Please enter a password'),
+    ])
+
+    remember_me = BooleanField('Remember Me')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = None
+
+    def validate_on_submit(self):
+        if not super().validate_on_submit():
+            return False
+
+        self.user = User.objects(email=self.email.data).first()
+
+        if self.user is None or not self.user.verify_password(self.password.data):
+            self.email.errors.append('Incorrect email')
+            self.password.errors.append('Incorrect password')
+            return False
+
+        if not self.user.is_active:
+            self.email.errors.append('Please verify your account before logging in')
             return False
 
         return True

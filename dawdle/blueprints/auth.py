@@ -7,9 +7,9 @@ from flask_login import login_user
 from flask_mail import Message
 from itsdangerous import BadSignature, URLSafeSerializer
 
-from dawdle.forms.auth import SignUpForm, VerifyResendForm
+from dawdle.forms.auth import LoginForm, SignUpForm, VerifyResendForm
 from dawdle.models.user import User
-from dawdle.utils import to_ObjectId
+from dawdle.utils import is_safe_url, to_ObjectId
 
 auth = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -119,10 +119,33 @@ def verify(token):
     # redirect to user's boards page
     return redirect(url_for('user.boards', user_id=str(user.id)))
 
-@auth.route('/login')
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
     """
     Login route.
     """
 
-    return render_template('auth/login.html')
+    # parse the form
+    form = LoginForm(request.form)
+
+    # render form if GET request
+    if request.method == 'GET':
+        return render_template('auth/login.html', form=form)
+
+    # render form again if submitted form is invalid
+    if not form.validate_on_submit():
+        return render_template('auth/login.html', form=form), 400
+
+    # login the user
+    user = form.user
+    login_user(user, remember=form.remember_me.data)
+
+    # get redirect target
+    next_target = request.args.get('next')
+
+    # make sure redirect target is safe
+    if not is_safe_url(next_target):
+        return abort(400)
+
+    # redirect to next target or to user's boards page
+    return redirect(next_target or url_for('user.boards', user_id=str(user.id)))

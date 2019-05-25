@@ -10,20 +10,30 @@ class TestAuth(TestBase):
     #
 
     def get_mock_sign_up_data(self,
-                              email=fake.email(),
-                              name=fake.name(),
+                              email=fake.email,
+                              name=fake.name,
                               password=fake.password()):
         return {
-            'email': email,
-            'name': name,
-            'password': password,
+            'email': email() if callable(email) else email,
+            'name': name() if callable(name) else name,
+            'password': password() if callable(password) else password,
         }
 
-    def get_mock_verify_resend_data(self, email=fake.email()):
-        return {'email': email}
+    def get_mock_verify_resend_data(self, email=fake.email):
+        return {
+            'email': email() if callable(email) else email,
+        }
 
     def get_verify_token(self, user_id):
         return URLSafeSerializer(self.app.secret_key).dumps(user_id)
+
+    def get_mock_login_data(self,
+                            email=fake.email,
+                            password=fake.password):
+        return {
+            'email': email() if callable(email) else email,
+            'password': password() if callable(password) else password,
+        }
 
     #
     # /auth/sign-up tests.
@@ -177,3 +187,55 @@ class TestAuth(TestBase):
         user = self.create_user(active=False)
         token = self.get_verify_token(str(user.id))
         self.assert_verify_successful(token, user.email)
+
+    #
+    # /auth/login tests.
+    #
+
+    def assert_login_successful(self, data):
+        response = self.client.post('/auth/login', data=data)
+        assert response.status_code == 302
+
+    def assert_login_unsuccessful(self, data):
+        response = self.client.post('/auth/login', data=data)
+        assert response.status_code == 400
+
+    def test_login_GET(self):
+        response = self.client.get('/auth/login')
+        assert response.status_code == 200
+
+    def test_login_no_email(self):
+        email = None
+        data = self.get_mock_login_data(email=email)
+        self.assert_login_unsuccessful(data)
+
+    def test_login_invalid_email(self):
+        email = fake.sentence()
+        data = self.get_mock_login_data(email=email)
+        self.assert_login_unsuccessful(data)
+
+    def test_login_no_password(self):
+        password = None
+        data = self.get_mock_login_data(password=password)
+        self.assert_login_unsuccessful(data)
+
+    def test_login_account_does_not_exist(self):
+        user = self.create_user(password='user password', active=True)
+        user.delete()
+        data = self.get_mock_login_data(email=user.email, password=user.password)
+        self.assert_login_unsuccessful(data)
+
+    def test_login_incorrect_password(self):
+        password = 'incorrect password'
+        data = self.get_mock_sign_up_data(email=self.user.email, password=password)
+        self.assert_login_unsuccessful(data)
+
+    def test_login_inactive_account(self):
+        password = 'user password'
+        user = self.create_user(password=password, active=False)
+        data = self.get_mock_login_data(email=user.email, password=password)
+        self.assert_login_unsuccessful(data)
+
+    def test_login_success(self):
+        data = self.get_mock_login_data(email=self.user.email, password=self.password)
+        self.assert_login_successful(data)
