@@ -239,3 +239,11 @@ class TestAuth(TestBase):
     def test_login_success(self):
         data = self.get_mock_login_data(email=self.user.email, password=self.password)
         self.assert_login_successful(data)
+
+    #
+    # /auth/logout tests.
+    #
+
+    def test_logout_success(self):
+        response = self.client.get('/auth/logout')
+        assert response.status_code == 200

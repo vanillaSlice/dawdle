@@ -3,7 +3,7 @@ Exports Auth routes.
 """
 
 from flask import abort, Blueprint, current_app, flash, redirect, render_template, request, url_for
-from flask_login import login_user
+from flask_login import login_user, logout_user
 from flask_mail import Message
 from itsdangerous import BadSignature, URLSafeSerializer
 
@@ -149,3 +149,15 @@ def login():
 
     # redirect to next target or to user's boards page
     return redirect(next_target or url_for('user.boards', user_id=str(user.id)))
+
+@auth.route('/logout', methods=['GET'])
+def logout():
+    """
+    Logout route.
+    """
+
+    # logout the user
+    logout_user()
+
+    # render logout page
+    return render_template('auth/logout.html')
