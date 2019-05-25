@@ -1,0 +1,7 @@
+Welcome {{ user.name }},
+<br />
+<br />
+Please <a href="{{ url_for('auth.verify', token=token, _external=True) }}">click here</a> to finish your registration.
+<br />
+<br />
+If you did not initiate this request, you can ignore this email.

@@ -37,6 +37,20 @@ class Test:
 
     DEBUG = True
     ENV = 'test'
+    MAIL_DEFAULT_SENDER = 'test'
+    MAIL_PASSWORD = 'test'
+    MAIL_PORT = 25
+    MAIL_SERVER = '127.0.0.1'
     MAIL_SUPPRESS_SEND = True
+    MAIL_USE_SSL = False
+    MAIL_USE_TLS = False
+    MAIL_USERNAME = 'test'
+    MONGODB_DB = 'dawdle'
     MONGODB_HOST = 'mongomock://localhost'
+    MONGODB_PASSWORD = None
+    MONGODB_PORT = 27017
+    MONGODB_USERNAME = None
+    SECRET_KEY = 'default secret key'
+    SERVER_NAME = '127.0.0.1:5000'
+    SESSION_COOKIE_DOMAIN = '127.0.0.1:5000'
     WTF_CSRF_ENABLED = False

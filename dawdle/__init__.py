@@ -79,6 +79,11 @@ def create_app(testing=False):
     login_manager.init_app(app)
     mail.init_app(app)
     mongoengine.init_app(app)
+    app.assets = assets
+    app.csrf = csrf
+    app.login_manager = login_manager
+    app.mail = mail
+    app.mongoengine = mongoengine
 
     # disable strict trailing slashes e.g. so /auth/login and /auth/login/ both resolve to same endpoint
     app.url_map.strict_slashes = False
