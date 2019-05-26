@@ -1,6 +1,6 @@
 {% extends 'shared/base.html' %}
 
-{% from 'shared/utils.html' import render_flashes, render_form_field, render_form_errors %}
+{% from 'shared/utils.html' import render_form_errors, render_form_field %}
 
 {% block styles %}
   {% assets 'auth_css' %}
@@ -10,33 +10,32 @@
 
 {% block title %}Resend Verification | Dawdle{% endblock %}
 
+{% set container_classes='auth hero is-fullheight-with-navbar' %}
+
 {% block content %}
-  <main class="auth hero is-fullheight-with-navbar">
-    {{ render_flashes() }}
-    <div class="hero-body columns">
-      <div class="column is-6 is-offset-3">
-        <div class="container box">
-          {{ render_form_errors(form) }}
-          <h1 class="title">
-            Verify Your Dawdle Account
-          </h1>
-          <h2 class="subtitle">
-            If you didn't receive an email, submit your email address and we'll send you a
-            link to verify your account.
-          </h2>
-          <form method="POST" action="{{ url_for('auth.verify_resend') }}">
-            {{ form.csrf_token }}
-            {{ render_form_field(form.email, type='email', placeholder='e.g. luke@therebellion.com', left_icon_classes='fas fa-envelope') }}
-            <div class="field">
-              <div class="control">
-                <button class="button is-success">
-                  <strong>Submit</strong>
-                </button>
-              </div>
+  <div class="hero-body columns">
+    <div class="column is-6 is-offset-3">
+      <div class="container box">
+        {{ render_form_errors(form) }}
+        <h1 class="title">
+          Verify Your Dawdle Account
+        </h1>
+        <h2 class="subtitle">
+          If you didn't receive an email, submit your email address and we'll send you a
+          link to verify your account.
+        </h2>
+        <form method="POST" action="{{ url_for('auth.verify_resend') }}">
+          {{ form.csrf_token }}
+          {{ render_form_field(form.email, type='email', placeholder='e.g. luke@therebellion.com', left_icon_classes='fas fa-envelope') }}
+          <div class="field">
+            <div class="control">
+              <button class="button is-success">
+                <strong>Submit</strong>
+              </button>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </div>
-  </main>
+  </div>
 {% endblock %}

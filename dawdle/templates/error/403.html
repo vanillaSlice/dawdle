@@ -8,23 +8,23 @@
 
 {% block title %}Not Authorised | Dawdle{% endblock %}
 
+{% set container_classes='error hero is-danger is-fullheight-with-navbar' %}
+
 {% block content %}
-  <main class="error hero is-danger is-fullheight-with-navbar">
-    <div class="hero-body has-text-centered">
-      <div class="container">
-        <h1 class="title">
-          Not Authorised
-        </h1>
-        <h2 class="subtitle">
-          The page you are not authorised to view this page.
-        </h2>
-        <a class="button is-link" href="{{ url_for('home.index') }}">
-          <span class="icon is-small">
-            <i class="fas fa-home"></i>
-          </span>
-          <span>Take Me Home</span>
-        </a>
-      </div>
+  <div class="hero-body has-text-centered">
+    <div class="container">
+      <h1 class="title">
+        Not Authorised
+      </h1>
+      <h2 class="subtitle">
+        The page you are not authorised to view this page.
+      </h2>
+      <a class="button is-link" href="{{ url_for('home.index') }}">
+        <span class="icon is-small">
+          <i class="fas fa-home"></i>
+        </span>
+        <span>Take Me Home</span>
+      </a>
     </div>
-  </main>
+  </div>
 {% endblock %}

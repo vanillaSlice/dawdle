@@ -8,30 +8,30 @@
 
 {% block title %}Error | Dawdle{% endblock %}
 
+{% set container_classes='error hero is-danger is-fullheight-with-navbar' %}
+
 {% block content %}
-  <main class="error hero is-danger is-fullheight-with-navbar">
-    <div class="hero-body has-text-centered">
-      <div class="container">
-        <h1 class="title">
-          Error
-        </h1>
-        <h2 class="subtitle">
-          Something has gone wrong.
-        </h2>
-        <p class="content">
-          Please send an email to
-          <a class="has-text-white" href="mailto:mikelowedev@gmail.com?subject=Dawdle:%20Error%20Page">
-            <em>mikelowedev@gmail.com</em>
-          </a>
-          and I'll look at it straight away!
-        </p>
-        <a class="button is-link" href="{{ url_for('home.index') }}">
-          <span class="icon is-small">
-            <i class="fas fa-home"></i>
-          </span>
-          <span>Take Me Home</span>
+  <div class="hero-body has-text-centered">
+    <div class="container">
+      <h1 class="title">
+        Error
+      </h1>
+      <h2 class="subtitle">
+        Something has gone wrong.
+      </h2>
+      <p class="content">
+        Please send an email to
+        <a class="has-text-white" href="mailto:mikelowedev@gmail.com?subject=Dawdle:%20Error%20Page">
+          <em>mikelowedev@gmail.com</em>
         </a>
-      </div>
+        and I'll look at it straight away!
+      </p>
+      <a class="button is-link" href="{{ url_for('home.index') }}">
+        <span class="icon is-small">
+          <i class="fas fa-home"></i>
+        </span>
+        <span>Take Me Home</span>
+      </a>
     </div>
-  </main>
+  </div>
 {% endblock %}

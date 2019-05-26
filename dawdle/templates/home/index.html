@@ -6,23 +6,23 @@
   {% endassets %}
 {% endblock %}
 
+{% set container_classes='home hero is-primary is-fullheight-with-navbar' %}
+
 {% block content %}
-  <main class="home hero is-primary is-fullheight-with-navbar">
-    <div class="hero-body has-text-centered">
-      <div class="container">
-        <h1 class="title">
-          Welcome to Dawdle!
-        </h1>
-        <h2 class="subtitle">
-          A place to organise your projects.
-        </h2>
-        <a class="button is-info" href="{{ url_for('auth.sign_up') }}">
-          <strong>Sign Up</strong>
-        </a>
-        <a class="button is-info is-inverted" href="{{ url_for('auth.login') }}">
-          Log In
-        </a>
-      </div>
+  <div class="hero-body has-text-centered">
+    <div class="container">
+      <h1 class="title">
+        Welcome to Dawdle!
+      </h1>
+      <h2 class="subtitle">
+        A place to organise your projects.
+      </h2>
+      <a class="button is-info" href="{{ url_for('auth.sign_up') }}">
+        <strong>Sign Up</strong>
+      </a>
+      <a class="button is-info is-inverted" href="{{ url_for('auth.login') }}">
+        Log In
+      </a>
     </div>
-  </main>
+  </div>
 {% endblock %}
