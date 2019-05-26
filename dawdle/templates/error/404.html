@@ -1,7 +1,30 @@
 {% extends 'shared/base.html' %}
 
-{% block title %}Error | Dawdle{% endblock %}
+{% block styles %}
+  {% assets 'error_css' %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet">
+  {% endassets %}
+{% endblock %}
+
+{% block title %}Not Found | Dawdle{% endblock %}
 
 {% block content %}
-  <h1>Page not found.</h1>
+  <section class="error hero is-danger is-fullheight-with-navbar">
+    <div class="hero-body has-text-centered">
+      <div class="container">
+        <h1 class="title">
+          404
+        </h1>
+        <h2 class="subtitle">
+          The page you are looking for could not be found.
+        </h2>
+        <a class="button is-link" href="{{ url_for('home.index') }}">
+          <span class="icon is-small">
+            <i class="fas fa-home"></i>
+          </span>
+          <span>Take me home</span>
+        </a>
+      </div>
+    </div>
+  </section>
 {% endblock %}
