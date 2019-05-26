@@ -6,12 +6,7 @@ from datetime import datetime
 
 from bson.objectid import ObjectId
 from flask_login import UserMixin
-from mongoengine import (BooleanField,
-                         DateTimeField,
-                         Document,
-                         EmailField,
-                         ObjectIdField,
-                         StringField)
+from mongoengine import BooleanField, DateTimeField, Document, EmailField, ObjectIdField, StringField
 from passlib.hash import sha256_crypt
 
 class User(Document, UserMixin):

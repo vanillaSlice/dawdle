@@ -207,7 +207,6 @@ def reset_password(token):
     try:
         auth_id = TimedJSONWebSignatureSerializer(current_app.secret_key, expires_in=600).loads(token)
     except BadSignature:
-        print('bad auth id')
         return abort(404)
 
     # make sure the user with the given auth id exists

@@ -179,6 +179,7 @@ class TestAuth(TestBase):
         user = User.objects(email=email).first()
         assert response.status_code == 302
         assert user.is_active
+        assert user.last_updated
 
     def assert_verify_unsuccessful(self, token, email):
         response = self.client.get('/auth/verify/{}'.format(token))
@@ -267,10 +268,12 @@ class TestAuth(TestBase):
     #
 
     def assert_reset_password_request_successful(self, data):
+        self.logout()
         response = self.client.post('/auth/reset-password', data=data)
         assert response.status_code == 302
 
     def assert_reset_password_request_unsuccessful(self, data):
+        self.logout()
         response = self.client.post('/auth/reset-password', data=data)
         assert response.status_code == 400
 
@@ -309,6 +312,7 @@ class TestAuth(TestBase):
         user = User.objects(id=user_id).first()
         assert response.status_code == 302
         assert user.auth_id != auth_id
+        assert user.last_updated
         assert user.verify_password(data['password'])
 
     def assert_reset_password_unsuccessful(self, auth_id, data):
@@ -316,6 +320,7 @@ class TestAuth(TestBase):
         response = self.client.post('/auth/reset-password/{}'.format(token), data=data)
         user = User.objects(auth_id=auth_id).first()
         assert response.status_code == 400
+        assert user.last_updated is None
         assert not user.verify_password(data['password'])
 
     def assert_reset_password_token_error(self, token):
