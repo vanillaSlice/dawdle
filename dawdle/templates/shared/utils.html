@@ -1,3 +1,22 @@
+<!-- renders a form field -->
+{% macro render_form_field(field, left_icon_classes=None) %}
+  <div class="field">
+    {{ field.label(class='label has-text-white') }}
+    <div class="control {{ 'has-icons-left' if left_icon_classes }}">
+      {% if field.errors %}
+        {{ field(class='input is-danger', **kwargs) | safe }}
+      {% else %}
+        {{ field(class='input', **kwargs) | safe }}
+      {% endif %}
+      {% if left_icon_classes %}
+        <span class="icon is-small is-left">
+          <i class="{{ left_icon_classes }}"></i>
+        </span>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
 <!-- renders any form errors -->
 {% macro render_form_errors(form) %}
   {% if form.errors %}
@@ -7,7 +26,7 @@
         <ul>
           {% for field_name, field_errors in form.errors.items() %}
             {% for error in field_errors %}
-              <li>{{ error }}</li>
+              <li><strong>{{ error }}</strong></li>
             {% endfor %}
           {% endfor %}
         </ul>
