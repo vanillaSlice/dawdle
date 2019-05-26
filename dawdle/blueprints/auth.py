@@ -7,6 +7,7 @@ from flask_login import login_user, logout_user
 from flask_mail import Message
 from itsdangerous import BadSignature, URLSafeSerializer
 
+from dawdle.extensions import mail
 from dawdle.forms.auth import LoginForm, SignUpForm, VerifyResendForm
 from dawdle.models.user import User
 from dawdle.utils import is_safe_url, to_ObjectId
@@ -25,7 +26,7 @@ def send_verification_email(user):
     token = URLSafeSerializer(current_app.secret_key).dumps(str(user.id))
     message = Message('Dawdle Verification', recipients=[user.email])
     message.html = render_template('auth/verify-email.html', user=user, token=token)
-    current_app.mail.send(message)
+    mail.send(message)
     flash('A verification email has been sent to {}. '.format(user.email) +
           'Please verify your account before logging in to Dawdle.', 'info')
 

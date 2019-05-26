@@ -5,27 +5,15 @@ Exports a function to create an instance of the Dawdle app.
 import os
 
 from flask import Flask, render_template
-from flask_assets import Environment
-from flask_login import LoginManager
-from flask_mail import Mail
-from flask_mongoengine import MongoEngine
-from flask_wtf.csrf import CSRFProtect
 
 from dawdle.assets import bundles
+from dawdle.blueprints.auth import auth
+from dawdle.blueprints.home import home
+from dawdle.blueprints.user import user
+from dawdle.extensions import assets, csrf, login_manager, mail, mongoengine
 from dawdle.models.user import User
 from dawdle.utils import to_ObjectId
 from dawdle.version import __version__
-
-assets = Environment()
-
-csrf = CSRFProtect()
-
-login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
-
-mail = Mail()
-
-mongoengine = MongoEngine()
 
 def create_app(testing=False):
     """
@@ -81,19 +69,11 @@ def create_app(testing=False):
     login_manager.init_app(app)
     mail.init_app(app)
     mongoengine.init_app(app)
-    app.assets = assets
-    app.csrf = csrf
-    app.login_manager = login_manager
-    app.mail = mail
-    app.mongoengine = mongoengine
 
     # disable strict trailing slashes e.g. so /auth/login and /auth/login/ both resolve to same endpoint
     app.url_map.strict_slashes = False
 
     # register blueprints
-    from dawdle.blueprints.auth import auth
-    from dawdle.blueprints.home import home
-    from dawdle.blueprints.user import user
     app.register_blueprint(auth)
     app.register_blueprint(home)
     app.register_blueprint(user)

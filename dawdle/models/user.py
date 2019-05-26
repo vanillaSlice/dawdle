@@ -19,7 +19,7 @@ class User(Document, UserMixin):
     User model.
     """
 
-    active = BooleanField(default=False)
+    active = BooleanField(required=True, default=False)
     auth_id = ObjectIdField(required=True, default=ObjectId, unique=True)
     created = DateTimeField(required=True, default=datetime.utcnow)
     email = EmailField(required=True)
