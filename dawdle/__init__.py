@@ -75,6 +75,11 @@ def create_app(testing=False):
     app.register_blueprint(home)
     app.register_blueprint(user)
 
+    # attach 403 error handler
+    @app.errorhandler(403)
+    def handle_403(error):
+        return render_template('error/403.html', error=error), 403
+
     # attach 404 error handler
     @app.errorhandler(404)
     def handle_404(error):
