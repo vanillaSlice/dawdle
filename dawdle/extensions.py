@@ -2,13 +2,12 @@
 Exports Flask extensions used.
 """
 
-from flask_assets import Environment
+from flask_assets import Bundle, Environment
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_mongoengine import MongoEngine
 from flask_wtf.csrf import CSRFProtect
 
-from dawdle.assets import bundles
 from dawdle.models.user import User
 from dawdle.utils import to_ObjectId
 
@@ -17,7 +16,18 @@ from dawdle.utils import to_ObjectId
 #
 
 assets = Environment()
-assets.register(bundles)
+assets.register({
+    'app_js': Bundle(
+        'scripts/app.js', 'styles/shared/*.js',
+        filters='jsmin',
+        output='build/app.min.js',
+    ),
+    'app_css': Bundle(
+        'styles/app.css', 'styles/shared/*.css',
+        filters='cssmin',
+        output='build/app.min.css',
+    ),
+})
 
 #
 # Flask-WTF

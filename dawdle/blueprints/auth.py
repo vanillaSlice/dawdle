@@ -2,6 +2,7 @@
 Exports Auth routes.
 """
 
+from bson.objectid import ObjectId
 from flask import abort, Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import login_user, logout_user
 from flask_mail import Message
@@ -23,7 +24,7 @@ def send_verification_email(user):
     Sends a verification email to the given user.
     """
 
-    token = URLSafeSerializer(current_app.secret_key).dumps(str(user.id))
+    token = URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))
     message = Message('Dawdle Verification', recipients=[user.email])
     message.html = render_template('auth/verify-email.html', user=user, token=token)
     mail.send(message)
@@ -94,12 +95,12 @@ def verify(token):
 
     # make sure we have a valid token
     try:
-        user_id = URLSafeSerializer(current_app.secret_key).loads(token)
+        auth_id = URLSafeSerializer(current_app.secret_key).loads(token)
     except BadSignature:
         return abort(404)
 
-    # make sure the user with the given id exists
-    user = User.objects(id=to_ObjectId(user_id)).first()
+    # make sure the user with the given auth id exists
+    user = User.objects(auth_id=to_ObjectId(auth_id)).first()
     if user is None:
         abort(404)
 
@@ -107,8 +108,9 @@ def verify(token):
     if user.is_active:
         return redirect(url_for('user.boards', user_id=str(user.id)))
 
-    # activate the user
+    # activate the user and update auth id
     user.active = True
+    user.auth_id = ObjectId()
     user.save()
 
     # login the new user

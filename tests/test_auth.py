@@ -12,7 +12,7 @@ class TestAuth(TestBase):
     def get_mock_sign_up_data(self,
                               email=fake.email,
                               name=fake.name,
-                              password=fake.password()):
+                              password=fake.password):
         return {
             'email': email() if callable(email) else email,
             'name': name() if callable(name) else name,
@@ -24,8 +24,8 @@ class TestAuth(TestBase):
             'email': email() if callable(email) else email,
         }
 
-    def get_verify_token(self, user_id):
-        return URLSafeSerializer(self.app.secret_key).dumps(user_id)
+    def get_verify_token(self, auth_id):
+        return URLSafeSerializer(self.app.secret_key).dumps(auth_id)
 
     def get_mock_login_data(self,
                             email=fake.email,
@@ -176,16 +176,16 @@ class TestAuth(TestBase):
     def test_verify_account_does_not_exist(self):
         user = self.create_user(active=False)
         user.delete()
-        token = self.get_verify_token(str(user.id))
+        token = self.get_verify_token(str(user.auth_id))
         self.assert_verify_unsuccessful(token, user.email)
 
     def test_verify_account_already_active(self):
-        token = self.get_verify_token(str(self.user.id))
+        token = self.get_verify_token(str(self.user.auth_id))
         self.assert_verify_successful(token, self.user.email)
 
     def test_verify_success(self):
         user = self.create_user(active=False)
-        token = self.get_verify_token(str(user.id))
+        token = self.get_verify_token(str(user.auth_id))
         self.assert_verify_successful(token, user.email)
 
     #
