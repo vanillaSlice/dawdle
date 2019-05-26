@@ -24,7 +24,7 @@
           If you didn't receive an email, submit your email address and we'll send you a
           link to verify your account.
         </h2>
-        <form method="POST" action="{{ url_for('auth.verify_resend') }}">
+        <form method="POST">
           {{ form.csrf_token }}
           {{ render_form_field(form.email, type='email', placeholder='e.g. luke@therebellion.com', left_icon_classes='fas fa-envelope') }}
           <div class="field">

@@ -36,6 +36,7 @@ csrf = CSRFProtect()
 
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
+login_manager.login_message_category = 'success'
 
 @login_manager.user_loader
 def load_user(user_id):

@@ -219,11 +219,11 @@ def reset_password(token):
 
     # render form if GET request
     if request.method == 'GET':
-        return render_template('auth/reset-password.html', form=form, token=token)
+        return render_template('auth/reset-password.html', form=form)
 
     # render form again if submitted form is invalid
     if not form.validate_on_submit():
-        return render_template('auth/reset-password.html', form=form, token=token), 400
+        return render_template('auth/reset-password.html', form=form), 400
 
     # update the user's password (making sure to update the auth id and last updated)
     user.password = User.encrypt_password(form.password.data)
