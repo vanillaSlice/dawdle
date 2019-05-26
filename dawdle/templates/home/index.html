@@ -1,5 +1,22 @@
 {% extends 'shared/base.html' %}
 
+{% block styles %}
+  {% assets 'home_css' %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet">
+  {% endassets %}
+{% endblock %}
+
 {% block content %}
-  <p>Working on it...</p>
+  <section class="home hero is-primary is-fullheight-with-navbar">
+    <div class="hero-body has-text-centered">
+      <div class="container">
+        <h1 class="title">
+          Welcome to Dawdle!
+        </h1>
+        <h2 class="subtitle">
+          A place to organise your projects.
+        </h2>
+      </div>
+    </div>
+  </section>
 {% endblock %}

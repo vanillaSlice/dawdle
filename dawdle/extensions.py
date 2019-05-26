@@ -19,6 +19,7 @@ assets = Environment()
 assets.register({
     'shared_js': Bundle('scripts/shared/*.js', filters='jsmin', output='build/shared.min.js'),
     'shared_css': Bundle('styles/shared/*.css', filters='cssmin', output='build/shared.min.css'),
+    'home_css': Bundle('styles/home/*.css', filters='cssmin', output='build/home.min.css'),
 })
 
 #
