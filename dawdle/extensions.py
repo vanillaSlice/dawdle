@@ -17,16 +17,8 @@ from dawdle.utils import to_ObjectId
 
 assets = Environment()
 assets.register({
-    'app_js': Bundle(
-        'scripts/app.js', 'styles/shared/*.js',
-        filters='jsmin',
-        output='build/app.min.js',
-    ),
-    'app_css': Bundle(
-        'styles/app.css', 'styles/shared/*.css',
-        filters='cssmin',
-        output='build/app.min.css',
-    ),
+    'shared_js': Bundle('scripts/shared/*.js', filters='jsmin', output='build/shared.min.js'),
+    'shared_css': Bundle('styles/shared/*.css', filters='cssmin', output='build/shared.min.css'),
 })
 
 #
