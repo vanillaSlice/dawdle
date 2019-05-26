@@ -4,7 +4,7 @@ Exports Auth forms.
 
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, PasswordField, StringField
-from wtforms.validators import DataRequired, Email, Length
+from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 from dawdle.models.user import User
 
@@ -130,3 +130,18 @@ class ResetPasswordRequestForm(FlaskForm):
             return False
 
         return True
+
+class ResetPasswordForm(FlaskForm):
+    """
+    Reset Password form.
+    """
+
+    password = PasswordField('Password', validators=[
+        DataRequired(message='Please enter a password'),
+        Length(min=8, message='Your password must be at least 8 characters'),
+        EqualTo('confirmation', message='Password and confirmation must match'),
+    ])
+
+    confirmation = PasswordField('Confirmation', validators=[
+        DataRequired(message='Please enter password confirmation'),
+    ])

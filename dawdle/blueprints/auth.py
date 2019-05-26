@@ -2,6 +2,8 @@
 Exports Auth routes.
 """
 
+from datetime import datetime
+
 from bson.objectid import ObjectId
 from flask import abort, Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
@@ -9,7 +11,7 @@ from flask_mail import Message
 from itsdangerous import BadSignature, TimedJSONWebSignatureSerializer, URLSafeSerializer
 
 from dawdle.extensions import mail
-from dawdle.forms.auth import LoginForm, ResetPasswordRequestForm, SignUpForm, VerifyResendForm
+from dawdle.forms.auth import LoginForm, ResetPasswordForm, ResetPasswordRequestForm, SignUpForm, VerifyResendForm
 from dawdle.models.user import User
 from dawdle.utils import is_safe_url, to_ObjectId
 
@@ -104,9 +106,10 @@ def verify(token):
     if user is None:
         abort(404)
 
-    # activate the user and update auth id
+    # activate the user (making sure to update the auth id and last updated)
     user.active = True
     user.auth_id = ObjectId()
+    user.last_updated = datetime.utcnow()
     user.save()
 
     # login the new user
@@ -180,7 +183,9 @@ def reset_password_request():
 
     # send reset password email
     user = form.user
-    token = TimedJSONWebSignatureSerializer(current_app.secret_key, expires_in=600).dumps(str(user.auth_id))
+    token = TimedJSONWebSignatureSerializer(current_app.secret_key, expires_in=600) \
+        .dumps(str(user.auth_id)) \
+        .decode('utf-8')
     message = Message('Dawdle Password Reset', recipients=[user.email])
     message.html = render_template('auth/reset-password-email.html', user=user, token=token)
     mail.send(message)
@@ -195,7 +200,43 @@ def reset_password_request():
 @auth.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     """
-    Reset Password Route.
+    Reset Password route.
     """
 
-    return 'reset password'
+    # make sure we have a valid token
+    try:
+        auth_id = TimedJSONWebSignatureSerializer(current_app.secret_key, expires_in=600).loads(token)
+    except BadSignature:
+        print('bad auth id')
+        return abort(404)
+
+    # make sure the user with the given auth id exists
+    user = User.objects(auth_id=to_ObjectId(auth_id)).first()
+    if user is None:
+        abort(404)
+
+    # parse the form
+    form = ResetPasswordForm(request.form)
+
+    # render form if GET request
+    if request.method == 'GET':
+        return render_template('auth/reset-password.html', form=form)
+
+    # render form again if submitted form is invalid
+    if not form.validate_on_submit():
+        return render_template('auth/reset-password.html', form=form), 400
+
+    # update the user's password (making sure to update the auth id and last updated)
+    user.password = User.encrypt_password(form.password.data)
+    user.auth_id = ObjectId()
+    user.last_updated = datetime.utcnow()
+    user.save()
+
+    # notify the user
+    flash('Your password has been reset.', 'success')
+
+    # login the user
+    login_user(user, remember=True)
+
+    # redirect to user's boards page
+    return redirect(url_for('user.boards', user_id=str(user.id)))
