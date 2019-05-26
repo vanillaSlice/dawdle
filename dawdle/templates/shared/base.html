@@ -28,9 +28,9 @@
 
 <body>
   {% include 'shared/header.html' %}
-  <main>
-    {% block content %}{% endblock %}
-  </main>
+
+  {% block content %}{% endblock %}
+
   {% include 'shared/footer.html' %}
 
   {% assets 'shared_js' %}

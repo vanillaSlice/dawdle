@@ -31,7 +31,7 @@ def send_verification_email(user):
     message.html = render_template('auth/verify-email.html', user=user, token=token)
     mail.send(message)
     flash('A verification email has been sent to {}. '.format(user.email) +
-          'Please verify your account before logging in to Dawdle.', 'info')
+          'Please verify your account before logging in to Dawdle.', 'success')
 
 #
 # Routes
@@ -192,7 +192,7 @@ def reset_password_request():
 
     # notify the user
     flash('A password reset email has been sent to {}. '.format(user.email) +
-          'This will expire in 10 minutes.', 'info')
+          'This will expire in 10 minutes.', 'success')
 
     # redirect to verify resend page again
     return redirect(url_for('auth.reset_password_request'))

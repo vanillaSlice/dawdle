@@ -1,3 +1,17 @@
+<!-- render flashes-->
+{% macro render_flashes() %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="notification is-radiusless is-{{category}}">
+          <button class="delete"></button>
+          <strong>{{ message }}</strong>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+{% endmacro %}
+
 <!-- renders a form field -->
 {% macro render_form_field(field, left_icon_classes=None) %}
   <div class="field">
