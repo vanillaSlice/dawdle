@@ -22,7 +22,7 @@
           <h2 class="subtitle">
             <a href="{{ url_for('auth.login') }}">or sign in to your account</a>
           </h2>
-          <form method="POST" action="{{ request.url }}">
+          <form method="POST" action="{{ url_for('auth.sign_up') }}">
             {{ form.csrf_token }}
             {{ render_form_field(form.name, type='text', placeholder='e.g. Luke Skywalker', left_icon_classes='fas fa-user') }}
             {{ render_form_field(form.email, type='email', placeholder='e.g. luke@therebellion.com', left_icon_classes='fas fa-envelope') }}
