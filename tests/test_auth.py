@@ -51,7 +51,7 @@ class TestAuth(TestBase):
         response = self.client.post('/auth/sign-up', data=data)
         user = User.objects(email=data['email']).first()
         assert response.status_code == 400
-        assert not user or user == self.user
+        assert user is None or user == self.user
 
     def test_sign_up_GET(self):
         response = self.client.get('/auth/sign-up')
@@ -178,10 +178,6 @@ class TestAuth(TestBase):
         user.delete()
         token = self.get_verify_token(str(user.auth_id))
         self.assert_verify_unsuccessful(token, user.email)
-
-    def test_verify_account_already_active(self):
-        token = self.get_verify_token(str(self.user.auth_id))
-        self.assert_verify_successful(token, self.user.email)
 
     def test_verify_success(self):
         user = self.create_user(active=False)

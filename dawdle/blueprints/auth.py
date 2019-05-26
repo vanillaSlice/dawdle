@@ -104,10 +104,6 @@ def verify(token):
     if user is None:
         abort(404)
 
-    # user is already active so redirect to user's boards page
-    if user.is_active:
-        return redirect(url_for('user.boards', user_id=str(user.id)))
-
     # activate the user and update auth id
     user.active = True
     user.auth_id = ObjectId()
