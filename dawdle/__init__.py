@@ -10,7 +10,7 @@ from dawdle.blueprints.auth import auth
 from dawdle.blueprints.home import home
 from dawdle.blueprints.user import user
 from dawdle.extensions import assets, csrf, login_manager, mail, mongoengine
-from dawdle.version import __version__
+from dawdle.version import version
 
 def create_app(testing=False):
     """
@@ -57,7 +57,7 @@ def create_app(testing=False):
 
     config.update({
         'TESTING': testing,
-        'VERSION': __version__,
+        'VERSION': version,
     })
 
     # init extensions

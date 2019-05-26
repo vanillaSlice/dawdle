@@ -4,12 +4,12 @@ Exports Auth routes.
 
 from bson.objectid import ObjectId
 from flask import abort, Blueprint, current_app, flash, redirect, render_template, request, url_for
-from flask_login import login_user, logout_user
+from flask_login import current_user, login_user, logout_user
 from flask_mail import Message
-from itsdangerous import BadSignature, URLSafeSerializer
+from itsdangerous import BadSignature, TimedJSONWebSignatureSerializer, URLSafeSerializer
 
 from dawdle.extensions import mail
-from dawdle.forms.auth import LoginForm, SignUpForm, VerifyResendForm
+from dawdle.forms.auth import LoginForm, ResetPasswordRequestForm, SignUpForm, VerifyResendForm
 from dawdle.models.user import User
 from dawdle.utils import is_safe_url, to_ObjectId
 
@@ -160,3 +160,42 @@ def logout():
 
     # render logout page
     return render_template('auth/logout.html')
+
+@auth.route('/reset-password', methods=['GET', 'POST'])
+def reset_password_request():
+    """
+    Reset Password Request route.
+    """
+
+    # parse the form
+    form = ResetPasswordRequestForm(request.form, obj=current_user)
+
+    # render form if GET request
+    if request.method == 'GET':
+        return render_template('auth/reset-password-request.html', form=form)
+
+    # render form again if submitted form is invalid
+    if not form.validate_on_submit():
+        return render_template('auth/reset-password-request.html', form=form), 400
+
+    # send reset password email
+    user = form.user
+    token = TimedJSONWebSignatureSerializer(current_app.secret_key, expires_in=600).dumps(str(user.auth_id))
+    message = Message('Dawdle Password Reset', recipients=[user.email])
+    message.html = render_template('auth/reset-password-email.html', user=user, token=token)
+    mail.send(message)
+
+    # notify the user
+    flash('A password reset email has been sent to {}. '.format(user.email) +
+          'This will expire in 10 minutes.', 'info')
+
+    # redirect to verify resend page again
+    return redirect(url_for('auth.reset_password_request'))
+
+@auth.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    """
+    Reset Password Route.
+    """
+
+    return 'reset password'

@@ -35,6 +35,11 @@ class TestAuth(TestBase):
             'password': password() if callable(password) else password,
         }
 
+    def get_mock_reset_password_request_data(self, email=fake.email):
+        return {
+            'email': email() if callable(email) else email,
+        }
+
     #
     # /auth/sign-up tests.
     #
@@ -243,3 +248,40 @@ class TestAuth(TestBase):
     def test_logout_success(self):
         response = self.client.get('/auth/logout')
         assert response.status_code == 200
+
+    #
+    # /auth/reset-password tests.
+    #
+
+    def assert_reset_password_request_successful(self, data):
+        response = self.client.post('/auth/reset-password', data=data)
+        assert response.status_code == 302
+
+    def assert_reset_password_request_unsuccessful(self, data):
+        response = self.client.post('/auth/reset-password', data=data)
+        assert response.status_code == 400
+
+    def test_reset_password_request_GET(self):
+        response = self.client.get('/auth/reset-password')
+        assert response.status_code == 200
+
+    def test_reset_password_request_no_email(self):
+        email = None
+        data = self.get_mock_reset_password_request_data(email=email)
+        self.assert_reset_password_request_unsuccessful(data)
+
+    def test_reset_password_request_invalid_email(self):
+        email = fake.sentence()
+        data = self.get_mock_reset_password_request_data(email=email)
+        self.assert_reset_password_request_unsuccessful(data)
+
+    def test_reset_password_request_account_does_not_exist(self):
+        user = self.create_user(active=False)
+        user.delete()
+        data = self.get_mock_reset_password_request_data(email=user.email)
+        self.assert_reset_password_request_unsuccessful(data)
+
+    def test_reset_password_request_success(self):
+        user = self.create_user(active=False)
+        data = self.get_mock_reset_password_request_data(email=user.email)
+        self.assert_reset_password_request_successful(data)
