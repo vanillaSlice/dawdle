@@ -22,7 +22,7 @@
           <h2 class="subtitle">
             <a href="{{ url_for('auth.sign_up') }}">or create an account</a>
           </h2>
-          <form method="POST" action="{{ url_for('auth.login') }}">
+          <form method="POST" action="{{ url_for('auth.login') }}" class="content">
             {{ form.csrf_token }}
             {{ render_form_field(form.email, type='email', placeholder='e.g. luke@therebellion.com', left_icon_classes='fas fa-envelope') }}
             {{ render_form_field(form.password, type='password', placeholder='e.g. ••••••••••••', left_icon_classes='fas fa-lock') }}
@@ -34,6 +34,7 @@
               </div>
             </div>
           </form>
+          <a href="{{ url_for('auth.reset_password_request') }}">Forgot your password?</a>
         </div>
       </div>
     </div>
