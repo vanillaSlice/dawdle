@@ -1,7 +1,63 @@
 {% extends 'shared/base.html' %}
 
-{% block title %}Create a Dawdle Account{% endblock %}
+{% from 'shared/utils.html' import render_form_errors %}
+
+{% block styles %}
+  {% assets 'auth_css' %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet">
+  {% endassets %}
+{% endblock %}
+
+{% block title %}Sign Up | Dawdle{% endblock %}
 
 {% block content %}
-  <p>Create a Dawdle Account</p>
+  <section class="sign-up hero is-link is-fullheight-with-navbar">
+    <div class="hero-body columns">
+      <div class="column is-half is-offset-one-quarter">
+        <div class="container">
+          {{ render_form_errors(form) }}
+          <h1 class="title">
+            Create a Dawdle Account
+          </h1>
+          <form method="POST" action="{{ request.url }}">
+            {{ form.csrf_token }}
+            <div class="field">
+              {{ form.name.label(class='label has-text-white') }}
+              <div class="control has-icons-left">
+                {{ form.name(class='input', type='text', placeholder='e.g. Luke Skywalker') }}
+                <span class="icon is-small is-left">
+                  <i class="fas fa-user"></i>
+                </span>
+              </div>
+            </div>
+            <div class="field">
+              {{ form.email.label(class='label has-text-white') }}
+              <div class="control has-icons-left">
+                {{ form.email(class='input', type='email', placeholder='e.g. luke@therebellion.com') }}
+                <span class="icon is-small is-left">
+                  <i class="fas fa-envelope"></i>
+                </span>
+              </div>
+            </div>
+            <div class="field">
+              {{ form.password.label(class='label has-text-white') }}
+              <p class="control has-icons-left">
+                {{ form.password(class='input', type='password', placeholder='e.g. ••••••••••••') }}
+                <span class="icon is-small is-left">
+                  <i class="fas fa-lock"></i>
+                </span>
+              </p>
+            </div>
+            <div class="field content">
+              <div class="control">
+                <button class="button is-primary">
+                  <strong>Create New Account</strong>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
 {% endblock %}
