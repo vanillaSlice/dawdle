@@ -1,7 +1,7 @@
 <!-- renders a form field -->
 {% macro render_form_field(field, left_icon_classes=None) %}
   <div class="field">
-    {{ field.label(class='label has-text-white') }}
+    {{ field.label(class='label') }}
     <div class="control {{ 'has-icons-left' if left_icon_classes }}">
       {% if field.errors %}
         {{ field(class='input is-danger', **kwargs) | safe }}
