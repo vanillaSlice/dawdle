@@ -270,7 +270,7 @@ class TestAuth(TestBase):
     def assert_reset_password_request_successful(self, data):
         self.logout()
         response = self.client.post('/auth/reset-password', data=data)
-        assert response.status_code == 302
+        assert response.status_code == 200
 
     def assert_reset_password_request_unsuccessful(self, data):
         self.logout()

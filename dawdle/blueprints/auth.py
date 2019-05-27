@@ -23,7 +23,8 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 
 def send_verification_email(user):
     """
-    Sends a verification email to the given user.
+    Sends a verification email to the given user and returns true or false depending
+    on whether this was successful.
     """
 
     token = URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))
@@ -33,9 +34,11 @@ def send_verification_email(user):
         mail.send(message)
         flash('A verification email has been sent to {}. '.format(user.email) +
               'Please verify your account before logging in to Dawdle.', 'success')
+        return True
     except:
-        flash('Could not send a verification email {}. '.format(user.email) +
+        flash('Could not send a verification email to {}. '.format(user.email) +
               'Please try again.', 'danger')
+        return False
 
 #
 # Routes
@@ -65,10 +68,11 @@ def sign_up():
     user.save()
 
     # send verification email
-    send_verification_email(user)
+    sent_email = send_verification_email(user)
+    status_code = 302 if sent_email else 500
 
     # redirect to verify resend page
-    return redirect(url_for('auth.verify_resend', email=form.email.data))
+    return redirect(url_for('auth.verify_resend', email=form.email.data)), status_code
 
 @auth.route('/verify/resend', methods=['GET', 'POST'])
 def verify_resend():
@@ -88,10 +92,11 @@ def verify_resend():
         return render_template('auth/verify-resend.html', form=form), 400
 
     # send verification email
-    send_verification_email(form.user)
+    sent_email = send_verification_email(form.user)
+    status_code = 200 if sent_email else 500
 
     # render form again
-    return render_template('auth/verify-resend.html', form=form)
+    return render_template('auth/verify-resend.html', form=form), status_code
 
 @auth.route('/verify/<token>', methods=['GET'])
 def verify(token):
@@ -196,12 +201,11 @@ def reset_password_request():
         mail.send(message)
         flash('A password reset email has been sent to {}. '.format(user.email) +
               'This will expire in 10 minutes.', 'success')
+        return render_template('auth/reset-password-request.html', form=form)
     except:
         flash('Could not send a password reset email to {}.'.format(user.email) +
               'Please try again.', 'danger')
-
-    # redirect to verify resend page again
-    return redirect(url_for('auth.reset_password_request'))
+        return render_template('auth/reset-password-request.html', form=form), 500
 
 @auth.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
