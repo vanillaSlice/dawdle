@@ -13,30 +13,32 @@
 {% set container_classes='auth hero is-fullheight-with-navbar' %}
 
 {% block content %}
-  <div class="hero-body columns is-mobile">
-    <div class="column is-12-mobile is-6-tablet is-offset-3-tablet">
-      <div class="container box">
-        {{ render_form_errors(form) }}
-        <h1 class="title">
-          Log In to Dawdle
-        </h1>
-        <h2 class="subtitle">
-          <a href="{{ url_for('auth.sign_up') }}">or create an account</a>
-        </h2>
-        <form method="POST" class="content">
-          {{ form.csrf_token }}
-          {{ render_form_field(form.email, type='email', placeholder='e.g. luke@therebellion.com', left_icon_classes='fas fa-envelope') }}
-          {{ render_form_field(form.password, type='password', placeholder='e.g. ••••••••••••', left_icon_classes='fas fa-lock') }}
-          {{ render_form_checkbox(form.remember_me, type='checkbox') }}
-          <div class="field content">
-            <div class="control">
-              <button class="button is-success">
-                <strong>Log In</strong>
-              </button>
+  <div class="hero-body">
+    <div class="container">
+      <div class="column is-6 is-offset-3">
+        <div class="box">
+          {{ render_form_errors(form) }}
+          <h1 class="title">
+            Log In to Dawdle
+          </h1>
+          <h2 class="subtitle">
+            <a href="{{ url_for('auth.sign_up') }}">or create an account</a>
+          </h2>
+          <form method="POST" class="content">
+            {{ form.csrf_token }}
+            {{ render_form_field(form.email, type='email', placeholder='e.g. luke@therebellion.com', left_icon_classes='fas fa-envelope') }}
+            {{ render_form_field(form.password, type='password', placeholder='e.g. ••••••••••••', left_icon_classes='fas fa-lock') }}
+            {{ render_form_checkbox(form.remember_me, type='checkbox') }}
+            <div class="field content">
+              <div class="control">
+                <button class="button is-success">
+                  <strong>Log In</strong>
+                </button>
+              </div>
             </div>
-          </div>
-        </form>
-        <a href="{{ url_for('auth.reset_password_request') }}">Forgot your password?</a>
+          </form>
+          <a href="{{ url_for('auth.reset_password_request') }}">Forgot your password?</a>
+        </div>
       </div>
     </div>
   </div>
