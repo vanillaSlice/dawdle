@@ -68,11 +68,10 @@ def sign_up():
     user.save()
 
     # send verification email
-    sent_email = send_verification_email(user)
-    status_code = 302 if sent_email else 500
+    send_verification_email(user)
 
     # redirect to verify resend page
-    return redirect(url_for('auth.verify_resend', email=form.email.data)), status_code
+    return redirect(url_for('auth.verify_resend', email=form.email.data))
 
 @auth.route('/verify/resend', methods=['GET', 'POST'])
 def verify_resend():
@@ -203,7 +202,7 @@ def reset_password_request():
               'This will expire in 10 minutes.', 'success')
         return render_template('auth/reset-password-request.html', form=form)
     except:
-        flash('Could not send a password reset email to {}.'.format(user.email) +
+        flash('Could not send a password reset email to {}. '.format(user.email) +
               'Please try again.', 'danger')
         return render_template('auth/reset-password-request.html', form=form), 500
 
