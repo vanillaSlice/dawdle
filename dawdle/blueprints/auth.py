@@ -34,7 +34,8 @@ def send_verification_email(user):
         flash('A verification email has been sent to {}. '.format(user.email) +
               'Please verify your account before logging in to Dawdle.', 'success')
     except:
-        flash('Could not send verification email. Please try again', 'danger')
+        flash('Could not send a verification email {}. '.format(user.email) +
+              'Please try again.', 'danger')
 
 #
 # Routes
@@ -67,7 +68,7 @@ def sign_up():
     send_verification_email(user)
 
     # redirect to verify resend page
-    return redirect(url_for('auth.verify_resend'))
+    return redirect(url_for('auth.verify_resend', email=form.email.data))
 
 @auth.route('/verify/resend', methods=['GET', 'POST'])
 def verify_resend():
@@ -76,7 +77,7 @@ def verify_resend():
     """
 
     # parse the form
-    form = VerifyResendForm(request.form)
+    form = VerifyResendForm(request.form, email=request.args.get('email'))
 
     # render form if GET request
     if request.method == 'GET':
@@ -89,8 +90,8 @@ def verify_resend():
     # send verification email
     send_verification_email(form.user)
 
-    # redirect to verify resend page again
-    return redirect(url_for('auth.verify_resend'))
+    # render form again
+    return render_template('auth/verify-resend.html', form=form)
 
 @auth.route('/verify/<token>', methods=['GET'])
 def verify(token):
@@ -196,7 +197,8 @@ def reset_password_request():
         flash('A password reset email has been sent to {}. '.format(user.email) +
               'This will expire in 10 minutes.', 'success')
     except:
-        flash('Could not send password reset email. Please try again', 'danger')
+        flash('Could not send a password reset email to {}.'.format(user.email) +
+              'Please try again.', 'danger')
 
     # redirect to verify resend page again
     return redirect(url_for('auth.reset_password_request'))

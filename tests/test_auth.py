@@ -135,7 +135,7 @@ class TestAuth(TestBase):
 
     def assert_verify_resend_successful(self, data):
         response = self.client.post('/auth/verify/resend', data=data)
-        assert response.status_code == 302
+        assert response.status_code == 200
 
     def assert_verify_resend_unsuccessful(self, data):
         response = self.client.post('/auth/verify/resend', data=data)
