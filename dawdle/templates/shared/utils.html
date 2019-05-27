@@ -1,3 +1,15 @@
+<!-- renders a form checkbox -->
+{% macro render_form_checkbox(field) %}
+  <div class="field">
+    <div class="control">
+      <label class="checkbox">
+        {{ field(class='checkbox', **kwargs) | safe }}
+        {{ field.label }}
+      </label>
+    </div>
+  </div>
+{% endmacro %}
+
 <!-- renders any form errors -->
 {% macro render_form_errors(form) %}
   {% if form.errors %}
