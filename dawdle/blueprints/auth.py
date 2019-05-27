@@ -29,9 +29,12 @@ def send_verification_email(user):
     token = URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))
     message = Message('Dawdle Verification', recipients=[user.email])
     message.html = render_template('auth/verify-email.html', user=user, token=token)
-    mail.send(message)
-    flash('A verification email has been sent to {}. '.format(user.email) +
-          'Please verify your account before logging in to Dawdle.', 'success')
+    try:
+        mail.send(message)
+        flash('A verification email has been sent to {}. '.format(user.email) +
+              'Please verify your account before logging in to Dawdle.', 'success')
+    except:
+        flash('Could not send verification email. Please try again', 'danger')
 
 #
 # Routes
@@ -188,11 +191,12 @@ def reset_password_request():
         .decode('utf-8')
     message = Message('Dawdle Password Reset', recipients=[user.email])
     message.html = render_template('auth/reset-password-email.html', user=user, token=token)
-    mail.send(message)
-
-    # notify the user
-    flash('A password reset email has been sent to {}. '.format(user.email) +
-          'This will expire in 10 minutes.', 'success')
+    try:
+        mail.send(message)
+        flash('A password reset email has been sent to {}. '.format(user.email) +
+              'This will expire in 10 minutes.', 'success')
+    except:
+        flash('Could not send password reset email. Please try again', 'danger')
 
     # redirect to verify resend page again
     return redirect(url_for('auth.reset_password_request'))
