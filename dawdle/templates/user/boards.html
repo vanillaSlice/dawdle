@@ -1,5 +1,21 @@
 {% extends 'shared/base.html' %}
 
+{% block styles %}
+  {% assets 'user_css' %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet">
+  {% endassets %}
+{% endblock %}
+
+{% block title %}Boards | Dawdle{% endblock %}
+
+{% set container_classes='boards hero is-primary is-fullheight-with-navbar' %}
+
 {% block content %}
-  <h1>Boards</h1>
+  <div class="hero-body has-text-centered">
+    <div class="container">
+      <h1 class="title">
+        Coming soon...
+      </h1>
+    </div>
+  </div>
 {% endblock %}
