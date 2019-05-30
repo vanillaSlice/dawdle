@@ -33,7 +33,7 @@ def send_verification_email(user):
     try:
         mail.send(message)
         flash('A verification email has been sent to {}. '.format(user.email) +
-              'Please verify your account before logging in to Dawdle.', 'success')
+              'Please verify your account before logging in to Dawdle.', 'info')
         return True
     except:
         flash('Could not send a verification email to {}. '.format(user.email) +
@@ -198,7 +198,7 @@ def reset_password_request():
     try:
         mail.send(message)
         flash('A password reset email has been sent to {}. '.format(user.email) +
-              'This will expire in 10 minutes.', 'success')
+              'This will expire in 10 minutes.', 'info')
         return render_template('auth/reset-password-request.html', form=form)
     except:
         flash('Could not send a password reset email to {}. '.format(user.email) +
