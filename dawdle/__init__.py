@@ -6,9 +6,7 @@ import os
 
 from flask import Flask, render_template
 
-from dawdle.blueprints.auth import auth
-from dawdle.blueprints.home import home
-from dawdle.blueprints.user import user
+from dawdle.blueprints import blueprints
 from dawdle.extensions import extensions
 from dawdle.version import version
 
@@ -68,9 +66,8 @@ def create_app(testing=False):
     app.url_map.strict_slashes = False
 
     # register blueprints
-    app.register_blueprint(auth)
-    app.register_blueprint(home)
-    app.register_blueprint(user)
+    for blueprint in blueprints:
+        app.register_blueprint(blueprint)
 
     # attach 403 error handler
     @app.errorhandler(403)

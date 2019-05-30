@@ -2,7 +2,7 @@
 Exports reusable util functions.
 """
 
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urljoin, urlparse
 
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
