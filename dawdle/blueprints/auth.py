@@ -127,7 +127,7 @@ def verify(token):
     flash('Your user registration was successful.', 'success')
 
     # redirect to user's boards page
-    return redirect(url_for('user.boards', user_id=str(user.id)))
+    return redirect(url_for('user.boards'))
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -147,8 +147,7 @@ def login():
         return render_template('auth/login.html', form=form), 400
 
     # login the user
-    user = form.user
-    login_user(user, remember=form.remember_me.data)
+    login_user(form.user, remember=form.remember_me.data)
 
     # get redirect target
     next_target = request.args.get('next')
@@ -158,7 +157,7 @@ def login():
         return abort(400)
 
     # redirect to next target or to user's boards page
-    return redirect(next_target or url_for('user.boards', user_id=str(user.id)))
+    return redirect(next_target or url_for('user.boards'))
 
 @auth.route('/logout', methods=['GET'])
 def logout():
@@ -247,4 +246,4 @@ def reset_password(token):
     login_user(user, remember=True)
 
     # redirect to user's boards page
-    return redirect(url_for('user.boards', user_id=str(user.id)))
+    return redirect(url_for('user.boards'))
