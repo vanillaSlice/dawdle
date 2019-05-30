@@ -15,7 +15,7 @@ class TestBase:
         # set up a test user and login
         self.password = fake.password()
         self.user = self.create_user(password=self.password)
-        self.login(self.user.email, self.password)
+        self.login()
 
     def create_user(self,
                     active=True,
@@ -29,8 +29,8 @@ class TestBase:
         user.password = User.encrypt_password(password() if callable(password) else password)
         return user.save()
 
-    def login(self, email, password):
-        self.client.post('/auth/login', data={'email': email, 'password': password})
+    def login(self):
+        self.client.post('/auth/login', data={'email': self.user.email, 'password': self.password})
 
     def get_random_string(self, length):
         return fake.sentence(nb_words=length)[:length]

@@ -1,5 +1,5 @@
 """
-Exports Auth routes.
+Exports Auth blueprint.
 """
 
 from datetime import datetime

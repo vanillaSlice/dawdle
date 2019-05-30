@@ -22,9 +22,7 @@ class TestAuth(TestBase):
         }
 
     def get_mock_verify_resend_data(self, email=fake.email):
-        return {
-            'email': email() if callable(email) else email,
-        }
+        return {'email': email() if callable(email) else email}
 
     def get_verify_token(self, auth_id):
         return URLSafeSerializer(self.app.secret_key).dumps(auth_id)
@@ -38,9 +36,7 @@ class TestAuth(TestBase):
         }
 
     def get_mock_reset_password_request_data(self, email=fake.email):
-        return {
-            'email': email() if callable(email) else email,
-        }
+        return {'email': email() if callable(email) else email}
 
     def get_reset_password_token(self, auth_id, expires_in=3600):
         return TimedJSONWebSignatureSerializer(self.app.secret_key, expires_in).dumps(auth_id).decode('utf-8')
@@ -211,8 +207,9 @@ class TestAuth(TestBase):
         response = self.client.post('/auth/login', data=data)
         assert response.status_code == 302
 
-    def assert_login_unsuccessful(self, data):
-        response = self.client.post('/auth/login', data=data)
+    def assert_login_unsuccessful(self, data, redirect_target=None):
+        path = '/auth/login?next={}'.format(redirect_target) if redirect_target else '/auth/login'
+        response = self.client.post(path, data=data)
         assert response.status_code == 400
 
     def test_login_GET(self):
@@ -250,6 +247,10 @@ class TestAuth(TestBase):
         user = self.create_user(password=password, active=False)
         data = self.get_mock_login_data(email=user.email, password=password)
         self.assert_login_unsuccessful(data)
+
+    def test_login_bad_redirect_target(self):
+        data = self.get_mock_login_data(email=self.user.email, password=self.password)
+        self.assert_login_unsuccessful(data, 'https://github.com/')
 
     def test_login_success(self):
         data = self.get_mock_login_data(email=self.user.email, password=self.password)

@@ -1,5 +1,5 @@
 """
-Exports User routes.
+Exports User blueprint.
 """
 
 from flask import abort, Blueprint, render_template
