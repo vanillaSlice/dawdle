@@ -10,7 +10,7 @@ from flask_login import current_user, login_user, logout_user
 from flask_mail import Message
 from itsdangerous import BadSignature, TimedJSONWebSignatureSerializer, URLSafeSerializer
 
-from dawdle.extensions import mail
+from dawdle.extensions.mail import mail
 from dawdle.forms.auth import LoginForm, ResetPasswordForm, ResetPasswordRequestForm, SignUpForm, VerifyResendForm
 from dawdle.models.user import User
 from dawdle.utils import is_safe_url, to_ObjectId

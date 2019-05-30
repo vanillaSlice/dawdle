@@ -9,7 +9,7 @@ from flask import Flask, render_template
 from dawdle.blueprints.auth import auth
 from dawdle.blueprints.home import home
 from dawdle.blueprints.user import user
-from dawdle.extensions import assets, csrf, login_manager, mail, mongoengine
+from dawdle.extensions import extensions
 from dawdle.version import version
 
 def create_app(testing=False):
@@ -61,11 +61,8 @@ def create_app(testing=False):
     })
 
     # init extensions
-    assets.init_app(app)
-    csrf.init_app(app)
-    login_manager.init_app(app)
-    mail.init_app(app)
-    mongoengine.init_app(app)
+    for extension in extensions:
+        extension.init_app(app)
 
     # disable strict trailing slashes e.g. so /auth/login and /auth/login/ both resolve to same endpoint
     app.url_map.strict_slashes = False
