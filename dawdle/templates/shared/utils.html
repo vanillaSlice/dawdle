@@ -29,7 +29,7 @@
 {% endmacro %}
 
 <!-- renders a form field -->
-{% macro render_form_field(field, left_icon_classes=None) %}
+{% macro render_form_field(field, left_icon_classes=None, help=None) %}
   <div class="field">
     {{ field.label(class='label') }}
     <div class="control {{ 'has-icons-left' if left_icon_classes }}">
@@ -44,5 +44,10 @@
         </span>
       {% endif %}
     </div>
+    {% if help %}
+      <p id="{{ field.id }}-help" class="help {{ 'is-danger' if field.errors }}">
+        {{ help }}
+      </p>
+    {% endif %}
   </div>
 {% endmacro %}

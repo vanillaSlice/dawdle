@@ -3,8 +3,9 @@ Exports Auth forms.
 """
 
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, PasswordField, StringField
+from wtforms import BooleanField, StringField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.widgets import PasswordInput
 
 from dawdle.models.user import User
 
@@ -23,10 +24,10 @@ class SignUpForm(FlaskForm):
         Email(message='Please enter a valid email'),
     ])
 
-    password = PasswordField('Password', validators=[
+    password = StringField('Password', validators=[
         DataRequired(message='Please enter a password'),
         Length(min=8, message='Your password must be at least 8 characters'),
-    ])
+    ], widget=PasswordInput(hide_value=False))
 
     def validate_on_submit(self):
         if not super().validate_on_submit():
@@ -78,9 +79,9 @@ class LoginForm(FlaskForm):
         Email(message='Please enter a valid email'),
     ])
 
-    password = PasswordField('Password', validators=[
+    password = StringField('Password', validators=[
         DataRequired(message='Please enter a password'),
-    ])
+    ], widget=PasswordInput(hide_value=False))
 
     remember_me = BooleanField('Remember Me')
 
@@ -136,12 +137,12 @@ class ResetPasswordForm(FlaskForm):
     Reset Password form.
     """
 
-    password = PasswordField('Password', validators=[
+    password = StringField('Password', validators=[
         DataRequired(message='Please enter a password'),
         Length(min=8, message='Your password must be at least 8 characters'),
-        EqualTo('confirmation', message='Password and confirmation must match'),
-    ])
+    ], widget=PasswordInput(hide_value=False))
 
-    confirmation = PasswordField('Confirmation', validators=[
+    confirmation = StringField('Confirmation', validators=[
         DataRequired(message='Please enter password confirmation'),
-    ])
+        EqualTo('password', message='Password and confirmation must match'),
+    ], widget=PasswordInput(hide_value=False))
