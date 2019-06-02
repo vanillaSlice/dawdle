@@ -1,0 +1,25 @@
+{% extends 'shared/base.html' %}
+
+{% block styles %}
+  {% assets 'support_css' %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet">
+  {% endassets %}
+{% endblock %}
+
+{% block title %}Support | Dawdle{% endblock %}
+
+{% set container_classes='support hero is-info is-fullheight-with-navbar' %}
+
+{% block content %}
+  <div class="hero-body has-text-centered">
+    <div class="container">
+      <h2 class="subtitle has-text-weight-bold">
+        Please send support requests to
+        <a class="has-text-white is-italic" href="mailto:mikelowedev@gmail.com?subject=Dawdle:%20Support%20Request">
+          mikelowedev@gmail.com
+        </a>
+        and I'll take a look at it straight away!
+      </h2>
+    </div>
+  </div>
+{% endblock %}

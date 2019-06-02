@@ -1,11 +1,14 @@
 <footer class="footer">
-  <div class="content has-text-right">
-    <p>
+  <div class="columns">
+    <div class="column is-6 has-text-left-tablet">
+      <a href="{{ url_for('support.index') }}">Support</a>
+    </div>
+    <div class="column is-6 has-text-right-tablet">
       v{{ config['VERSION'] }}
       <span class="separator"></span>
       <a href="https://github.com/vanillaSlice/dawdle">GitHub</a>
       <span class="separator"></span>
       Made with 🎧 by <a href="https://www.mikelowe.xyz/">Mike</a>
-    </p>
+    </div>
   </div>
 </footer>
