@@ -17,7 +17,7 @@ class SignUpForm(FlaskForm):
     name = StringField('Name', validators=[
         DataRequired(message='Please enter a name'),
         Length(min=1, max=50, message='Your name must be between 1 and 50 characters'),
-    ])
+    ], filters=[lambda s: ' '.join(s.split())])
 
     email = StringField('Email', validators=[
         DataRequired(message='Please enter an email'),

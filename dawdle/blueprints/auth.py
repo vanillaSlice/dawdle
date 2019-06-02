@@ -64,6 +64,7 @@ def sign_up():
     # save new user
     user = User()
     form.populate_obj(user)
+    user.initials = ''.join([s[0].upper() for s in user.name.split(' ')])[:4]
     user.password = User.encrypt_password(form.password.data)
     user.save()
 

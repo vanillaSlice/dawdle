@@ -18,6 +18,7 @@ class User(Document, UserMixin):
     auth_id = ObjectIdField(required=True, default=ObjectId, unique=True)
     created = DateTimeField(required=True, default=datetime.utcnow)
     email = EmailField(required=True)
+    initials = StringField(required=True, min_length=1, max_length=4)
     last_updated = DateTimeField()
     name = StringField(required=True, min_length=1, max_length=50)
     password = StringField(required=True)

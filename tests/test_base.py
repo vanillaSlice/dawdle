@@ -20,20 +20,19 @@ class TestBase:
     def create_user(self,
                     active=True,
                     email=fake.email,
+                    initials=fake.pystr,
                     name=fake.name,
                     password=fake.password):
         user = User()
         user.active = active
         user.email = email() if callable(email) else email
+        user.initials = initials(min_chars=1, max_chars=4) if callable(initials) else initials
         user.name = name() if callable(name) else name
         user.password = User.encrypt_password(password() if callable(password) else password)
         return user.save()
 
     def login(self):
         self.client.post('/auth/login', data={'email': self.user.email, 'password': self.password})
-
-    def get_random_string(self, length):
-        return fake.sentence(nb_words=length)[:length]
 
     def teardown_method(self):
         self.logout()
