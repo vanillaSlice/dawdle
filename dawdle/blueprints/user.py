@@ -15,3 +15,12 @@ def boards():
     """
 
     return render_template('user/boards.html')
+
+@user.route('/settings', methods=['GET'])
+@login_required
+def settings():
+    """
+    Settings route.
+    """
+
+    return render_template('user/settings.html')

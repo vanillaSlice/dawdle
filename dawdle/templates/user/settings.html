@@ -1,0 +1,21 @@
+{% extends 'shared/base.html' %}
+
+{% block styles %}
+  {% assets 'user_css' %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet">
+  {% endassets %}
+{% endblock %}
+
+{% block title %}Settings | Dawdle{% endblock %}
+
+{% set container_classes='settings has-background-primary' %}
+
+{% block content %}
+  <div class="hero-body has-text-centered">
+    <div class="container">
+      <h1 class="title has-text-white">
+        Settings...
+      </h1>
+    </div>
+  </div>
+{% endblock %}
