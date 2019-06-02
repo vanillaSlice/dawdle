@@ -27,7 +27,10 @@
           </h2>
           <form method="POST">
             {{ form.csrf_token }}
-            {{ render_form_field(form.email, type='email', placeholder='e.g. leia@alderaan.com', left_icon_classes='fas fa-envelope') }}
+            {{ render_form_field(form.email,
+                                 type='email',
+                                 placeholder='e.g. leia@alderaan.com',
+                                 left_icon_classes='fas fa-envelope') }}
             <div class="field">
               <div class="control">
                 <button class="button is-primary has-text-weight-bold">
