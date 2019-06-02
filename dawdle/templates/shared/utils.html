@@ -19,7 +19,9 @@
         <ul>
           {% for field_name, field_errors in form.errors.items() %}
             {% for error in field_errors %}
-              <li><strong>{{ error }}</strong></li>
+              <li class="has-text-weight-bold">
+                {{ error }}
+              </li>
             {% endfor %}
           {% endfor %}
         </ul>
