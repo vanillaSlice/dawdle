@@ -22,7 +22,7 @@
             Create a Dawdle Account
           </h1>
           <h2 class="subtitle">
-            <a href="{{ url_for('auth.login') }}">or sign in to your account</a>
+            <a href="{{ url_for('auth.login_GET') }}">or sign in to your account</a>
           </h2>
           <form method="POST">
             {{ form.csrf_token }}

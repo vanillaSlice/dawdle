@@ -34,14 +34,14 @@ class TestBase:
         return user.save()
 
     def login(self):
-        self.client.post(url_for('auth.login'), data={'email': self.user.email, 'password': self.password})
+        self.client.post(url_for('auth.login_POST'), data={'email': self.user.email, 'password': self.password})
 
     def teardown_method(self):
         self.logout()
         self.clear_db()
 
     def logout(self):
-        self.client.get(url_for('auth.logout'))
+        self.client.get(url_for('auth.logout_GET'))
 
     def clear_db(self):
         User.objects.delete()

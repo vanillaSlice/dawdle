@@ -177,101 +177,105 @@ class TestAuth(TestBase):
         self.assert_verify_resend_POST_successful(data)
 
     #
-    # /auth/verify/<token> tests.
+    # verify_GET tests.
     #
 
-    def assert_verify_successful(self, token, email):
-        response = self.client.get('/auth/verify/{}'.format(token))
+    def assert_verify_GET_successful(self, token, email):
+        response = self.client.get(url_for('auth.verify_GET', token=token))
         user = User.objects(email=email).first()
         assert response.status_code == 302
         assert user.is_active
         assert user.last_updated
 
-    def assert_verify_unsuccessful(self, token, email):
-        response = self.client.get('/auth/verify/{}'.format(token))
+    def assert_verify_GET_unsuccessful(self, token, email):
+        response = self.client.get(url_for('auth.verify_GET', token=token))
         user = User.objects(email=email).first()
         assert response.status_code == 404
         assert user is None or not user.is_active
 
-    def test_verify_invalid_token(self):
+    def test_verify_GET_invalid_token(self):
         user = self.create_user(active=False)
         token = self.get_verify_token('invalid token')
-        self.assert_verify_unsuccessful(token, user.email)
+        self.assert_verify_GET_unsuccessful(token, user.email)
 
-    def test_verify_account_does_not_exist(self):
+    def test_verify_GET_account_does_not_exist(self):
         user = self.create_user(active=False)
         user.delete()
         token = self.get_verify_token(str(user.auth_id))
-        self.assert_verify_unsuccessful(token, user.email)
+        self.assert_verify_GET_unsuccessful(token, user.email)
 
-    def test_verify_success(self):
+    def test_verify_GET_success(self):
         user = self.create_user(active=False)
         token = self.get_verify_token(str(user.auth_id))
-        self.assert_verify_successful(token, user.email)
+        self.assert_verify_GET_successful(token, user.email)
 
     #
-    # /auth/login tests.
+    # login_GET tests.
     #
 
-    def assert_login_successful(self, data):
-        response = self.client.post('/auth/login', data=data)
+    def test_login_GET(self):
+        response = self.client.get(url_for('auth.login_GET'))
+        assert response.status_code == 200
+
+    #
+    # login_POST tests.
+    #
+
+    def assert_login_POST_successful(self, data):
+        response = self.client.post(url_for('auth.login_POST'), data=data)
         assert response.status_code == 302
 
-    def assert_login_unsuccessful(self, data, redirect_target=None):
-        path = '/auth/login?next={}'.format(redirect_target) if redirect_target else '/auth/login'
+    def assert_login_POST_unsuccessful(self, data, redirect_target=None):
+        path = url_for('auth.login_POST', next=redirect_target)
         response = self.client.post(path, data=data)
         assert response.status_code == 400
 
-    def test_login_GET(self):
-        response = self.client.get('/auth/login')
-        assert response.status_code == 200
-
-    def test_login_no_email(self):
+    def test_login_POST_no_email(self):
         email = None
         data = self.get_mock_login_data(email=email)
-        self.assert_login_unsuccessful(data)
+        self.assert_login_POST_unsuccessful(data)
 
-    def test_login_invalid_email(self):
+    def test_login_POST_invalid_email(self):
         email = fake.sentence()
         data = self.get_mock_login_data(email=email)
-        self.assert_login_unsuccessful(data)
+        self.assert_login_POST_unsuccessful(data)
 
-    def test_login_no_password(self):
+    def test_login_POST_no_password(self):
         password = None
         data = self.get_mock_login_data(password=password)
-        self.assert_login_unsuccessful(data)
+        self.assert_login_POST_unsuccessful(data)
 
-    def test_login_account_does_not_exist(self):
+    def test_login_POST_account_does_not_exist(self):
         user = self.create_user(password='user password', active=True)
         user.delete()
         data = self.get_mock_login_data(email=user.email, password=user.password)
-        self.assert_login_unsuccessful(data)
+        self.assert_login_POST_unsuccessful(data)
 
-    def test_login_incorrect_password(self):
+    def test_login_POST_incorrect_password(self):
         password = 'incorrect password'
         data = self.get_mock_sign_up_data(email=self.user.email, password=password)
-        self.assert_login_unsuccessful(data)
+        self.assert_login_POST_unsuccessful(data)
 
-    def test_login_inactive_account(self):
+    def test_login_POST_inactive_account(self):
         password = 'user password'
         user = self.create_user(password=password, active=False)
         data = self.get_mock_login_data(email=user.email, password=password)
-        self.assert_login_unsuccessful(data)
+        self.assert_login_POST_unsuccessful(data)
 
-    def test_login_bad_redirect_target(self):
+    def test_login_POST_bad_redirect_target(self):
         data = self.get_mock_login_data(email=self.user.email, password=self.password)
-        self.assert_login_unsuccessful(data, 'https://github.com/')
+        self.assert_login_POST_unsuccessful(data, 'https://github.com/')
 
-    def test_login_success(self):
+    def test_login_POST_success(self):
         data = self.get_mock_login_data(email=self.user.email, password=self.password)
-        self.assert_login_successful(data)
+        self.assert_login_POST_successful(data)
 
     #
-    # /auth/logout tests.
+    # logout_GET tests.
     #
 
-    def test_logout_success(self):
-        response = self.client.get('/auth/logout')
+    def test_logout_GET_success(self):
+        response = self.client.get(url_for('auth.logout_GET'))
         assert response.status_code == 200
 
     #

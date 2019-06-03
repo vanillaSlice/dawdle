@@ -107,10 +107,10 @@ def verify_resend_POST():
     # render form again
     return render_template('auth/verify-resend.html', form=form), status_code
 
-@auth.route('/verify/<token>', methods=['GET'])
-def verify(token):
+@auth.route('/verify/<token>')
+def verify_GET(token):
     """
-    Verify route.
+    Verify GET route.
     """
 
     # make sure we have a valid token
@@ -139,18 +139,22 @@ def verify(token):
     # redirect to user's boards page
     return redirect(url_for('user.boards'))
 
-@auth.route('/login', methods=['GET', 'POST'])
-def login():
+@auth.route('/login')
+def login_GET():
     """
-    Login route.
+    Login GET route.
+    """
+
+    return render_template('auth/login.html', form=LoginForm(request.form))
+
+@auth.route('/login', methods=['POST'])
+def login_POST():
+    """
+    Login POST route.
     """
 
     # parse the form
     form = LoginForm(request.form)
-
-    # render form if GET request
-    if request.method == 'GET':
-        return render_template('auth/login.html', form=form)
 
     # render form again if submitted form is invalid
     if not form.validate_on_submit():
@@ -169,10 +173,10 @@ def login():
     # redirect to next target or to user's boards page
     return redirect(next_target or url_for('user.boards'))
 
-@auth.route('/logout', methods=['GET'])
-def logout():
+@auth.route('/logout')
+def logout_GET():
     """
-    Logout route.
+    Logout GET route.
     """
 
     # logout the user
