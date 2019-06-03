@@ -15,7 +15,7 @@ def index_GET():
 
     # redirect to user's boards page if already logged in
     if current_user.is_authenticated:
-        return redirect(url_for('user.boards'))
+        return redirect(url_for('user.boards_GET'))
 
     # otherwise render home page
     return render_template('home/index.html')

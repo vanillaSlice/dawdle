@@ -7,20 +7,20 @@ from flask_login import login_required
 
 user = Blueprint('user', __name__, url_prefix='/user')
 
-@user.route('/boards', methods=['GET'])
+@user.route('/boards')
 @login_required
-def boards():
+def boards_GET():
     """
-    Boards route.
+    Boards GET route.
     """
 
     return render_template('user/boards.html')
 
-@user.route('/settings', methods=['GET'])
+@user.route('/settings')
 @login_required
-def settings():
+def settings_GET():
     """
-    Settings route.
+    Settings GET route.
     """
 
     return render_template('user/settings.html')

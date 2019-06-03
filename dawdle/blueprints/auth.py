@@ -40,6 +40,24 @@ def send_verification_email(user):
               'Please try again.', 'danger')
         return False
 
+def verify_reset_password_token(token):
+    """
+    Verifies reset password token, returning the user if successful.
+    """
+
+    # make sure we have a valid token
+    try:
+        auth_id = TimedJSONWebSignatureSerializer(current_app.secret_key, expires_in=600).loads(token)
+    except BadSignature:
+        abort(404)
+
+    # make sure the user with the given auth id exists
+    user = User.objects(auth_id=to_ObjectId(auth_id)).first()
+    if user is None:
+        abort(404)
+
+    return user
+
 #
 # Routes
 #
@@ -117,7 +135,7 @@ def verify_GET(token):
     try:
         auth_id = URLSafeSerializer(current_app.secret_key).loads(token)
     except BadSignature:
-        return abort(404)
+        abort(404)
 
     # make sure the user with the given auth id exists
     user = User.objects(auth_id=to_ObjectId(auth_id)).first()
@@ -137,7 +155,7 @@ def verify_GET(token):
     flash('Your user registration was successful.', 'success')
 
     # redirect to user's boards page
-    return redirect(url_for('user.boards'))
+    return redirect(url_for('user.boards_GET'))
 
 @auth.route('/login')
 def login_GET():
@@ -168,10 +186,10 @@ def login_POST():
 
     # make sure redirect target is safe
     if not is_safe_url(next_target):
-        return abort(400)
+        abort(400)
 
     # redirect to next target or to user's boards page
-    return redirect(next_target or url_for('user.boards'))
+    return redirect(next_target or url_for('user.boards_GET'))
 
 @auth.route('/logout')
 def logout_GET():
@@ -185,18 +203,23 @@ def logout_GET():
     # render logout page
     return render_template('auth/logout.html')
 
-@auth.route('/reset-password', methods=['GET', 'POST'])
-def reset_password_request():
+@auth.route('/reset-password')
+def reset_password_request_GET():
     """
-    Reset Password Request route.
+    Reset Password Request GET route.
+    """
+
+    form = ResetPasswordRequestForm(request.form, obj=current_user)
+    return render_template('auth/reset-password-request.html', form=form)
+
+@auth.route('/reset-password', methods=['POST'])
+def reset_password_request_POST():
+    """
+    Reset Password Request POST route.
     """
 
     # parse the form
     form = ResetPasswordRequestForm(request.form, obj=current_user)
-
-    # render form if GET request
-    if request.method == 'GET':
-        return render_template('auth/reset-password-request.html', form=form)
 
     # render form again if submitted form is invalid
     if not form.validate_on_submit():
@@ -219,29 +242,26 @@ def reset_password_request():
               'Please try again.', 'danger')
         return render_template('auth/reset-password-request.html', form=form), 500
 
-@auth.route('/reset-password/<token>', methods=['GET', 'POST'])
-def reset_password(token):
+@auth.route('/reset-password/<token>')
+def reset_password_GET(token):
     """
-    Reset Password route.
+    Reset Password GET route.
     """
 
-    # make sure we have a valid token
-    try:
-        auth_id = TimedJSONWebSignatureSerializer(current_app.secret_key, expires_in=600).loads(token)
-    except BadSignature:
-        return abort(404)
+    verify_reset_password_token(token)
 
-    # make sure the user with the given auth id exists
-    user = User.objects(auth_id=to_ObjectId(auth_id)).first()
-    if user is None:
-        abort(404)
+    return render_template('auth/reset-password.html', form=ResetPasswordForm(request.form))
+
+@auth.route('/reset-password/<token>', methods=['POST'])
+def reset_password_POST(token):
+    """
+    Reset Password POST route.
+    """
+
+    user = verify_reset_password_token(token)
 
     # parse the form
     form = ResetPasswordForm(request.form)
-
-    # render form if GET request
-    if request.method == 'GET':
-        return render_template('auth/reset-password.html', form=form)
 
     # render form again if submitted form is invalid
     if not form.validate_on_submit():
@@ -260,4 +280,4 @@ def reset_password(token):
     login_user(user, remember=True)
 
     # redirect to user's boards page
-    return redirect(url_for('user.boards'))
+    return redirect(url_for('user.boards_GET'))

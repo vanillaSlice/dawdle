@@ -279,49 +279,81 @@ class TestAuth(TestBase):
         assert response.status_code == 200
 
     #
-    # /auth/reset-password tests.
+    # reset_password_request_GET tests.
     #
 
-    def assert_reset_password_request_successful(self, data):
-        self.logout()
-        response = self.client.post('/auth/reset-password', data=data)
+    def test_reset_password_request_GET(self):
+        response = self.client.get(url_for('auth.reset_password_request_GET'))
         assert response.status_code == 200
 
-    def assert_reset_password_request_unsuccessful(self, data):
+    #
+    # reset_password_request_POST tests.
+    #
+
+    def assert_reset_password_request_POST_successful(self, data):
         self.logout()
-        response = self.client.post('/auth/reset-password', data=data)
+        response = self.client.post(url_for('auth.reset_password_request_POST'), data=data)
+        assert response.status_code == 200
+
+    def assert_reset_password_request_POST_unsuccessful(self, data):
+        self.logout()
+        response = self.client.post(url_for('auth.reset_password_request_POST'), data=data)
         assert response.status_code == 400
 
-    def test_reset_password_request_GET(self):
-        response = self.client.get('/auth/reset-password')
-        assert response.status_code == 200
-
-    def test_reset_password_request_no_email(self):
+    def test_reset_password_request_POST_no_email(self):
         email = None
         data = self.get_mock_reset_password_request_data(email=email)
-        self.assert_reset_password_request_unsuccessful(data)
+        self.assert_reset_password_request_POST_unsuccessful(data)
 
-    def test_reset_password_request_invalid_email(self):
+    def test_reset_password_request_POST_invalid_email(self):
         email = fake.sentence()
         data = self.get_mock_reset_password_request_data(email=email)
-        self.assert_reset_password_request_unsuccessful(data)
+        self.assert_reset_password_request_POST_unsuccessful(data)
 
-    def test_reset_password_request_account_does_not_exist(self):
+    def test_reset_password_request_POST_account_does_not_exist(self):
         user = self.create_user(active=False)
         user.delete()
         data = self.get_mock_reset_password_request_data(email=user.email)
-        self.assert_reset_password_request_unsuccessful(data)
+        self.assert_reset_password_request_POST_unsuccessful(data)
 
-    def test_reset_password_request_success(self):
+    def test_reset_password_request_POST_success(self):
         user = self.create_user(active=False)
         data = self.get_mock_reset_password_request_data(email=user.email)
-        self.assert_reset_password_request_successful(data)
+        self.assert_reset_password_request_POST_successful(data)
 
     #
-    # /auth/reset-password/<token> tests.
+    # reset_password_GET tests.
     #
 
-    def assert_reset_password_successful(self, user_id, auth_id, data):
+    def assert_reset_password_GET_unsuccessful(self, token):
+        response = self.client.get('/auth/reset-password/{}'.format(token))
+        assert response.status_code == 404
+
+    def test_reset_password_GET(self):
+        token = self.get_reset_password_token(auth_id=str(self.user.auth_id))
+        response = self.client.get(url_for('auth.reset_password_GET', token=token))
+        assert response.status_code == 200
+
+    def test_reset_password_GET_invalid_token(self):
+        token = self.get_reset_password_token('invalid token')
+        self.assert_reset_password_GET_unsuccessful(token)
+
+    def test_reset_password_GET_expired_token(self):
+        token = self.get_reset_password_token(auth_id=str(self.user.auth_id), expires_in=1)
+        time.sleep(2)
+        self.assert_reset_password_GET_unsuccessful(token)
+
+    def test_reset_password_GET_account_does_not_exist(self):
+        user = self.create_user(active=False)
+        user.delete()
+        token = self.get_reset_password_token(str(user.auth_id))
+        self.assert_reset_password_GET_unsuccessful(token)
+
+    #
+    # reset_password_POST tests.
+    #
+
+    def assert_reset_password_POST_successful(self, user_id, auth_id, data):
         token = self.get_reset_password_token(auth_id=str(auth_id))
         response = self.client.post('/auth/reset-password/{}'.format(token), data=data)
         user = User.objects(id=user_id).first()
@@ -330,7 +362,7 @@ class TestAuth(TestBase):
         assert user.last_updated
         assert user.verify_password(data['password'])
 
-    def assert_reset_password_unsuccessful(self, auth_id, data):
+    def assert_reset_password_POST_unsuccessful(self, auth_id, data):
         token = self.get_reset_password_token(auth_id=str(auth_id))
         response = self.client.post('/auth/reset-password/{}'.format(token), data=data)
         user = User.objects(auth_id=auth_id).first()
@@ -338,52 +370,28 @@ class TestAuth(TestBase):
         assert user.last_updated is None
         assert not user.verify_password(data['password'])
 
-    def assert_reset_password_token_error(self, token):
-        response = self.client.get('/auth/reset-password/{}'.format(token))
-        assert response.status_code == 404
-
-    def test_reset_password_invalid_token(self):
-        token = self.get_reset_password_token('invalid token')
-        self.assert_reset_password_token_error(token)
-
-    def test_reset_password_expired_token(self):
-        token = self.get_reset_password_token(auth_id=str(self.user.auth_id), expires_in=1)
-        time.sleep(2)
-        self.assert_reset_password_token_error(token)
-
-    def test_reset_password_account_does_not_exist(self):
-        user = self.create_user(active=False)
-        user.delete()
-        token = self.get_reset_password_token(str(user.auth_id))
-        self.assert_reset_password_token_error(token)
-
-    def test_reset_password_GET(self):
-        token = self.get_reset_password_token(auth_id=str(self.user.auth_id))
-        response = self.client.get('/auth/reset-password/{}'.format(token))
-        assert response.status_code == 200
-
-    def test_reset_password_no_password(self):
+    def test_reset_password_POST_no_password(self):
         password = None
         data = self.get_mock_reset_password_data(password=password, confirmation=password)
-        self.assert_reset_password_unsuccessful(self.user.auth_id, data)
+        self.assert_reset_password_POST_unsuccessful(self.user.auth_id, data)
 
-    def test_reset_password_less_than_minimum(self):
+    def test_reset_password_POST_less_than_minimum(self):
         password = fake.pystr(min_chars=7, max_chars=7)
         data = self.get_mock_reset_password_data(password=password, confirmation=password)
-        self.assert_reset_password_unsuccessful(self.user.auth_id, data)
+        self.assert_reset_password_POST_unsuccessful(self.user.auth_id, data)
 
-    def test_reset_password_length_equal_to_minimum(self):
+    def test_reset_password_POST_length_equal_to_minimum(self):
         password = fake.pystr(min_chars=8, max_chars=8)
         data = self.get_mock_reset_password_data(password=password, confirmation=password)
-        self.assert_reset_password_successful(self.user.id, self.user.auth_id, data)
+        self.assert_reset_password_POST_successful(self.user.id, self.user.auth_id, data)
 
-    def test_reset_password_and_confirmation_dont_match(self):
+    def test_reset_password_POST_and_confirmation_dont_match(self):
         password = 'password'
         confirmation = 'confirmation'
         data = self.get_mock_reset_password_data(password=password, confirmation=confirmation)
-        self.assert_reset_password_unsuccessful(self.user.auth_id, data)
+        self.assert_reset_password_POST_unsuccessful(self.user.auth_id, data)
 
-    def test_reset_password_success(self):
+    def test_reset_password_POST_success(self):
         password = fake.password()
         data = self.get_mock_reset_password_data(password=password, confirmation=password)
-        self.assert_reset_password_successful(self.user.id, self.user.auth_id, data)
+        self.assert_reset_password_POST_successful(self.user.id, self.user.auth_id, data)

@@ -14,7 +14,7 @@
     <div id="header-navbar-menu" class="navbar-menu">
       <div class="navbar-start">
         {% if current_user.is_authenticated %}
-          <a class="navbar-item" href="{{ url_for('user.boards') }}">
+          <a class="navbar-item" href="{{ url_for('user.boards_GET') }}">
             Boards
           </a>
         {% endif %}
@@ -24,7 +24,7 @@
           <div class="navbar-item has-dropdown is-hoverable">
             <a class="navbar-link">{{ current_user.initials }}</a>
             <div class="navbar-dropdown is-right">
-              <a class="navbar-item" href="{{ url_for('user.settings') }}">
+              <a class="navbar-item" href="{{ url_for('user.settings_GET') }}">
                 Settings
               </a>
               <a class="navbar-item" href="{{ url_for('auth.logout_GET') }}">
