@@ -8,9 +8,9 @@ from flask_login import current_user
 home = Blueprint('home', __name__, url_prefix='/')
 
 @home.route('/')
-def index():
+def index_GET():
     """
-    Index route.
+    Index GET route.
     """
 
     # redirect to user's boards page if already logged in
