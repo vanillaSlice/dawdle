@@ -2,8 +2,8 @@
 Exports User blueprint.
 """
 
-from flask import Blueprint, render_template
-from flask_login import login_required
+from flask import Blueprint, flash, redirect, render_template, url_for
+from flask_login import current_user, login_required
 
 user = Blueprint('user', __name__, url_prefix='/user')
 
@@ -24,3 +24,16 @@ def settings_GET():
     """
 
     return render_template('user/settings.html')
+
+@user.route('/delete', methods=['POST'])
+@login_required
+def delete_POST():
+    """
+    Delete POST route.
+    """
+
+    current_user.delete()
+
+    flash('Your account has be deleted.', 'info')
+
+    return redirect(url_for('home.index_GET'))

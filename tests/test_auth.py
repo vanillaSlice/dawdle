@@ -326,7 +326,7 @@ class TestAuth(TestBase):
     #
 
     def assert_reset_password_GET_unsuccessful(self, token):
-        response = self.client.get('/auth/reset-password/{}'.format(token))
+        response = self.client.get(url_for('auth.reset_password_GET', token=token))
         assert response.status_code == 404
 
     def test_reset_password_GET(self):
@@ -355,7 +355,7 @@ class TestAuth(TestBase):
 
     def assert_reset_password_POST_successful(self, user_id, auth_id, data):
         token = self.get_reset_password_token(auth_id=str(auth_id))
-        response = self.client.post('/auth/reset-password/{}'.format(token), data=data)
+        response = self.client.post(url_for('auth.reset_password_POST', token=token), data=data)
         user = User.objects(id=user_id).first()
         assert response.status_code == 302
         assert user.auth_id != auth_id
@@ -364,7 +364,7 @@ class TestAuth(TestBase):
 
     def assert_reset_password_POST_unsuccessful(self, auth_id, data):
         token = self.get_reset_password_token(auth_id=str(auth_id))
-        response = self.client.post('/auth/reset-password/{}'.format(token), data=data)
+        response = self.client.post(url_for('auth.reset_password_POST', token=token), data=data)
         user = User.objects(auth_id=auth_id).first()
         assert response.status_code == 400
         assert user.last_updated is None

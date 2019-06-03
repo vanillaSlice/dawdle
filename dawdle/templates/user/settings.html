@@ -8,14 +8,14 @@
 
 {% block title %}Settings | Dawdle{% endblock %}
 
-{% set container_classes='settings has-background-primary' %}
+{% set container_classes='settings has-background-primary is-fullheight-with-navbar' %}
 
 {% block content %}
   <div class="hero-body has-text-centered">
     <div class="container">
-      <h1 class="title has-text-white">
-        Settings...
-      </h1>
+      <form method="POST" action="{{ url_for('user.delete_POST') }}">
+        <button class="button is-danger">Delete Account</button>
+      </form>
     </div>
   </div>
 {% endblock %}
