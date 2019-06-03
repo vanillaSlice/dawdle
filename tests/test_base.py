@@ -1,4 +1,5 @@
 from faker import Faker
+from flask import url_for
 
 from dawdle import create_app
 from dawdle.models.user import User
@@ -33,14 +34,14 @@ class TestBase:
         return user.save()
 
     def login(self):
-        self.client.post('/auth/login', data={'email': self.user.email, 'password': self.password})
+        self.client.post(url_for('auth.login'), data={'email': self.user.email, 'password': self.password})
 
     def teardown_method(self):
         self.logout()
         self.clear_db()
 
     def logout(self):
-        self.client.get('/auth/logout')
+        self.client.get(url_for('auth.logout'))
 
     def clear_db(self):
         User.objects.delete()

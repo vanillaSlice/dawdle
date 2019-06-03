@@ -44,18 +44,22 @@ def send_verification_email(user):
 # Routes
 #
 
-@auth.route('/sign-up', methods=['GET', 'POST'])
-def sign_up():
+@auth.route('/sign-up')
+def sign_up_GET():
     """
-    Sign Up route.
+    Sign Up GET route.
+    """
+
+    return render_template('auth/sign-up.html', form=SignUpForm(request.form))
+
+@auth.route('/sign-up', methods=['POST'])
+def sign_up_POST():
+    """
+    Sign Up POST route.
     """
 
     # parse the form
     form = SignUpForm(request.form)
-
-    # render form if GET request
-    if request.method == 'GET':
-        return render_template('auth/sign-up.html', form=form)
 
     # render form again if submitted form is invalid
     if not form.validate_on_submit():
@@ -72,20 +76,25 @@ def sign_up():
     send_verification_email(user)
 
     # redirect to verify resend page
-    return redirect(url_for('auth.verify_resend', email=form.email.data))
+    return redirect(url_for('auth.verify_resend_GET', email=form.email.data))
 
-@auth.route('/verify/resend', methods=['GET', 'POST'])
-def verify_resend():
+@auth.route('/verify/resend')
+def verify_resend_GET():
     """
-    Verify Resend route.
+    Verify Resend GET route.
+    """
+
+    form = VerifyResendForm(request.form, email=request.args.get('email'))
+    return render_template('auth/verify-resend.html', form=form)
+
+@auth.route('/verify/resend', methods=['POST'])
+def verify_resend_POST():
+    """
+    Verify Resend POST route.
     """
 
     # parse the form
     form = VerifyResendForm(request.form, email=request.args.get('email'))
-
-    # render form if GET request
-    if request.method == 'GET':
-        return render_template('auth/verify-resend.html', form=form)
 
     # render form again if submitted form is invalid
     if not form.validate_on_submit():

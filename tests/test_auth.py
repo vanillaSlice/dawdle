@@ -1,5 +1,6 @@
 import time
 
+from flask import url_for
 from itsdangerous import TimedJSONWebSignatureSerializer, URLSafeSerializer
 
 from dawdle.models.user import User
@@ -50,11 +51,19 @@ class TestAuth(TestBase):
         }
 
     #
-    # /auth/sign-up tests.
+    # sign_up_GET tests.
     #
 
-    def assert_sign_up_successful(self, data):
-        response = self.client.post('/auth/sign-up', data=data)
+    def test_sign_up_GET(self):
+        response = self.client.get(url_for('auth.sign_up_GET'))
+        assert response.status_code == 200
+
+    #
+    # sign_up_POST tests.
+    #
+
+    def assert_sign_up_POST_successful(self, data):
+        response = self.client.post(url_for('auth.sign_up_POST'), data=data)
         user = User.objects(email=data['email']).first()
         assert response.status_code == 302
         assert not user.is_active
@@ -62,110 +71,110 @@ class TestAuth(TestBase):
         assert user.name == data['name']
         assert user.verify_password(data['password'])
 
-    def assert_sign_up_unsuccessful(self, data):
-        response = self.client.post('/auth/sign-up', data=data)
+    def assert_sign_up_POST_unsuccessful(self, data):
+        response = self.client.post(url_for('auth.sign_up_POST'), data=data)
         user = User.objects(email=data['email']).first()
         assert response.status_code == 400
         assert user is None or user == self.user
 
-    def test_sign_up_GET(self):
-        response = self.client.get('/auth/sign-up')
-        assert response.status_code == 200
-
-    def test_sign_up_no_name(self):
+    def test_sign_up_POST_no_name(self):
         name = None
         data = self.get_mock_sign_up_data(name=name)
-        self.assert_sign_up_unsuccessful(data)
+        self.assert_sign_up_POST_unsuccessful(data)
 
-    def test_sign_up_name_length_equal_to_minimum(self):
+    def test_sign_up_POST_name_length_equal_to_minimum(self):
         name = fake.pystr(min_chars=1, max_chars=1)
         data = self.get_mock_sign_up_data(name=name)
-        self.assert_sign_up_successful(data)
+        self.assert_sign_up_POST_successful(data)
 
-    def test_sign_up_name_length_equal_to_maximum(self):
+    def test_sign_up_POST_name_length_equal_to_maximum(self):
         name = fake.pystr(min_chars=50, max_chars=50)
         data = self.get_mock_sign_up_data(name=name)
-        self.assert_sign_up_successful(data)
+        self.assert_sign_up_POST_successful(data)
 
-    def test_sign_up_name_length_greater_than_maximum(self):
+    def test_sign_up_POST_name_length_greater_than_maximum(self):
         name = fake.pystr(min_chars=51, max_chars=51)
         data = self.get_mock_sign_up_data(name=name)
-        self.assert_sign_up_unsuccessful(data)
+        self.assert_sign_up_POST_unsuccessful(data)
 
-    def test_sign_up_no_email(self):
+    def test_sign_up_POST_no_email(self):
         email = None
         data = self.get_mock_sign_up_data(email=email)
-        self.assert_sign_up_unsuccessful(data)
+        self.assert_sign_up_POST_unsuccessful(data)
 
-    def test_sign_up_invalid_email(self):
+    def test_sign_up_POST_invalid_email(self):
         email = fake.sentence()
         data = self.get_mock_sign_up_data(email=email)
-        self.assert_sign_up_unsuccessful(data)
+        self.assert_sign_up_POST_unsuccessful(data)
 
-    def test_sign_up_no_password(self):
+    def test_sign_up_POST_no_password(self):
         password = None
         data = self.get_mock_sign_up_data(password=password)
-        self.assert_sign_up_unsuccessful(data)
+        self.assert_sign_up_POST_unsuccessful(data)
 
-    def test_sign_up_password_length_less_than_minimum(self):
+    def test_sign_up_POST_password_length_less_than_minimum(self):
         password = fake.pystr(min_chars=7, max_chars=7)
         data = self.get_mock_sign_up_data(password=password)
-        self.assert_sign_up_unsuccessful(data)
+        self.assert_sign_up_POST_unsuccessful(data)
 
-    def test_sign_up_password_length_equal_to_minimum(self):
+    def test_sign_up_POST_password_length_equal_to_minimum(self):
         password = fake.pystr(min_chars=8, max_chars=8)
         data = self.get_mock_sign_up_data(password=password)
-        self.assert_sign_up_successful(data)
+        self.assert_sign_up_POST_successful(data)
 
-    def test_sign_up_account_already_exists(self):
+    def test_sign_up_POST_account_already_exists(self):
         email = self.user.email
         data = self.get_mock_sign_up_data(email=email)
-        self.assert_sign_up_unsuccessful(data)
+        self.assert_sign_up_POST_unsuccessful(data)
 
-    def test_sign_up_success(self):
+    def test_sign_up_POST_success(self):
         data = self.get_mock_sign_up_data()
-        self.assert_sign_up_successful(data)
+        self.assert_sign_up_POST_successful(data)
 
     #
-    # /auth/verify/resend tests.
+    # verify_resend_GET tests.
     #
-
-    def assert_verify_resend_successful(self, data):
-        response = self.client.post('/auth/verify/resend', data=data)
-        assert response.status_code == 200
-
-    def assert_verify_resend_unsuccessful(self, data):
-        response = self.client.post('/auth/verify/resend', data=data)
-        assert response.status_code == 400
 
     def test_verify_resend_GET(self):
-        response = self.client.get('/auth/verify/resend')
+        response = self.client.get(url_for('auth.verify_resend_GET'))
         assert response.status_code == 200
 
-    def test_verify_resend_no_email(self):
+    #
+    # verify_resend_POST tests.
+    #
+
+    def assert_verify_resend_POST_successful(self, data):
+        response = self.client.post(url_for('auth.verify_resend_POST'), data=data)
+        assert response.status_code == 200
+
+    def assert_verify_resend_POST_unsuccessful(self, data):
+        response = self.client.post(url_for('auth.verify_resend_POST'), data=data)
+        assert response.status_code == 400
+
+    def test_verify_resend_POST_no_email(self):
         email = None
         data = self.get_mock_verify_resend_data(email=email)
-        self.assert_verify_resend_unsuccessful(data)
+        self.assert_verify_resend_POST_unsuccessful(data)
 
-    def test_verify_resend_invalid_email(self):
+    def test_verify_resend_POST_invalid_email(self):
         email = fake.sentence()
         data = self.get_mock_verify_resend_data(email=email)
-        self.assert_verify_resend_unsuccessful(data)
+        self.assert_verify_resend_POST_unsuccessful(data)
 
-    def test_verify_resend_account_does_not_exist(self):
+    def test_verify_resend_POST_account_does_not_exist(self):
         user = self.create_user()
         user.delete()
         data = self.get_mock_verify_resend_data(email=user.email)
-        self.assert_verify_resend_unsuccessful(data)
+        self.assert_verify_resend_POST_unsuccessful(data)
 
-    def test_verify_resend_account_already_verified(self):
+    def test_verify_resend_POST_account_already_verified(self):
         data = self.get_mock_verify_resend_data(email=self.user.email)
-        self.assert_verify_resend_unsuccessful(data)
+        self.assert_verify_resend_POST_unsuccessful(data)
 
-    def test_verify_resend_success(self):
+    def test_verify_resend_POST_success(self):
         user = self.create_user(active=False)
         data = self.get_mock_verify_resend_data(email=user.email)
-        self.assert_verify_resend_successful(data)
+        self.assert_verify_resend_POST_successful(data)
 
     #
     # /auth/verify/<token> tests.
