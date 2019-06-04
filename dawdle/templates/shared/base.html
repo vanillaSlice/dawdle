@@ -34,7 +34,7 @@
       {% if messages %}
         {% for category, message in messages %}
           <div class="notification is-marginless is-radiusless is-{{category}} has-text-weight-bold">
-            <button class="delete"></button>
+            <button class="delete js-notification-close"></button>
             {{ message }}
           </div>
         {% endfor %}

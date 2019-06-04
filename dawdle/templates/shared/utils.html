@@ -14,7 +14,7 @@
 {% macro render_form_errors(form) %}
   {% if form.errors %}
     <div class="notification is-danger">
-      <button class="delete"></button>
+      <button class="delete js-notification-close"></button>
       <div class="content">
         <ul>
           {% for field_name, field_errors in form.errors.items() %}
@@ -32,14 +32,17 @@
 
 <!-- renders a form field -->
 {% macro render_form_field(field, left_icon_classes=None, help=None) %}
+  {% set classes = 'input js-form-field' %}
+  {% if field.errors %}
+    {% set classes = '{} is-danger'.format(classes) %}
+  {% endif %}
+  {% if help %}
+    {% set help_id = 'js-{}-help'.format(field.id) %}
+  {% endif %}
   <div class="field">
     {{ field.label(class='label') }}
     <div class="control {{ 'has-icons-left' if left_icon_classes }}">
-      {% if field.errors %}
-        {{ field(class='input is-danger', **kwargs) | safe }}
-      {% else %}
-        {{ field(class='input', **kwargs) | safe }}
-      {% endif %}
+      {{ field(class=classes, data_help='#{}'.format(help_id), **kwargs) | safe }}
       {% if left_icon_classes %}
         <span class="icon is-small is-left">
           <i class="{{ left_icon_classes }}"></i>
@@ -47,7 +50,7 @@
       {% endif %}
     </div>
     {% if help %}
-      <p id="{{ field.id }}-help" class="help {{ 'is-danger' if field.errors }}">
+      <p id="{{ help_id }}" class="help {{ 'is-danger' if field.errors }}">
         {{ help }}
       </p>
     {% endif %}
