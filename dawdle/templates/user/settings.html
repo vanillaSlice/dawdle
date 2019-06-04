@@ -8,40 +8,62 @@
 
 {% block title %}Settings | Dawdle{% endblock %}
 
-{% set container_classes='user-settings' %}
+{% set container_classes='user-settings has-background-dark' %}
 
 {% block content %}
   <div class="container">
     <div class="columns">
-      <div class="column is-6 is-offset-3">
-        <h1 class="title">Settings</h1>
-
-        <form method="POST" action="{{ url_for('user.delete_POST') }}">
-          <div id="js-delete-account-modal" class="modal">
-            <div class="modal-background js-modal-close" data-target="#js-delete-account-modal"></div>
-            <div class="modal-card">
-              <header class="modal-card-head">
-                <p class="modal-card-title">Delete Account</p>
-                <button type="button" class="delete js-modal-close" aria-label="close"
-                  data-target="#js-delete-account-modal"></button>
-              </header>
-              <section class="modal-card-body">
-                Permanently delete your account and all of your boards?
-              </section>
-              <footer class="modal-card-foot">
-                <button type="submit" class="button is-danger">
-                  Delete Account
-                </button>
-                <button type="button" class="button js-modal-close" data-target="#js-delete-account-modal">
-                  Cancel
-                </button>
-              </footer>
+      <div class="column is-6 is-offset-3 is-paddingless">
+        <div class="box">
+          <h1 class="title">Settings</h1>
+          <h2 class="title is-size-5">Account Details</h2>
+          <p>
+            Bacon ipsum dolor amet frankfurter ball tip short ribs, buffalo capicola jowl sausage salami turkey pastrami.
+            Short ribs biltong tenderloin pastrami, drumstick swine ground round kielbasa jowl shoulder shank porchetta.
+            Pastrami capicola pork chop ham hock ribeye jerky tri-tip short ribs porchetta spare ribs alcatra drumstick
+            fatback doner. Porchetta ribeye shank pig venison short loin short ribs frankfurter pork chop chuck cupim
+            ham hock rump salami. Landjaeger kevin beef t-bone, tongue fatback pig strip steak ribeye biltong salami
+            capicola filet mignon ground round pastrami.
+          </p>
+          <hr>
+          <h2 class="title is-size-5">Update Password</h2>
+          <p>
+            Bacon ipsum dolor amet frankfurter ball tip short ribs, buffalo capicola jowl sausage salami turkey pastrami.
+            Short ribs biltong tenderloin pastrami, drumstick swine ground round kielbasa jowl shoulder shank porchetta.
+            Pastrami capicola pork chop ham hock ribeye jerky tri-tip short ribs porchetta spare ribs alcatra drumstick
+            fatback doner. Porchetta ribeye shank pig venison short loin short ribs frankfurter pork chop chuck cupim
+            ham hock rump salami. Landjaeger kevin beef t-bone, tongue fatback pig strip steak ribeye biltong salami
+            capicola filet mignon ground round pastrami.
+          </p>
+          <hr>
+          <h2 class="title is-size-5">Advanced</h2>
+          <form method="POST" action="{{ url_for('user.delete_POST') }}">
+            <div id="js-delete-account-modal" class="modal">
+              <div class="modal-background js-modal-close" data-target="#js-delete-account-modal"></div>
+              <div class="modal-card">
+                <header class="modal-card-head">
+                  <p class="modal-card-title">Delete Account</p>
+                  <button type="button" class="delete js-modal-close" aria-label="close"
+                    data-target="#js-delete-account-modal"></button>
+                </header>
+                <section class="modal-card-body">
+                  Permanently delete your account and all of your boards?
+                </section>
+                <footer class="modal-card-foot">
+                  <button type="submit" class="button is-danger has-text-weight-bold">
+                    Delete Account
+                  </button>
+                  <button type="button" class="button js-modal-close" data-target="#js-delete-account-modal">
+                    Cancel
+                  </button>
+                </footer>
+              </div>
             </div>
-          </div>
-        </form>
-        <button class="button is-danger js-modal-open" data-target="#js-delete-account-modal">
-          Delete Account
-        </button>
+          </form>
+          <button class="button is-danger has-text-weight-bold js-modal-open" data-target="#js-delete-account-modal">
+            Delete Account
+          </button>
+        </div>
       </div>
     </div>
   </div>

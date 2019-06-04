@@ -25,10 +25,12 @@ $(document).ready(function() {
   // displays modal when clicked
   $('.js-modal-open').click(function() {
     $($(this).data('target')).addClass('is-active');
+    $('html').addClass('is-clipped');
   });
 
   // hides modal when clicked
   $('.js-modal-close').click(function() {
     $($(this).data('target')).removeClass('is-active');
+    $('html').removeClass('is-clipped');
   });
 });
