@@ -34,6 +34,6 @@ def delete_POST():
 
     current_user.delete()
 
-    flash('Your account has be deleted.', 'info')
+    flash('Your account has been deleted.', 'info')
 
     return redirect(url_for('home.index_GET'))

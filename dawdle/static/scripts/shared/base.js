@@ -21,4 +21,14 @@ $(document).ready(function() {
       $('#' + fieldElement.attr('id') + '-help').toggleClass('is-danger', state);
     }
   }
+
+  // add active class to target modal when clicked
+  $('.js-modal-open').click(function() {
+    $($(this).data('target')).addClass('is-active');
+  });
+
+  // remove active class from target modal when clicked
+  $('.js-modal-close').click(function() {
+    $($(this).data('target')).removeClass('is-active');
+  });
 });

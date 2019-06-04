@@ -1,0 +1,4 @@
+.user-settings {
+  min-height: calc(100vh - 3.25rem);
+  padding: 3rem 1.5rem;
+}

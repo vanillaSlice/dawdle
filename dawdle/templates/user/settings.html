@@ -8,14 +8,41 @@
 
 {% block title %}Settings | Dawdle{% endblock %}
 
-{% set container_classes='settings has-background-primary is-fullheight-with-navbar' %}
+{% set container_classes='user-settings' %}
 
 {% block content %}
-  <div class="hero-body has-text-centered">
-    <div class="container">
-      <form method="POST" action="{{ url_for('user.delete_POST') }}">
-        <button class="button is-danger">Delete Account</button>
-      </form>
+  <div class="container">
+    <div class="columns">
+      <div class="column is-6 is-offset-3">
+        <h1 class="title">Settings</h1>
+
+        <form method="POST" action="{{ url_for('user.delete_POST') }}">
+          <div id="delete-account-modal" class="modal">
+            <div class="modal-background"></div>
+            <div class="modal-card">
+              <header class="modal-card-head">
+                <p class="modal-card-title">Delete Account</p>
+                <button type="button" class="delete js-modal-close" aria-label="close"
+                  data-target="#delete-account-modal"></button>
+              </header>
+              <section class="modal-card-body">
+                Permanently delete your account and all of your boards?
+              </section>
+              <footer class="modal-card-foot">
+                <button type="submit" class="button is-danger">
+                  Delete Account
+                </button>
+                <button type="button" class="button js-modal-close" data-target="#delete-account-modal">
+                  Cancel
+                </button>
+              </footer>
+            </div>
+          </div>
+        </form>
+        <button class="button is-danger js-modal-open" data-target="#delete-account-modal">
+          Delete Account
+        </button>
+      </div>
     </div>
   </div>
 {% endblock %}
