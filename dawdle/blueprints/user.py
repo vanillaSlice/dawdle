@@ -25,6 +25,15 @@ def settings_GET():
 
     return render_template('user/settings.html')
 
+@user.route('/delete')
+@login_required
+def delete_GET():
+    """
+    Delete GET route.
+    """
+
+    return redirect(url_for('user.settings_GET'))
+
 @user.route('/delete', methods=['POST'])
 @login_required
 def delete_POST():

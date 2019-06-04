@@ -33,6 +33,19 @@ class TestUser(TestBase):
         assert response.status_code == 200
 
     #
+    # delete_GET tests.
+    #
+
+    def test_delete_GET_not_authenticated(self):
+        self.logout()
+        response = self.client.get(url_for('user.delete_GET'))
+        assert response.status_code == 302
+
+    def test_delete_GET_authenticated(self):
+        response = self.client.get(url_for('user.delete_GET'))
+        assert response.status_code == 302
+
+    #
     # delete_POST tests.
     #
 
