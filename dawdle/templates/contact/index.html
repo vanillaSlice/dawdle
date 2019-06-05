@@ -29,11 +29,15 @@
                                  left_icon_classes='fas fa-envelope') }}
             {{ render_form_field(form.subject,
                                  type='text',
-                                 placeholder='Message subject this is',
+                                 minlength='1',
+                                 maxlength='256',
+                                 placeholder='e.g. Fear is the path to the dark side',
                                  left_icon_classes='fas fa-pencil-alt') }}
             {{ render_form_field(form.message,
                                  rows='10',
-                                 placeholder='Message content this is',
+                                 minlength='1',
+                                 maxlength='1000',
+                                 placeholder='e.g. Hmm. In the end, cowards are those who follow the dark side. You must unlearn what you have unlearned. Train yourself to let go of everything you fear to lose. You will know good from bad when you are at peace and passive. Smaller in number are we, but larger in mind.',
                                  left_icon_classes='fas fa-pencil-alt') }}
             <div class="field content">
               <div class="control">
