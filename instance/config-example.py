@@ -2,6 +2,7 @@
 Local config properties.
 """
 
+CONTACT_EMAIL = None
 DEBUG = True
 ENV = 'local'
 MAIL_DEFAULT_SENDER = None

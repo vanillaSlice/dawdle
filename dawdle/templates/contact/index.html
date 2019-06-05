@@ -1,5 +1,7 @@
 {% extends 'shared/base.html' %}
 
+{% from 'shared/utils.html' import render_form_errors, render_form_field %}
+
 {% block styles %}
   {% assets 'contact_css' %}
     <link href="{{ ASSET_URL }}" rel="stylesheet">
@@ -8,18 +10,41 @@
 
 {% block title %}Contact | Dawdle{% endblock %}
 
-{% set container_classes='contact hero is-info is-fullheight-with-navbar' %}
+{% set container_classes='contact hero has-background-info is-fullheight-with-navbar' %}
 
 {% block content %}
-  <div class="hero-body has-text-centered">
+  <div class="hero-body">
     <div class="container">
-      <p class="is-size-5 has-text-weight-bold">
-        Please send support requests to
-        <a class="has-text-white is-italic" href="mailto:mikelowedev@gmail.com?subject=Dawdle:%20Support%20Request">
-          mikelowedev@gmail.com
-        </a>
-        and I'll take a look straight away!
-      </p>
+      <div class="column is-6 is-offset-3 is-paddingless">
+        <div class="box">
+          {{ render_form_errors(form) }}
+          <h1 class="title">
+            Contact Us
+          </h1>
+          <form method="POST" class="content">
+            {{ form.csrf_token }}
+            {{ render_form_field(form.email,
+                                 type='email',
+                                 placeholder='e.g. yoda@dagobah.com',
+                                 left_icon_classes='fas fa-envelope') }}
+            {{ render_form_field(form.subject,
+                                 type='text',
+                                 placeholder='Message subject this is',
+                                 left_icon_classes='fas fa-pencil-alt') }}
+            {{ render_form_field(form.message,
+                                 rows='10',
+                                 placeholder='Message content this is',
+                                 left_icon_classes='fas fa-pencil-alt') }}
+            <div class="field content">
+              <div class="control">
+                <button class="button is-primary has-text-weight-bold">
+                  Send
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}

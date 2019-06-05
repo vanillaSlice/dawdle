@@ -31,6 +31,7 @@ def create_app(testing=False):
     # load environment variables (if present)
     environ = os.environ
     config.update({
+        'CONTACT_EMAIL': environ.get('CONTACT_EMAIL', config.get('CONTACT_EMAIL')),
         'DEBUG': environ.get('DEBUG', str(config.get('DEBUG'))).lower() == 'true',
         'ENV': environ.get('ENV', config.get('ENV')),
         'MAIL_DEFAULT_SENDER': environ.get('MAIL_DEFAULT_SENDER', config.get('MAIL_DEFAULT_SENDER')),

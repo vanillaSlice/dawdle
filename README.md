@@ -18,6 +18,7 @@ The following properties can be configured:
 
 | Name                    | Purpose                                                          | Default               |
 | ----------------------- | ---------------------------------------------------------------- | --------------------- |
+| `CONTACT_EMAIL`         | Email address to send messages to from contact page.             | `None`                |
 | `DEBUG`                 | If debug mode is enabled.                                        | `False`               |
 | `ENV`                   | Environment the app is running in.                               | `production`          |
 | `MAIL_DEFAULT_SENDER`   | The default address to send emails from.                         | `None`                |
@@ -54,6 +55,7 @@ The app requires an email address to send messages from e.g. for user verificati
 You don't need your own mail server for this. You can use a Gmail account with the following settings:
 
 ```
+CONTACT_EMAIL = <Gmail address>
 MAIL_DEFAULT_SENDER = <Gmail address>
 MAIL_PASSWORD = <Gmail password>
 MAIL_PORT = 587

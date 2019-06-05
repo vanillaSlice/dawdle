@@ -10,6 +10,7 @@ class Default:
     Default config properties.
     """
 
+    CONTACT_EMAIL = None
     DEBUG = False
     ENV = 'production'
     MAIL_DEFAULT_SENDER = None
@@ -35,6 +36,7 @@ class Test:
     Test config properties.
     """
 
+    CONTACT_EMAIL = None
     DEBUG = True
     ENV = 'test'
     MAIL_DEFAULT_SENDER = 'dawdle'

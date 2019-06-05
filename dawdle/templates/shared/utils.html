@@ -33,16 +33,20 @@
 <!-- renders a form field -->
 {% macro render_form_field(field, left_icon_classes=None, help=None) %}
   {% set classes = 'input js-form-field' %}
+  {% if field.type == 'TextAreaField' %}
+    {% set classes = '{} textarea'.format(classes) %}
+  {% endif %}
   {% if field.errors %}
     {% set classes = '{} is-danger'.format(classes) %}
-  {% endif %}
-  {% if help %}
-    {% set help_id = 'js-{}-help'.format(field.id) %}
   {% endif %}
   <div class="field">
     {{ field.label(class='label') }}
     <div class="control {{ 'has-icons-left' if left_icon_classes }}">
-      {{ field(class=classes, data_help='#{}'.format(help_id), **kwargs) | safe }}
+      {% if help %}
+        {{ field(class=classes, data_help='#js-{}-help'.format(field.id), **kwargs) | safe }}
+      {% else %}
+        {{ field(class=classes, **kwargs) | safe }}
+      {% endif %}
       {% if left_icon_classes %}
         <span class="icon is-small is-left">
           <i class="{{ left_icon_classes }}"></i>
@@ -50,7 +54,7 @@
       {% endif %}
     </div>
     {% if help %}
-      <p id="{{ help_id }}" class="help {{ 'is-danger' if field.errors }}">
+      <p id="js-{{ field.id }}-help" class="help {{ 'is-danger' if field.errors }}">
         {{ help }}
       </p>
     {% endif %}
