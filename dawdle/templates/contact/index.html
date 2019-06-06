@@ -21,6 +21,9 @@
           <h1 class="title">
             Contact Us
           </h1>
+          <h2 class="subtitle">
+            Got a question? Feel free to send us a message.
+          </h2>
           <form method="POST" class="content">
             {{ form.csrf_token }}
             {{ render_form_field(form.email,
@@ -31,13 +34,13 @@
                                  type='text',
                                  minlength='1',
                                  maxlength='256',
-                                 placeholder='e.g. Fear is the path to the dark side',
+                                 placeholder='e.g. A subject this is',
                                  left_icon_classes='fas fa-pencil-alt') }}
             {{ render_form_field(form.message,
                                  rows='10',
                                  minlength='1',
                                  maxlength='1000',
-                                 placeholder='e.g. Hmm. In the end, cowards are those who follow the dark side. You must unlearn what you have unlearned. Train yourself to let go of everything you fear to lose. You will know good from bad when you are at peace and passive. Smaller in number are we, but larger in mind.',
+                                 placeholder='e.g. A message this is',
                                  left_icon_classes='fas fa-pencil-alt') }}
             <div class="field content">
               <div class="control">
