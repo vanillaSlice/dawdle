@@ -1,4 +1,4 @@
-<header>
+<header class="header">
   <nav class="navbar is-transparent" role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item" href="{{ url_for('home.index_GET') }}">
@@ -23,7 +23,11 @@
       <div class="navbar-end">
         {% if current_user.is_authenticated %}
           <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">{{ current_user.initials }}</a>
+            <a class="navbar-link">
+              <span class="user-icon has-background-primary has-text-white">
+                {{ current_user.initials }}
+              </span>
+            </a>
             <div class="navbar-dropdown is-right">
               <a class="navbar-item" href="{{ url_for('user.settings_GET') }}">
                 Settings
