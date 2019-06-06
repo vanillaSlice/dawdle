@@ -19,13 +19,12 @@
       <h2 class="subtitle has-text-weight-bold">
         Something has gone wrong.
       </h2>
-      <p class="content has-text-weight-bold">
-        Please send an email to
-        <a class="has-text-white is-italic" href="mailto:mikelowedev@gmail.com?subject=Dawdle:%20Error%20Page">
-          mikelowedev@gmail.com
-        </a>
-        and I'll take a look at it straight away!
-      </p>
+      <a class="button is-link" href="{{ url_for('contact.index_GET') }}">
+        <span class="icon is-small">
+          <i class="fas fa-envelope"></i>
+        </span>
+        <span>Contact Us</span>
+      </a>
       <a class="button is-link" href="{{ url_for('home.index_GET') }}">
         <span class="icon is-small">
           <i class="fas fa-home"></i>
