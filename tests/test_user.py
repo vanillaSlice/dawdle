@@ -30,7 +30,7 @@ class TestUser(TestBase):
 
     def test_settings_GET_authenticated(self):
         response = self.client.get(url_for('user.settings_GET'))
-        assert response.status_code == 200
+        assert response.status_code == 302
 
     #
     # delete_GET tests.
