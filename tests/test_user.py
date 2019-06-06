@@ -33,29 +33,29 @@ class TestUser(TestBase):
         assert response.status_code == 302
 
     #
-    # delete_GET tests.
+    # settings_delete_account_GET tests.
     #
 
-    def test_delete_GET_not_authenticated(self):
+    def test_settings_delete_account_GET_not_authenticated(self):
         self.logout()
-        response = self.client.get(url_for('user.delete_GET'))
+        response = self.client.get(url_for('user.settings_delete_account_GET'))
         assert response.status_code == 302
 
-    def test_delete_GET_authenticated(self):
-        response = self.client.get(url_for('user.delete_GET'))
-        assert response.status_code == 302
+    def test_settings_delete_account_GET_authenticated(self):
+        response = self.client.get(url_for('user.settings_delete_account_GET'))
+        assert response.status_code == 200
 
     #
-    # delete_POST tests.
+    # settings_delete_account_POST tests.
     #
 
-    def test_delete_POST_not_authenticated(self):
+    def test_settings_delete_account_POST_not_authenticated(self):
         self.logout()
-        response = self.client.post(url_for('user.delete_POST'))
+        response = self.client.post(url_for('user.settings_delete_account_POST'))
         assert response.status_code == 302
         assert len(User.objects()) == 1
 
-    def test_delete_POST_authenticated(self):
-        response = self.client.post(url_for('user.delete_POST'))
+    def test_settings_delete_account_POST_authenticated(self):
+        response = self.client.post(url_for('user.settings_delete_account_POST'))
         assert response.status_code == 302
         assert not User.objects()

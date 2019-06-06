@@ -52,20 +52,11 @@ def settings_delete_account_GET():
 
     return render_template('user/settings-delete-account.html')
 
-@user.route('/delete')
+@user.route('/settings/delete-account', methods=['POST'])
 @login_required
-def delete_GET():
+def settings_delete_account_POST():
     """
-    Delete GET route.
-    """
-
-    return redirect(url_for('user.settings_GET'))
-
-@user.route('/delete', methods=['POST'])
-@login_required
-def delete_POST():
-    """
-    Delete POST route.
+    Settings Delete Account POST route.
     """
 
     current_user.delete()

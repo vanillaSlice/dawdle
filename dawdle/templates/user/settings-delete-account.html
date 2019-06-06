@@ -5,7 +5,7 @@
 {% set settings_page='delete-account' %}
 
 {% block settings_content %}
-  <form method="POST" action="{{ url_for('user.delete_POST') }}">
+  <form method="POST">
     <div id="js-delete-account-modal" class="modal">
       <div class="modal-background js-modal-close" data-target="#js-delete-account-modal"></div>
       <div class="modal-card">
@@ -28,7 +28,8 @@
       </div>
     </div>
   </form>
-  <button class="button is-danger has-text-weight-bold js-modal-open" data-target="#js-delete-account-modal">
+  <button class="button is-fullwidth is-danger has-text-weight-bold js-modal-open"
+    data-target="#js-delete-account-modal">
     Delete Account
   </button>
 {% endblock %}
