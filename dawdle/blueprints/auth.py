@@ -149,7 +149,7 @@ def verify_GET(token):
     user.save()
 
     # login the new user
-    login_user(user, remember=True)
+    login_user(user)
 
     # notify the user
     flash('Your user registration was successful.', 'success')
@@ -277,7 +277,7 @@ def reset_password_POST(token):
     flash('Your password has been reset.', 'success')
 
     # login the user
-    login_user(user, remember=True)
+    login_user(user)
 
     # redirect to user's boards page
     return redirect(url_for('user.boards_GET'))
