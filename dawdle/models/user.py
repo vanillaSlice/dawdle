@@ -38,9 +38,9 @@ class User(Document, UserMixin):
 
         return sha256_crypt.hash(password)
 
-    def verify_password(self, encrypted_password):
+    def verify_password(self, password):
         """
-        Verifies user against the encrypted password.
+        Verifies user against the password.
         """
 
-        return False if encrypted_password is None else sha256_crypt.verify(encrypted_password, self.password)
+        return False if password is None else sha256_crypt.verify(password, self.password)

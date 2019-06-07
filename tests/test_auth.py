@@ -375,17 +375,17 @@ class TestAuth(TestBase):
         data = self.get_mock_reset_password_data(password=password, confirmation=password)
         self.assert_reset_password_POST_unsuccessful(self.user.auth_id, data)
 
-    def test_reset_password_POST_less_than_minimum(self):
+    def test_reset_password_POST_password_less_than_minimum(self):
         password = fake.pystr(min_chars=7, max_chars=7)
         data = self.get_mock_reset_password_data(password=password, confirmation=password)
         self.assert_reset_password_POST_unsuccessful(self.user.auth_id, data)
 
-    def test_reset_password_POST_length_equal_to_minimum(self):
+    def test_reset_password_POST_password_length_equal_to_minimum(self):
         password = fake.pystr(min_chars=8, max_chars=8)
         data = self.get_mock_reset_password_data(password=password, confirmation=password)
         self.assert_reset_password_POST_successful(self.user.id, self.user.auth_id, data)
 
-    def test_reset_password_POST_and_confirmation_dont_match(self):
+    def test_reset_password_POST_password_and_confirmation_dont_match(self):
         password = 'password'
         confirmation = 'confirmation'
         data = self.get_mock_reset_password_data(password=password, confirmation=confirmation)
