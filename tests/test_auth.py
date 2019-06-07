@@ -276,7 +276,7 @@ class TestAuth(TestBase):
 
     def test_logout_GET_success(self):
         response = self.client.get(url_for('auth.logout_GET'))
-        assert response.status_code == 200
+        assert response.status_code == 302
 
     #
     # reset_password_request_GET tests.

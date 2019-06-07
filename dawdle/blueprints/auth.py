@@ -200,8 +200,11 @@ def logout_GET():
     # logout the user
     logout_user()
 
-    # render logout page
-    return render_template('auth/logout.html')
+    # notify the user
+    flash('You have been logged out.', 'info')
+
+    # render home page
+    return redirect(url_for('home.index_GET'))
 
 @auth.route('/reset-password')
 def reset_password_request_GET():
