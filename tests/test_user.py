@@ -90,7 +90,7 @@ class TestUser(TestBase):
                                                   confirmation=confirmation)
         self.assert_settings_update_password_POST_unsuccessful(self.user.auth_id, data)
 
-    def test_settings_update_password_POST_new_password_less_than_minimum(self):
+    def test_settings_update_password_POST_new_password_length_less_than_minimum(self):
         current_password = self.password
         new_password = fake.pystr(min_chars=7, max_chars=7)
         confirmation = new_password
