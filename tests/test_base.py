@@ -42,6 +42,13 @@ class TestBase:
         cls.logged_in = True
 
     @classmethod
+    def with_new_user(cls):
+        password = cls.fake.password()
+        user = cls.create_user(active=True, password=password)
+        cls.login(email=user.email, password=password)
+        return user, password
+
+    @classmethod
     def logout(cls):
         cls.client.get(url_for('auth.logout_GET'))
         cls.logged_in = False

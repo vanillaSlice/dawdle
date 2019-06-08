@@ -67,13 +67,13 @@ class TestAuth(TestBase):
 
     def assert_sign_up_POST_unsuccessful(self, data):
         response = self.client.post(url_for('auth.sign_up_POST'), data=data)
-        user = User.objects(email=data['email']).first()
+        user = User.objects(email=data.get('email')).first()
         assert response.status_code == 400
         assert user is None or user == self.user
 
     def test_sign_up_POST_no_name(self):
-        name = None
-        data = self.get_mock_sign_up_data(name=name)
+        data = self.get_mock_sign_up_data()
+        del data['name']
         self.assert_sign_up_POST_unsuccessful(data)
 
     def test_sign_up_POST_name_length_equal_to_minimum(self):
@@ -92,8 +92,8 @@ class TestAuth(TestBase):
         self.assert_sign_up_POST_unsuccessful(data)
 
     def test_sign_up_POST_no_email(self):
-        email = None
-        data = self.get_mock_sign_up_data(email=email)
+        data = self.get_mock_sign_up_data()
+        del data['email']
         self.assert_sign_up_POST_unsuccessful(data)
 
     def test_sign_up_POST_invalid_email(self):
@@ -102,8 +102,8 @@ class TestAuth(TestBase):
         self.assert_sign_up_POST_unsuccessful(data)
 
     def test_sign_up_POST_no_password(self):
-        password = None
-        data = self.get_mock_sign_up_data(password=password)
+        data = self.get_mock_sign_up_data()
+        del data['password']
         self.assert_sign_up_POST_unsuccessful(data)
 
     def test_sign_up_POST_password_length_less_than_minimum(self):
@@ -148,14 +148,14 @@ class TestAuth(TestBase):
         assert response.status_code == status_code
 
     def test_verify_resend_POST_no_email(self):
-        email = None
-        data = self.get_mock_verify_resend_data(email=email)
+        data = self.get_mock_verify_resend_data()
+        del data['email']
         self.assert_verify_resend_POST_response(data, 400)
 
     def test_verify_resend_POST_email_in_request(self):
         user = self.create_user(active=False)
-        email = None
-        data = self.get_mock_verify_resend_data(email=email)
+        data = self.get_mock_verify_resend_data()
+        del data['email']
         self.assert_verify_resend_POST_response(data, 200, email=user.email)
 
     def test_verify_resend_POST_invalid_email(self):
@@ -245,8 +245,8 @@ class TestAuth(TestBase):
         assert response.status_code == 400
 
     def test_login_POST_no_email(self):
-        email = None
-        data = self.get_mock_login_data(email=email)
+        data = self.get_mock_login_data()
+        del data['email']
         self.assert_login_POST_unsuccessful(data)
 
     def test_login_POST_invalid_email(self):
@@ -255,8 +255,8 @@ class TestAuth(TestBase):
         self.assert_login_POST_unsuccessful(data)
 
     def test_login_POST_no_password(self):
-        password = None
-        data = self.get_mock_login_data(password=password)
+        data = self.get_mock_login_data()
+        del data['password']
         self.assert_login_POST_unsuccessful(data)
 
     def test_login_POST_account_does_not_exist(self):
@@ -311,8 +311,8 @@ class TestAuth(TestBase):
 
     def test_reset_password_request_POST_no_email_not_authenticated(self):
         self.logout()
-        email = None
-        data = self.get_mock_reset_password_request_data(email=email)
+        data = self.get_mock_reset_password_request_data()
+        del data['email']
         self.assert_reset_password_request_POST_response(data, 400)
 
     def test_reset_password_request_POST_invalid_email(self):
@@ -389,12 +389,12 @@ class TestAuth(TestBase):
         user = User.objects(auth_id=auth_id).first()
         assert response.status_code == 400
         assert user.last_updated is None
-        assert not user.verify_password(data['password'])
+        assert not user.verify_password(data.get('password'))
 
     def test_reset_password_POST_no_password(self):
         user = self.create_user(active=True)
-        password = None
-        data = self.get_mock_reset_password_data(password=password, confirmation=password)
+        data = self.get_mock_reset_password_data()
+        del data['password']
         self.assert_reset_password_POST_unsuccessful(user.auth_id, data)
 
     def test_reset_password_POST_password_length_less_than_minimum(self):

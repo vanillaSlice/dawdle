@@ -35,18 +35,18 @@ class TestContact(TestBase):
 
     def test_index_POST_no_email_not_authenticated(self):
         self.logout()
-        email = None
-        data = self.get_mock_contact_data(email=email)
+        data = self.get_mock_contact_data()
+        del data['email']
         self.assert_index_POST_response(data, 400)
 
     def test_index_POST_no_email(self):
-        email = None
-        data = self.get_mock_contact_data(email=email)
+        data = self.get_mock_contact_data()
+        del data['email']
         self.assert_index_POST_response(data, 302)
 
     def test_index_POST_no_subject(self):
-        subject = None
-        data = self.get_mock_contact_data(subject=subject)
+        data = self.get_mock_contact_data()
+        del data['subject']
         self.assert_index_POST_response(data, 400)
 
     def test_index_POST_subject_length_equal_to_minimum(self):
@@ -65,8 +65,8 @@ class TestContact(TestBase):
         self.assert_index_POST_response(data, 400)
 
     def test_index_POST_no_message(self):
-        message = None
-        data = self.get_mock_contact_data(message=message)
+        data = self.get_mock_contact_data()
+        del data['message']
         self.assert_index_POST_response(data, 400)
 
     def test_index_POST_message_length_equal_to_minimum(self):
