@@ -33,7 +33,7 @@ def send_verification_email(user):
     try:
         mail.send(message)
         flash('A verification email has been sent to {}. '.format(user.email) +
-              'Please verify your account before logging in to Dawdle.', 'info')
+              'Please verify your email before logging in to Dawdle.', 'info')
         return True
     except:
         flash('Could not send a verification email to {}. '.format(user.email) +

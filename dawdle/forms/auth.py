@@ -101,7 +101,7 @@ class LoginForm(FlaskForm):
             return False
 
         if not self.user.is_active:
-            self.email.errors.append('Please verify your account before logging in')
+            self.email.errors.append('Please verify your email before logging in')
             return False
 
         return True

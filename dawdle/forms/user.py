@@ -5,7 +5,7 @@ Exports User forms.
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField
-from wtforms.validators import DataRequired, EqualTo, Length
+from wtforms.validators import DataRequired, Email, EqualTo, Length
 from wtforms.widgets import PasswordInput
 
 class UpdateAccountDetailsForm(FlaskForm):
@@ -22,6 +22,16 @@ class UpdateAccountDetailsForm(FlaskForm):
         DataRequired(message='Please enter initials'),
         Length(min=1, max=4, message='Your initials must be between 1 and 4 characters'),
     ], filters=[lambda s: ' '.join(s.split())])
+
+class UpdateEmailForm(FlaskForm):
+    """
+    Update Email form.
+    """
+
+    email = StringField('Email', validators=[
+        DataRequired(message='Please enter an email'),
+        Email(message='Please enter a valid email'),
+    ])
 
 class UpdatePasswordForm(FlaskForm):
     """

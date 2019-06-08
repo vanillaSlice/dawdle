@@ -39,7 +39,7 @@ class TestUser(TestBase):
         self.logout()
         self.assert_boards_GET_response(302)
 
-    def test_boards_GET_authenticated(self):
+    def test_boards_GET(self):
         self.assert_boards_GET_response(200)
 
     #
@@ -54,7 +54,7 @@ class TestUser(TestBase):
         self.logout()
         self.assert_settings_GET_response(302)
 
-    def test_settings_GET_authenticated(self):
+    def test_settings_GET(self):
         self.assert_settings_GET_response(302)
 
     #
@@ -69,7 +69,7 @@ class TestUser(TestBase):
         self.logout()
         self.assert_settings_account_details_GET_response(302)
 
-    def test_settings_account_details_GET_authenticated(self):
+    def test_settings_account_details_GET(self):
         self.assert_settings_account_details_GET_response(200)
 
     #
@@ -127,6 +127,21 @@ class TestUser(TestBase):
         self.assert_settings_account_details_POST_successful(data)
 
     #
+    # settings_update_email_GET tests.
+    #
+
+    def assert_settings_update_email_GET_response(self, status_code):
+        response = self.client.get(url_for('user.settings_update_email_GET'))
+        assert response.status_code == status_code
+
+    def test_settings_update_email_GET_not_authenticated(self):
+        self.logout()
+        self.assert_settings_update_email_GET_response(302)
+
+    def test_settings_update_email_GET(self):
+        self.assert_settings_update_email_GET_response(200)
+
+    #
     # settings_update_password_GET tests.
     #
 
@@ -138,7 +153,7 @@ class TestUser(TestBase):
         self.logout()
         self.assert_settings_update_password_GET_response(302)
 
-    def test_settings_update_password_GET_authenticated(self):
+    def test_settings_update_password_GET(self):
         self.assert_settings_update_password_GET_response(200)
 
     #
@@ -223,7 +238,7 @@ class TestUser(TestBase):
         response = self.client.get(url_for('user.settings_delete_account_GET'))
         assert response.status_code == 302
 
-    def test_settings_delete_account_GET_authenticated(self):
+    def test_settings_delete_account_GET(self):
         response = self.client.get(url_for('user.settings_delete_account_GET'))
         assert response.status_code == 200
 

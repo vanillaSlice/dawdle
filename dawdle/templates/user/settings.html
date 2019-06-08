@@ -12,15 +12,20 @@
   <div class="body">
     <div class="container">
       <div class="columns">
-        <div class="column is-6 is-offset-3 is-paddingless">
+        <div class="column is-8 is-offset-2 is-paddingless">
           <div class="box">
             {% block settings_form_errors %}{% endblock %}
-            <h1 class="title">Settings</h1>
+            <h1 class="title">User Settings</h1>
             <div class="tabs">
               <ul>
                 <li class="{{ 'is-active' if settings_page == 'account-details' }}">
                   <a href="{{ url_for('user.settings_account_details_GET') }}">
                     Account Details
+                  </a>
+                </li>
+                <li class="{{ 'is-active' if settings_page == 'update-email' }}">
+                  <a href="{{ url_for('user.settings_update_email_GET') }}">
+                    Update Email
                   </a>
                 </li>
                 <li class="{{ 'is-active' if settings_page == 'update-password' }}">
