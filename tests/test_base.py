@@ -4,44 +4,52 @@ from flask import url_for
 from dawdle import create_app
 from dawdle.models.user import User
 
-fake = Faker()
-
 class TestBase:
 
-    def setup_method(self):
+    @classmethod
+    def setup_class(cls):
+        cls.fake = Faker()
+
         # set up test app instance
-        self.app = create_app(testing=True)
-        self.app.app_context().push()
-        self.client = self.app.test_client()
+        cls.app = create_app(testing=True)
+        cls.app.app_context().push()
+        cls.client = cls.app.test_client()
 
         # set up a test user and login
-        self.password = fake.password()
-        self.user = self.create_user(password=self.password)
-        self.login()
+        cls.password = cls.fake.password()
+        cls.user = cls.create_user(password=cls.password)
+        cls.login()
 
-    def create_user(self,
-                    active=True,
-                    email=fake.email,
-                    initials=fake.pystr,
-                    name=fake.name,
-                    password=fake.password):
+    @classmethod
+    def teardown_class(cls):
+        cls.clear_db()
+
+    @classmethod
+    def create_user(cls, **kwargs):
         user = User()
-        user.active = active
-        user.email = email() if callable(email) else email
-        user.initials = initials(min_chars=1, max_chars=4) if callable(initials) else initials
-        user.name = name() if callable(name) else name
-        user.password = User.encrypt_password(password() if callable(password) else password)
+        user.active = kwargs.get('active', True)
+        user.email = kwargs.get('email', cls.fake.email())
+        user.initials = kwargs.get('initials', cls.fake.pystr(min_chars=1, max_chars=4))
+        user.name = kwargs.get('name', cls.fake.name())
+        user.password = User.encrypt_password(kwargs.get('password', cls.fake.password()))
         return user.save()
 
-    def login(self):
-        self.client.post(url_for('auth.login_POST'), data={'email': self.user.email, 'password': self.password})
+    @classmethod
+    def login(cls, **kwargs):
+        email = kwargs.get('email', cls.user.email)
+        password = kwargs.get('password', cls.password)
+        cls.client.post(url_for('auth.login_POST'), data={'email': email, 'password': password})
+        cls.logged_in = True
 
-    def teardown_method(self):
-        self.logout()
-        self.clear_db()
+    @classmethod
+    def logout(cls):
+        cls.client.get(url_for('auth.logout_GET'))
+        cls.logged_in = False
 
-    def logout(self):
-        self.client.get(url_for('auth.logout_GET'))
-
+    @classmethod
     def clear_db(self):
         User.objects.delete()
+
+    def setup_method(self):
+        if not self.logged_in:
+            self.login()

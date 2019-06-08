@@ -1,6 +1,8 @@
+from unittest import mock
+
 from flask import url_for
 
-from tests.test_base import fake, TestBase
+from tests.test_base import TestBase
 
 class TestContact(TestBase):
 
@@ -8,14 +10,11 @@ class TestContact(TestBase):
     # Utils
     #
 
-    def get_mock_contact_data(self,
-                              email=fake.email,
-                              subject=fake.sentence,
-                              message=fake.sentences):
+    def get_mock_contact_data(self, **kwargs):
         return {
-            'email': email() if callable(email) else email,
-            'subject': subject() if callable(subject) else subject,
-            'message': message() if callable(message) else message,
+            'email': kwargs.get('email', self.fake.email()),
+            'subject': kwargs.get('subject', self.fake.sentence()),
+            'message': kwargs.get('message', self.fake.sentences()),
         }
 
     #
@@ -30,65 +29,67 @@ class TestContact(TestBase):
     # index_POST tests.
     #
 
-    def assert_index_POST_successful(self, data):
+    def assert_index_POST_response(self, data, status_code):
         response = self.client.post(url_for('contact.index_POST'), data=data)
-        assert response.status_code == 302
-
-    def assert_index_POST_unsuccessful(self, data):
-        response = self.client.post(url_for('contact.index_POST'), data=data)
-        assert response.status_code == 400
+        assert response.status_code == status_code
 
     def test_index_POST_no_email_not_authenticated(self):
         self.logout()
         email = None
         data = self.get_mock_contact_data(email=email)
-        self.assert_index_POST_unsuccessful(data)
+        self.assert_index_POST_response(data, 400)
 
-    def test_index_POST_no_email_authenticated(self):
+    def test_index_POST_no_email(self):
         email = None
         data = self.get_mock_contact_data(email=email)
-        self.assert_index_POST_successful(data)
+        self.assert_index_POST_response(data, 302)
 
     def test_index_POST_no_subject(self):
         subject = None
         data = self.get_mock_contact_data(subject=subject)
-        self.assert_index_POST_unsuccessful(data)
+        self.assert_index_POST_response(data, 400)
 
     def test_index_POST_subject_length_equal_to_minimum(self):
-        subject = fake.pystr(min_chars=1, max_chars=1)
+        subject = self.fake.pystr(min_chars=1, max_chars=1)
         data = self.get_mock_contact_data(subject=subject)
-        self.assert_index_POST_successful(data)
+        self.assert_index_POST_response(data, 302)
 
     def test_index_POST_subject_length_equal_to_maximum(self):
-        subject = fake.pystr(min_chars=256, max_chars=256)
+        subject = self.fake.pystr(min_chars=256, max_chars=256)
         data = self.get_mock_contact_data(subject=subject)
-        self.assert_index_POST_successful(data)
+        self.assert_index_POST_response(data, 302)
 
     def test_index_POST_subject_length_greater_than_maximum(self):
-        subject = fake.pystr(min_chars=257, max_chars=257)
+        subject = self.fake.pystr(min_chars=257, max_chars=257)
         data = self.get_mock_contact_data(subject=subject)
-        self.assert_index_POST_unsuccessful(data)
+        self.assert_index_POST_response(data, 400)
 
     def test_index_POST_no_message(self):
         message = None
         data = self.get_mock_contact_data(message=message)
-        self.assert_index_POST_unsuccessful(data)
+        self.assert_index_POST_response(data, 400)
 
     def test_index_POST_message_length_equal_to_minimum(self):
-        message = fake.pystr(min_chars=1, max_chars=1)
-        data = self.get_mock_contact_data(subject=message)
-        self.assert_index_POST_successful(data)
+        message = self.fake.pystr(min_chars=1, max_chars=1)
+        data = self.get_mock_contact_data(message=message)
+        self.assert_index_POST_response(data, 302)
 
     def test_index_POST_message_length_equal_to_maximum(self):
-        message = fake.pystr(min_chars=1000, max_chars=1000)
+        message = self.fake.pystr(min_chars=1000, max_chars=1000)
         data = self.get_mock_contact_data(message=message)
-        self.assert_index_POST_successful(data)
+        self.assert_index_POST_response(data, 302)
 
     def test_index_POST_message_length_greater_than_maximum(self):
-        message = fake.pystr(min_chars=1001, max_chars=1001)
+        message = self.fake.pystr(min_chars=1001, max_chars=1001)
         data = self.get_mock_contact_data(message=message)
-        self.assert_index_POST_unsuccessful(data)
+        self.assert_index_POST_response(data, 400)
+
+    @mock.patch('dawdle.blueprints.contact.mail')
+    def test_index_POST_error_sending_email(self, mail_mock):
+        mail_mock.send.side_effect = RuntimeError('some error')
+        data = self.get_mock_contact_data()
+        self.assert_index_POST_response(data, 500)
 
     def test_index_POST_success(self):
         data = self.get_mock_contact_data()
-        self.assert_index_POST_successful(data)
+        self.assert_index_POST_response(data, 302)

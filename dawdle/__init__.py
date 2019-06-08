@@ -6,8 +6,14 @@ import os
 
 from flask import Flask, render_template
 
-from dawdle.blueprints import blueprints
-from dawdle.extensions import extensions
+from dawdle.blueprints.auth import auth as auth_blueprint
+from dawdle.blueprints.contact import contact as contact_blueprint
+from dawdle.blueprints.home import home as home_blueprint
+from dawdle.blueprints.user import user as user_blueprint
+from dawdle.extensions.assets import assets as assets_extension
+from dawdle.extensions.login import login_manager as login_manager_extension
+from dawdle.extensions.mail import mail as mail_extension
+from dawdle.extensions.mongoengine import mongoengine as mongoengine_extension
 from dawdle.version import version
 
 def create_app(testing=False):
@@ -54,21 +60,22 @@ def create_app(testing=False):
         'WTF_CSRF_ENABLED': environ.get('WTF_CSRF_ENABLED', str(config.get('WTF_CSRF_ENABLED'))).lower() == 'true',
     })
 
-    config.update({
-        'TESTING': testing,
-        'VERSION': version,
-    })
+    config.update({'TESTING': testing, 'VERSION': version})
 
     # init extensions
-    for extension in extensions:
-        extension.init_app(app)
+    assets_extension.init_app(app)
+    login_manager_extension.init_app(app)
+    mail_extension.init_app(app)
+    mongoengine_extension.init_app(app)
 
     # disable strict trailing slashes e.g. so /auth/login and /auth/login/ both resolve to same endpoint
     app.url_map.strict_slashes = False
 
     # register blueprints
-    for blueprint in blueprints:
-        app.register_blueprint(blueprint)
+    app.register_blueprint(auth_blueprint)
+    app.register_blueprint(contact_blueprint)
+    app.register_blueprint(home_blueprint)
+    app.register_blueprint(user_blueprint)
 
     # attach 403 error handler
     @app.errorhandler(403)
