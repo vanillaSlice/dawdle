@@ -36,3 +36,22 @@ class UpdatePasswordForm(FlaskForm):
             return False
 
         return True
+
+class DeleteUserForm(FlaskForm):
+    """
+    Delete User form.
+    """
+
+    password = StringField('Password Confirmation', validators=[
+        DataRequired(message='Please enter your password'),
+    ], widget=PasswordInput(hide_value=False))
+
+    def validate_on_submit(self):
+        if not super().validate_on_submit():
+            return False
+
+        if not current_user.verify_password(self.password.data):
+            self.password.errors.append('Incorrect password')
+            return False
+
+        return True

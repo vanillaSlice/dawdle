@@ -8,7 +8,7 @@ from bson.objectid import ObjectId
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user
 
-from dawdle.forms.user import UpdatePasswordForm
+from dawdle.forms.user import DeleteUserForm, UpdatePasswordForm
 from dawdle.models.user import User
 
 user = Blueprint('user', __name__, url_prefix='/user')
@@ -85,7 +85,7 @@ def settings_delete_account_GET():
     Settings Delete Account GET route.
     """
 
-    return render_template('user/settings-delete-account.html')
+    return render_template('user/settings-delete-account.html', form=DeleteUserForm(request.form))
 
 @user.route('/settings/delete-account', methods=['POST'])
 @login_required
@@ -93,6 +93,13 @@ def settings_delete_account_POST():
     """
     Settings Delete Account POST route.
     """
+
+    # parse the form
+    form = DeleteUserForm(request.form)
+
+    # render form again if submitted form is invalid
+    if not form.validate_on_submit():
+        return render_template('user/settings-delete-account.html', form=form), 400
 
     current_user.delete()
 

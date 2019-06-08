@@ -16,6 +16,9 @@ class TestUser(TestBase):
             'confirmation': kwargs.get('confirmation', self.fake.password()),
         }
 
+    def get_mock_delete_account_data(self, **kwargs):
+        return {'password': kwargs.get('password', self.fake.password())}
+
     #
     # boards_GET tests.
     #
@@ -156,13 +159,25 @@ class TestUser(TestBase):
     # settings_delete_account_POST tests.
     #
 
+    def assert_settings_delete_account_POST_response(self, data, status_code):
+        response = self.client.post(url_for('user.settings_delete_account_POST'), data=data)
+        assert response.status_code == status_code
+
     def test_settings_delete_account_POST_not_authenticated(self):
         self.logout()
-        response = self.client.post(url_for('user.settings_delete_account_POST'))
-        assert response.status_code == 302
+        data = self.get_mock_delete_account_data()
+        self.assert_settings_delete_account_POST_response(data, 302)
 
-    def test_settings_delete_account_POST_authenticated(self):
-        user = self.create_user(active=True)
-        self.login(email=user.email, password='password')
-        response = self.client.post(url_for('user.settings_delete_account_POST'))
-        assert response.status_code == 302
+    def test_settings_delete_account_POST_incorrect_password(self):
+        password = 'password'
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        data = self.get_mock_delete_account_data(password='wrong')
+        self.assert_settings_delete_account_POST_response(data, 400)
+
+    def test_settings_delete_account_POST_success(self):
+        password = 'password'
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        data = self.get_mock_delete_account_data(password=password)
+        self.assert_settings_delete_account_POST_response(data, 302)
