@@ -90,10 +90,11 @@ class TestUser(TestBase):
         assert response.status_code == 302
 
     def test_settings_update_password_POST_incorrect_current_password(self):
-        user = self.create_user(active=True, password='password')
-        self.login(email=user.email, password='password')
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
         current_password = 'wrong'
-        new_password = self.fake.pystr(min_chars=8, max_chars=8)
+        new_password = self.fake.password()
         confirmation = new_password
         data = self.get_mock_update_password_data(current_password=current_password,
                                                   new_password=new_password,
@@ -101,9 +102,10 @@ class TestUser(TestBase):
         self.assert_settings_update_password_POST_unsuccessful(user.auth_id, data)
 
     def test_settings_update_password_POST_new_password_length_less_than_minimum(self):
-        user = self.create_user(active=True, password='password')
-        self.login(email=user.email, password='password')
-        current_password = 'password'
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        current_password = password
         new_password = self.fake.pystr(min_chars=7, max_chars=7)
         confirmation = new_password
         data = self.get_mock_update_password_data(current_password=current_password,
@@ -112,9 +114,10 @@ class TestUser(TestBase):
         self.assert_settings_update_password_POST_unsuccessful(user.auth_id, data)
 
     def test_settings_update_password_POST_new_password_length_equal_to_minimum(self):
-        user = self.create_user(active=True, password='password')
-        self.login(email=user.email, password='password')
-        current_password = 'password'
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        current_password = password
         new_password = self.fake.pystr(min_chars=8, max_chars=8)
         confirmation = new_password
         data = self.get_mock_update_password_data(current_password=current_password,
@@ -123,10 +126,11 @@ class TestUser(TestBase):
         self.assert_settings_update_password_POST_successful(user.id, user.auth_id, data)
 
     def test_settings_update_password_POST_new_password_and_confirmation_dont_match(self):
-        user = self.create_user(active=True, password='password')
-        self.login(email=user.email, password='password')
-        current_password = 'password'
-        new_password = self.fake.pystr(min_chars=8, max_chars=8)
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        current_password = password
+        new_password = self.fake.password()
         confirmation = 'wrong'
         data = self.get_mock_update_password_data(current_password=current_password,
                                                   new_password=new_password,
@@ -134,10 +138,11 @@ class TestUser(TestBase):
         self.assert_settings_update_password_POST_unsuccessful(user.auth_id, data)
 
     def test_settings_update_password_POST_success(self):
-        user = self.create_user(active=True, password='password')
-        self.login(email=user.email, password='password')
-        current_password = 'password'
-        new_password = self.fake.pystr(min_chars=8, max_chars=8)
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        current_password = password
+        new_password = self.fake.password()
         confirmation = new_password
         data = self.get_mock_update_password_data(current_password=current_password,
                                                   new_password=new_password,
@@ -170,15 +175,22 @@ class TestUser(TestBase):
         data = self.get_mock_delete_account_data()
         self.assert_settings_delete_account_POST_response(data, 302)
 
+    def test_settings_delete_account_POST_no_password(self):
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        data = self.get_mock_delete_account_data(password=None)
+        self.assert_settings_delete_account_POST_response(data, 400)
+
     def test_settings_delete_account_POST_incorrect_password(self):
-        password = 'password'
+        password = self.fake.password()
         user = self.create_user(active=True, password=password)
         self.login(email=user.email, password=password)
         data = self.get_mock_delete_account_data(password='wrong')
         self.assert_settings_delete_account_POST_response(data, 400)
 
     def test_settings_delete_account_POST_success(self):
-        password = 'password'
+        password = self.fake.password()
         user = self.create_user(active=True, password=password)
         self.login(email=user.email, password=password)
         data = self.get_mock_delete_account_data(password=password)
@@ -186,7 +198,8 @@ class TestUser(TestBase):
 
     @mock.patch('dawdle.blueprints.user.mail')
     def test_settings_delete_account_POST_error_sending_email(self, mail_mock):
-        password = 'password'
+        mail_mock.send.side_effect = RuntimeError('some error')
+        password = self.fake.password()
         user = self.create_user(active=True, password=password)
         self.login(email=user.email, password=password)
         data = self.get_mock_delete_account_data(password=password)
