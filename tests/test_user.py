@@ -1,3 +1,5 @@
+from unittest import mock
+
 from flask import url_for
 
 from dawdle.models.user import User
@@ -176,6 +178,14 @@ class TestUser(TestBase):
         self.assert_settings_delete_account_POST_response(data, 400)
 
     def test_settings_delete_account_POST_success(self):
+        password = 'password'
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        data = self.get_mock_delete_account_data(password=password)
+        self.assert_settings_delete_account_POST_response(data, 302)
+
+    @mock.patch('dawdle.blueprints.user.mail')
+    def test_settings_delete_account_POST_error_sending_email(self, mail_mock):
         password = 'password'
         user = self.create_user(active=True, password=password)
         self.login(email=user.email, password=password)

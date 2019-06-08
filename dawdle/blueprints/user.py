@@ -7,7 +7,9 @@ from datetime import datetime
 from bson.objectid import ObjectId
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user
+from flask_mail import Message
 
+from dawdle.extensions.mail import mail
 from dawdle.forms.user import DeleteUserForm, UpdatePasswordForm
 from dawdle.models.user import User
 
@@ -100,6 +102,13 @@ def settings_delete_account_POST():
     # render form again if submitted form is invalid
     if not form.validate_on_submit():
         return render_template('user/settings-delete-account.html', form=form), 400
+
+    message = Message('Dawdle Account Deleted', recipients=[current_user.email])
+    message.html = render_template('user/settings-delete-account-email.html', user=current_user)
+    try:
+        mail.send(message)
+    except:
+        pass
 
     current_user.delete()
 
