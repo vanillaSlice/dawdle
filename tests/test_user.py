@@ -11,6 +11,12 @@ class TestUser(TestBase):
     # Utils
     #
 
+    def get_mock_account_details_data(self, **kwargs):
+        return {
+            'name': kwargs.get('name', self.fake.name()),
+            'initials': kwargs.get('initials', self.fake.pystr(min_chars=1, max_chars=4)),
+        }
+
     def get_mock_update_password_data(self, **kwargs):
         return {
             'current_password': kwargs.get('current_password', self.fake.password()),
@@ -50,6 +56,110 @@ class TestUser(TestBase):
 
     def test_settings_GET_authenticated(self):
         self.assert_settings_GET_response(302)
+
+    #
+    # settings_account_details_GET tests.
+    #
+
+    def assert_settings_account_details_GET_response(self, status_code):
+        response = self.client.get(url_for('user.settings_account_details_GET'))
+        assert response.status_code == status_code
+
+    def test_settings_account_details_GET_not_authenticated(self):
+        self.logout()
+        self.assert_settings_account_details_GET_response(302)
+
+    def test_settings_account_details_GET_authenticated(self):
+        self.assert_settings_account_details_GET_response(200)
+
+    #
+    # settings_account_details_POST tests.
+    #
+
+    def assert_settings_account_details_POST_successful(self, user_id, data):
+        response = self.client.post(url_for('user.settings_account_details_POST'), data=data)
+        user = User.objects(id=user_id).first()
+        assert response.status_code == 302
+        assert user.initials == data['initials']
+        assert user.last_updated
+        assert user.name == data['name']
+
+    def assert_settings_account_details_POST_unsuccessful(self, user_id, data):
+        response = self.client.post(url_for('user.settings_account_details_POST'), data=data)
+        user = User.objects(id=user_id).first()
+        assert response.status_code == 400
+        assert user.last_updated is None
+
+    def test_settings_account_details_POST_no_name(self):
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        name = ''
+        data = self.get_mock_account_details_data(name=name)
+        self.assert_settings_account_details_POST_unsuccessful(user.id, data)
+
+    def test_settings_account_details_POST_name_length_equal_to_minimum(self):
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        name = self.fake.pystr(min_chars=1, max_chars=1)
+        data = self.get_mock_account_details_data(name=name)
+        self.assert_settings_account_details_POST_successful(user.id, data)
+
+    def test_settings_account_details_POST_name_length_equal_to_maximum(self):
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        name = self.fake.pystr(min_chars=50, max_chars=50)
+        data = self.get_mock_account_details_data(name=name)
+        self.assert_settings_account_details_POST_successful(user.id, data)
+
+    def test_settings_account_details_POST_name_length_greater_than_maximum(self):
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        name = self.fake.pystr(min_chars=51, max_chars=51)
+        data = self.get_mock_account_details_data(name=name)
+        self.assert_settings_account_details_POST_unsuccessful(user.id, data)
+
+    def test_settings_account_details_POST_no_initials(self):
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        initials = ''
+        data = self.get_mock_account_details_data(initials=initials)
+        self.assert_settings_account_details_POST_unsuccessful(user.id, data)
+
+    def test_settings_account_details_POST_initials_length_equal_to_minimum(self):
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        initials = self.fake.pystr(min_chars=1, max_chars=1)
+        data = self.get_mock_account_details_data(initials=initials)
+        self.assert_settings_account_details_POST_successful(user.id, data)
+
+    def test_settings_account_details_POST_initials_length_equal_to_maximum(self):
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        initials = self.fake.pystr(min_chars=4, max_chars=4)
+        data = self.get_mock_account_details_data(initials=initials)
+        self.assert_settings_account_details_POST_successful(user.id, data)
+
+    def test_settings_account_details_POST_initials_length_greater_than_maximum(self):
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        initials = self.fake.pystr(min_chars=5, max_chars=5)
+        data = self.get_mock_account_details_data(initials=initials)
+        self.assert_settings_account_details_POST_unsuccessful(user.id, data)
+
+    def test_settings_account_details_POST_success(self):
+        password = self.fake.password()
+        user = self.create_user(active=True, password=password)
+        self.login(email=user.email, password=password)
+        data = self.get_mock_account_details_data()
+        self.assert_settings_account_details_POST_successful(user.id, data)
 
     #
     # settings_update_password_GET tests.

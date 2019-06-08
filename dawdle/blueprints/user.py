@@ -10,7 +10,7 @@ from flask_login import current_user, login_required, login_user
 from flask_mail import Message
 
 from dawdle.extensions.mail import mail
-from dawdle.forms.user import DeleteUserForm, UpdatePasswordForm
+from dawdle.forms.user import DeleteUserForm, UpdateAccountDetailsForm, UpdatePasswordForm
 from dawdle.models.user import User
 
 user = Blueprint('user', __name__, url_prefix='/user')
@@ -40,7 +40,33 @@ def settings_account_details_GET():
     Settings Account Details GET route.
     """
 
-    return render_template('user/settings-account-details.html')
+    form = UpdateAccountDetailsForm(request.form, obj=current_user)
+    return render_template('user/settings-account-details.html', form=form)
+
+@user.route('/settings/account-details', methods=['POST'])
+@login_required
+def settings_account_details_POST():
+    """
+    Settings Account Details POST route.
+    """
+
+    # parse the form
+    form = UpdateAccountDetailsForm(request.form, obj=current_user)
+
+    # render form again if submitted form is invalid
+    if not form.validate_on_submit():
+        return render_template('user/settings-account-details.html', form=form), 400
+
+    # update the user's account details
+    form.populate_obj(current_user)
+    current_user.last_updated = datetime.utcnow()
+    current_user.save()
+
+    # notify the user
+    flash('Your account details have been updated.', 'success')
+
+    # redirect back to account details page again
+    return redirect(url_for('user.settings_account_details_POST'))
 
 @user.route('/settings/update-password')
 @login_required

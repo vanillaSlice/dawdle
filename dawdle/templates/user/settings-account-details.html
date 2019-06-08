@@ -1,31 +1,36 @@
 {% extends 'user/settings.html' %}
 
+{% from 'shared/utils.html' import render_form_errors, render_form_field %}
+
 {% block title %}Account Details | Dawdle{% endblock %}
 
 {% set settings_page='account-details' %}
 
+{% block settings_form_errors %}
+  {{ render_form_errors(form) }}
+{% endblock %}
+
 {% block settings_content %}
-  <div class="field">
-    <label class="label">Name</label>
-    <div class="control">
-      <input class="input" type="text" placeholder="Jabba the Hutt">
+  <form method="POST">
+    {{ form.csrf_token }}
+    {{ render_form_field(form.name,
+                         type='text',
+                         minlength='1',
+                         maxlength='50',
+                         placeholder='e.g. Jabba the Hutt',
+                         left_icon_classes='fas fa-user') }}
+    {{ render_form_field(form.initials,
+                         type='text',
+                         minlength='1',
+                         maxlength='4',
+                         placeholder='e.g. JBBA',
+                         left_icon_classes='fas fa-font') }}
+    <div class="field content">
+      <div class="control">
+        <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold">
+          Update Details
+        </button>
+      </div>
     </div>
-  </div>
-  <div class="field">
-    <label class="label">Initials</label>
-    <div class="control">
-      <input class="input" type="text" maxlength="4" placeholder="JBBA">
-    </div>
-  </div>
-  <div class="field">
-    <label class="label">Email</label>
-    <div class="control">
-      <input class="input" type="email" placeholder="jabba@thepalace.com">
-    </div>
-  </div>
-  <div class="field">
-    <div class="control">
-      <button type="submit" class="button is-fullwidth is-info">Update</button>
-    </div>
-  </div>
+  </form>
 {% endblock %}

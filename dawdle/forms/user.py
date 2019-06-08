@@ -8,6 +8,21 @@ from wtforms import StringField
 from wtforms.validators import DataRequired, EqualTo, Length
 from wtforms.widgets import PasswordInput
 
+class UpdateAccountDetailsForm(FlaskForm):
+    """
+    Update Account Details form.
+    """
+
+    name = StringField('Name', validators=[
+        DataRequired(message='Please enter a name'),
+        Length(min=1, max=50, message='Your name must be between 1 and 50 characters'),
+    ], filters=[lambda s: ' '.join(s.split())])
+
+    initials = StringField('Initials', validators=[
+        DataRequired(message='Please enter initials'),
+        Length(min=1, max=4, message='Your initials must be between 1 and 4 characters'),
+    ], filters=[lambda s: ' '.join(s.split())])
+
 class UpdatePasswordForm(FlaskForm):
     """
     Update Password form.
