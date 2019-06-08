@@ -233,14 +233,16 @@ class TestUser(TestBase):
     # settings_delete_account_GET tests.
     #
 
+    def assert_settings_delete_account_GET_response(self, status_code):
+        response = self.client.get(url_for('user.settings_delete_account_GET'))
+        assert response.status_code == status_code
+
     def test_settings_delete_account_GET_not_authenticated(self):
         self.logout()
-        response = self.client.get(url_for('user.settings_delete_account_GET'))
-        assert response.status_code == 302
+        self.assert_settings_delete_account_GET_response(302)
 
     def test_settings_delete_account_GET(self):
-        response = self.client.get(url_for('user.settings_delete_account_GET'))
-        assert response.status_code == 200
+        self.assert_settings_delete_account_GET_response(200)
 
     #
     # settings_delete_account_POST tests.
