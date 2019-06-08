@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-pytest --cov=$(dirname $0)/../dawdle/
+pytest --cov-report term-missing --cov=$(dirname $0)/../dawdle/

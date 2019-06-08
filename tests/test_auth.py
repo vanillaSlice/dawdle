@@ -204,7 +204,12 @@ class TestAuth(TestBase):
 
     def test_verify_GET_invalid_token(self):
         user = self.create_user(active=False)
-        token = self.get_verify_token('invalid token')
+        token = 'invalid token'
+        self.assert_verify_GET_unsuccessful(token, user.email)
+
+    def test_verify_GET_invalid_auth_id(self):
+        user = self.create_user(active=False)
+        token = self.get_verify_token('invalid auth id')
         self.assert_verify_GET_unsuccessful(token, user.email)
 
     def test_verify_GET_account_does_not_exist(self):
@@ -347,7 +352,11 @@ class TestAuth(TestBase):
         assert response.status_code == 200
 
     def test_reset_password_GET_invalid_token(self):
-        token = self.get_reset_password_token('invalid token')
+        token = 'invalid token'
+        self.assert_reset_password_GET_unsuccessful(token)
+
+    def test_reset_password_GET_invalid_auth_id(self):
+        token = self.get_reset_password_token('invalid auth id')
         self.assert_reset_password_GET_unsuccessful(token)
 
     def test_reset_password_GET_expired_token(self):
