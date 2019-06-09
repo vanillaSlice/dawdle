@@ -185,7 +185,7 @@ def settings_delete_account_POST():
         return render_template('user/settings-delete-account.html', form=form), 400
 
     message = Message('Dawdle Account Deleted', recipients=[current_user.email])
-    message.body = 'Hello {},\n\nYour Dawdle account has been deleted. We\'re sorry to see you go :('  \
+    message.body = 'Hello {},\n\nYour Dawdle account has been deleted. We\'re sorry to see you go :( '  \
         'You can always come back!'.format(current_user.name)
     try:
         mail.send(message)
