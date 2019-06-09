@@ -9,6 +9,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user
 from flask_mail import Message
 
+from dawdle.blueprints.auth import send_verification_email
 from dawdle.extensions.mail import mail
 from dawdle.forms.user import DeleteUserForm, UpdateAccountDetailsForm, UpdateEmailForm, UpdatePasswordForm
 from dawdle.models.user import User
@@ -77,6 +78,40 @@ def settings_update_email_GET():
 
     form = UpdateEmailForm(request.form, email=current_user.email)
     return render_template('user/settings-update-email.html', form=form)
+
+@user.route('/settings/update-email', methods=['POST'])
+@login_required
+def settings_update_email_POST():
+    """
+    Settings Update Email POST route.
+    """
+
+    # parse the form
+    form = UpdateEmailForm(request.form, email=current_user.email)
+
+    # render form again if submitted form is invalid
+    if not form.validate_on_submit():
+        return render_template('user/settings-update-email.html', form=form), 400
+
+    # don't update if email is the same
+    if form.email.data == current_user.email:
+        flash('No update needed.', 'info')
+        return render_template('user/settings-update-email.html', form=form)
+
+    # update the user's email (making sure to update the auth id and last updated)
+    current_user.active = False
+    current_user.auth_id = ObjectId()
+    current_user.email = form.email.data
+    current_user.last_updated = datetime.utcnow()
+    current_user.save()
+
+    redirect_target = url_for('user.settings_update_email_POST')
+
+    # send verification email
+    send_verification_email(current_user, redirect_target=redirect_target)
+
+    # redirect to verify resend page
+    return redirect(url_for('auth.verify_resend_GET', email=form.email.data, next=redirect_target))
 
 @user.route('/settings/update-password')
 @login_required

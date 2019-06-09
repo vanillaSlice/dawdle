@@ -8,6 +8,8 @@ from wtforms import StringField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from wtforms.widgets import PasswordInput
 
+from dawdle.models.user import User
+
 class UpdateAccountDetailsForm(FlaskForm):
     """
     Update Account Details form.
@@ -32,6 +34,24 @@ class UpdateEmailForm(FlaskForm):
         DataRequired(message='Please enter an email'),
         Email(message='Please enter a valid email'),
     ])
+
+    password = StringField('Password Confirmation', validators=[
+        DataRequired(message='Please enter your password'),
+    ], widget=PasswordInput(hide_value=False))
+
+    def validate_on_submit(self):
+        if not super().validate_on_submit():
+            return False
+
+        if not current_user.verify_password(self.password.data):
+            self.password.errors.append('Incorrect password')
+            return False
+
+        if current_user.email != self.email.data and User.objects(email=self.email.data).first():
+            self.email.errors.append('There is already an account with this email')
+            return False
+
+        return True
 
 class UpdatePasswordForm(FlaskForm):
     """

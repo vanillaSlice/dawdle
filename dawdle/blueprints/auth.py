@@ -21,7 +21,7 @@ auth = Blueprint('auth', __name__, url_prefix='/auth')
 # Utils
 #
 
-def send_verification_email(user):
+def send_verification_email(user, redirect_target=None):
     """
     Sends a verification email to the given user and returns true or false depending
     on whether this was successful.
@@ -29,7 +29,7 @@ def send_verification_email(user):
 
     token = URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))
     message = Message('Dawdle Verification', recipients=[user.email])
-    message.html = render_template('auth/verify-email.html', user=user, token=token)
+    message.html = render_template('auth/verify-email.html', user=user, token=token, redirect_target=redirect_target)
     try:
         mail.send(message)
         flash('A verification email has been sent to {}. '.format(user.email) +
@@ -119,7 +119,7 @@ def verify_resend_POST():
         return render_template('auth/verify-resend.html', form=form), 400
 
     # send verification email
-    sent_email = send_verification_email(form.user)
+    sent_email = send_verification_email(form.user, request.args.get('next'))
     status_code = 200 if sent_email else 500
 
     # render form again
@@ -148,14 +148,21 @@ def verify_GET(token):
     user.last_updated = datetime.utcnow()
     user.save()
 
-    # login the new user
+    # login the user
     login_user(user)
 
     # notify the user
-    flash('Your user registration was successful.', 'success')
+    flash('Your email address has been verified.', 'success')
 
-    # redirect to user's boards page
-    return redirect(url_for('user.boards_GET'))
+    # get redirect target
+    next_target = request.args.get('next')
+
+    # make sure redirect target is safe
+    if not is_safe_url(next_target):
+        abort(400)
+
+    # redirect to next target or to user's boards page
+    return redirect(next_target or url_for('user.boards_GET'))
 
 @auth.route('/login')
 def login_GET():

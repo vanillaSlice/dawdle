@@ -17,6 +17,10 @@
                          type='email',
                          placeholder='e.g. chewie@thefalcon.com',
                          left_icon_classes='fas fa-envelope') }}
+    {{ render_form_field(form.password,
+                         type='password',
+                         placeholder='e.g. ••••••••••••',
+                         left_icon_classes='fas fa-lock') }}
     <div class="field content">
       <div class="control">
         <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold">

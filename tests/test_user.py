@@ -17,6 +17,12 @@ class TestUser(TestBase):
             'initials': kwargs.get('initials', self.fake.pystr(min_chars=1, max_chars=4)),
         }
 
+    def get_mock_update_email_data(self, **kwargs):
+        return {
+            'email': kwargs.get('email', self.fake.email()),
+            'password': kwargs.get('password', self.fake.password()),
+        }
+
     def get_mock_update_password_data(self, **kwargs):
         return {
             'current_password': kwargs.get('current_password', self.fake.password()),
@@ -140,6 +146,72 @@ class TestUser(TestBase):
 
     def test_settings_update_email_GET(self):
         self.assert_settings_update_email_GET_response(200)
+
+    #
+    # settings_update_email_POST tests.
+    #
+
+    def assert_settings_update_email_POST_successful(self, user_id, auth_id, data):
+        response = self.client.post(url_for('user.settings_update_email_POST'), data=data)
+        user = User.objects(id=user_id).first()
+        assert response.status_code == 302
+        assert not user.is_active
+        assert user.auth_id != auth_id
+        assert user.email == data['email']
+        assert user.last_updated
+
+    def assert_settings_update_email_POST_unsuccessful(self, user_id, auth_id, data):
+        response = self.client.post(url_for('user.settings_update_email_POST'), data=data)
+        user = User.objects(id=user_id).first()
+        assert response.status_code == 400
+        assert user.is_active
+        assert user.auth_id == auth_id
+        assert user.email != data['email']
+        assert not user.last_updated
+
+    def assert_settings_update_email_POST_no_update(self, user_id, auth_id, data):
+        response = self.client.post(url_for('user.settings_update_email_POST'), data=data)
+        user = User.objects(id=user_id).first()
+        assert response.status_code == 200
+        assert user.is_active
+        assert user.auth_id == auth_id
+        assert user.email == data['email']
+        assert not user.last_updated
+
+    def test_settings_update_email_POST_not_authenticated(self):
+        self.logout()
+        response = self.client.post(url_for('user.settings_update_email_POST'))
+        assert response.status_code == 302
+
+    def test_settings_update_email_POST_invalid_email(self):
+        user, password = self.with_new_user()
+        email = self.fake.sentence()
+        data = self.get_mock_update_email_data(email=email, password=password)
+        self.assert_settings_update_email_POST_unsuccessful(user.id, user.auth_id, data)
+
+    def test_settings_update_email_POST_incorrect_password(self):
+        user, password = self.with_new_user()
+        email = self.fake.email()
+        data = self.get_mock_update_email_data(email=email, password='wrong')
+        self.assert_settings_update_email_POST_unsuccessful(user.id, user.auth_id, data)
+
+    def test_settings_update_email_POST_account_with_email_already_exists(self):
+        user, password = self.with_new_user()
+        email = self.user.email
+        data = self.get_mock_update_email_data(email=email, password=password)
+        self.assert_settings_update_email_POST_unsuccessful(user.id, user.auth_id, data)
+
+    def test_settings_update_email_POST_no_update(self):
+        user, password = self.with_new_user()
+        email = user.email
+        data = self.get_mock_update_email_data(email=email, password=password)
+        self.assert_settings_update_email_POST_no_update(user.id, user.auth_id, data)
+
+    def test_settings_update_email_POST_success(self):
+        user, password = self.with_new_user()
+        email = self.fake.email()
+        data = self.get_mock_update_email_data(email=email, password=password)
+        self.assert_settings_update_email_POST_successful(user.id, user.auth_id, data)
 
     #
     # settings_update_password_GET tests.

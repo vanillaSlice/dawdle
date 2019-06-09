@@ -218,6 +218,12 @@ class TestAuth(TestBase):
         token = self.get_verify_token(str(user.auth_id))
         self.assert_verify_GET_unsuccessful(token, user.email)
 
+    def test_verify_GET_bad_redirect_target(self):
+        user = self.create_user(active=False)
+        token = self.get_verify_token(str(user.auth_id))
+        response = self.client.get(url_for('auth.verify_GET', token=token, next='https://github.com/'))
+        assert response.status_code == 400
+
     def test_verify_GET_success(self):
         user = self.create_user(active=False)
         token = self.get_verify_token(str(user.auth_id))

@@ -1,8 +1,8 @@
-Welcome {{ user.name }},
+Hello {{ user.name }},
 <br />
 <br />
-Please <a href="{{ url_for('auth.verify_GET', token=token, _external=True) }}">click here</a> to finish your
-registration.
+Please <a href="{{ url_for('auth.verify_GET', token=token, next=redirect_target, _external=True) }}">click here</a> to verify your email
+address.
 <br />
 <br />
 If you did not initiate this request, you can ignore this email.

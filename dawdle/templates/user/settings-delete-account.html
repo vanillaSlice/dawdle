@@ -6,37 +6,23 @@
 
 {% set settings_page='delete-account' %}
 
+{% block settings_form_errors %}
+  {{ render_form_errors(form) }}
+{% endblock %}
+
 {% block settings_content %}
   <form method="POST">
     {{ form.csrf_token }}
-    <div id="js-delete-account-modal" class="modal {{ 'is-active' if form.errors }}">
-      <div class="modal-background js-modal-close" data-target="#js-delete-account-modal"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">Delete Account</p>
-          <button type="button" class="delete js-modal-close" aria-label="close"
-            data-target="#js-delete-account-modal"></button>
-        </header>
-        <section class="modal-card-body">
-          {{ render_form_errors(form) }}
-          {{ render_form_field(form.password,
-                               type='password',
-                               placeholder='e.g. ••••••••••••',
-                               left_icon_classes='fas fa-lock') }}
-        </section>
-        <footer class="modal-card-foot">
-          <button type="submit" class="button is-danger has-text-weight-bold">
-            Delete Account
-          </button>
-          <button type="button" class="button js-modal-close" data-target="#js-delete-account-modal">
-            Cancel
-          </button>
-        </footer>
+    {{ render_form_field(form.password,
+                         type='password',
+                         placeholder='e.g. ••••••••••••',
+                         left_icon_classes='fas fa-lock') }}
+    <div class="field content">
+      <div class="control">
+        <button type="submit" class="button is-fullwidth is-danger has-text-weight-bold">
+          Delete Account
+        </button>
       </div>
     </div>
   </form>
-  <button type="button" class="button is-fullwidth is-danger has-text-weight-bold js-modal-open"
-    data-target="#js-delete-account-modal">
-    Delete Account
-  </button>
 {% endblock %}
