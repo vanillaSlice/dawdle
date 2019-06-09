@@ -34,7 +34,7 @@ def index_POST():
 
     # send email
     message = Message('Dawdle: {}'.format(form.subject.data), recipients=[current_app.config['CONTACT_EMAIL']])
-    message.html = render_template('contact/email.html', email=form.email.data, message=form.message.data)
+    message.body = 'From: {}\n\n{}'.format(form.email.data, form.message.data)
     try:
         mail.send(message)
         flash('We have received your message. Somebody will get back to you shortly.', 'success')
