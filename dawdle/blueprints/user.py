@@ -58,6 +58,11 @@ def settings_account_details_POST():
     if not form.validate_on_submit():
         return render_template('user/settings-account-details.html', form=form), 400
 
+    # don't update if not needed
+    if not form.update_needed():
+        flash('No update needed.', 'info')
+        return redirect(url_for('user.settings_account_details_POST'))
+
     # update the user's account details
     form.populate_obj(current_user)
     current_user.last_updated = datetime.utcnow()
@@ -93,10 +98,10 @@ def settings_update_email_POST():
     if not form.validate_on_submit():
         return render_template('user/settings-update-email.html', form=form), 400
 
-    # don't update if email is the same
-    if form.email.data == current_user.email:
+    # don't update if not needed
+    if not form.update_needed():
         flash('No update needed.', 'info')
-        return render_template('user/settings-update-email.html', form=form)
+        return redirect(url_for('user.settings_update_email_POST'))
 
     # update the user's email (making sure to update the auth id and last updated)
     current_user.active = False
@@ -135,6 +140,11 @@ def settings_update_password_POST():
     # render form again if submitted form is invalid
     if not form.validate_on_submit():
         return render_template('user/settings-update-password.html', form=form), 400
+
+    # don't update if not needed
+    if not form.update_needed():
+        flash('No update needed.', 'info')
+        return redirect(url_for('user.settings_update_password_POST'))
 
     # update the user's password (making sure to update the auth id and last updated)
     current_user.password = User.encrypt_password(form.new_password.data)

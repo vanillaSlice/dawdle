@@ -25,6 +25,13 @@ class UpdateAccountDetailsForm(FlaskForm):
         Length(min=1, max=4, message='Your initials must be between 1 and 4 characters'),
     ], filters=[lambda s: ' '.join(s.split())])
 
+    def update_needed(self):
+        """
+        Returns if the data in the form means that the user needs updating.
+        """
+
+        return self.name.data != current_user.name or self.initials.data != current_user.initials
+
 class UpdateEmailForm(FlaskForm):
     """
     Update Email form.
@@ -52,6 +59,13 @@ class UpdateEmailForm(FlaskForm):
             return False
 
         return True
+
+    def update_needed(self):
+        """
+        Returns if the data in the form means that the user needs updating.
+        """
+
+        return self.email.data != current_user.email
 
 class UpdatePasswordForm(FlaskForm):
     """
@@ -81,6 +95,13 @@ class UpdatePasswordForm(FlaskForm):
             return False
 
         return True
+
+    def update_needed(self):
+        """
+        Returns if the data in the form means that the user needs updating.
+        """
+
+        return not current_user.verify_password(self.new_password.data)
 
 class DeleteUserForm(FlaskForm):
     """

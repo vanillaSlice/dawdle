@@ -98,6 +98,14 @@ class TestUser(TestBase):
         assert response.status_code == 400
         assert user.last_updated is None
 
+    def assert_settings_account_details_POST_no_update(self, user_id, data):
+        response = self.client.post(url_for('user.settings_account_details_POST'), data=data)
+        user = User.objects(id=user_id).first()
+        assert response.status_code == 302
+        assert user.initials == data['initials']
+        assert not user.last_updated
+        assert user.name == data['name']
+
     def test_settings_account_details_POST_name_length_equal_to_minimum(self):
         name = self.fake.pystr(min_chars=1, max_chars=1)
         data = self.get_mock_account_details_data(name=name)
@@ -127,6 +135,11 @@ class TestUser(TestBase):
         initials = self.fake.pystr(min_chars=5, max_chars=5)
         data = self.get_mock_account_details_data(initials=initials)
         self.assert_settings_account_details_POST_unsuccessful(data)
+
+    def test_settings_account_details_POST_no_update(self):
+        user, password = self.with_new_user()
+        data = self.get_mock_account_details_data(name=user.name, initials=user.initials)
+        self.assert_settings_account_details_POST_no_update(user.id, data)
 
     def test_settings_account_details_POST_success(self):
         data = self.get_mock_account_details_data()
@@ -172,7 +185,7 @@ class TestUser(TestBase):
     def assert_settings_update_email_POST_no_update(self, user_id, auth_id, data):
         response = self.client.post(url_for('user.settings_update_email_POST'), data=data)
         user = User.objects(id=user_id).first()
-        assert response.status_code == 200
+        assert response.status_code == 302
         assert user.is_active
         assert user.auth_id == auth_id
         assert user.email == data['email']
@@ -246,6 +259,14 @@ class TestUser(TestBase):
         assert response.status_code == 400
         assert user.last_updated is None
 
+    def assert_settings_update_password_POST_no_update(self, user_id, auth_id, data):
+        response = self.client.post(url_for('user.settings_update_password_POST'), data=data)
+        user = User.objects(id=user_id).first()
+        assert response.status_code == 302
+        assert user.auth_id == auth_id
+        assert not user.last_updated
+        assert user.verify_password(data['new_password'])
+
     def test_settings_update_password_POST_not_authenticated(self):
         self.logout()
         response = self.client.post(url_for('user.settings_update_password_POST'))
@@ -290,6 +311,16 @@ class TestUser(TestBase):
                                                   new_password=new_password,
                                                   confirmation=confirmation)
         self.assert_settings_update_password_POST_unsuccessful(user.auth_id, data)
+
+    def test_settings_update_password_POST_no_update(self):
+        user, password = self.with_new_user()
+        current_password = password
+        new_password = password
+        confirmation = password
+        data = self.get_mock_update_password_data(current_password=current_password,
+                                                  new_password=new_password,
+                                                  confirmation=confirmation)
+        self.assert_settings_update_password_POST_no_update(user.id, user.auth_id, data)
 
     def test_settings_update_password_POST_success(self):
         user, password = self.with_new_user()
