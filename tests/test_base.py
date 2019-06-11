@@ -39,7 +39,7 @@ class TestBase:
         email = kwargs.get('email', cls.user.email)
         password = kwargs.get('password', cls.password)
         cls.client.post(url_for('auth.login_POST'), data={'email': email, 'password': password})
-        cls.logged_in = True
+        cls.logged_in = cls.user.email == email and cls.password == password
 
     @classmethod
     def with_new_user(cls):

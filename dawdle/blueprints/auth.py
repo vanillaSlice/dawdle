@@ -8,6 +8,7 @@ from bson.objectid import ObjectId
 from flask import abort, Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_user, logout_user
 from flask_mail import Message
+from flask_principal import AnonymousIdentity, Identity, identity_changed
 from itsdangerous import BadSignature, TimedJSONWebSignatureSerializer, URLSafeSerializer
 
 from dawdle.extensions.mail import mail
@@ -149,6 +150,7 @@ def verify_GET(token):
     user.save()
 
     # login the user
+    identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
     login_user(user)
 
     # notify the user
@@ -186,7 +188,9 @@ def login_POST():
         return render_template('auth/login.html', form=form), 400
 
     # login the user
-    login_user(form.user, remember=form.remember_me.data)
+    user = form.user
+    identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
+    login_user(user, remember=form.remember_me.data)
 
     # get redirect target
     next_target = request.args.get('next')
@@ -205,6 +209,7 @@ def logout_GET():
     """
 
     # logout the user
+    identity_changed.send(current_app._get_current_object(), identity=AnonymousIdentity())
     logout_user()
 
     # notify the user
@@ -287,6 +292,7 @@ def reset_password_POST(token):
     flash('Your password has been reset.', 'success')
 
     # login the user
+    identity_changed.send(current_app._get_current_object(), identity=Identity(user.get_id()))
     login_user(user)
 
     # redirect to user's boards page

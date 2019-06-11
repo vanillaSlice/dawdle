@@ -5,8 +5,9 @@ Exports User blueprint.
 from datetime import datetime
 
 from bson.objectid import ObjectId
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user
+from flask_principal import Identity, identity_changed
 from flask_mail import Message
 
 from dawdle.blueprints.auth import send_verification_email
@@ -156,6 +157,7 @@ def settings_update_password_POST():
     flash('Your password has been updated.', 'success')
 
     # login the user with the updated password
+    identity_changed.send(current_app._get_current_object(), identity=Identity(current_user.get_id()))
     login_user(current_user)
 
     # redirect back to update password page again
