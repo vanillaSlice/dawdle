@@ -1,7 +1,3 @@
-"""
-Exports a function to create an instance of the Dawdle app.
-"""
-
 import os
 
 from flask import Flask, render_template
@@ -14,85 +10,77 @@ from dawdle.extensions.assets import assets as assets_extension
 from dawdle.extensions.login import login_manager as login_manager_extension
 from dawdle.extensions.mail import mail as mail_extension
 from dawdle.extensions.mongoengine import mongoengine as mongoengine_extension
-from dawdle.version import version
+
+version = '0.1.0'
 
 def create_app(testing=False):
-    """
-    Creates an instance of the Dawdle app.
-    """
-
     app = Flask(__name__, instance_relative_config=True)
-    config = app.config
 
-    # load default config
-    config.from_object('config.Default')
+    _load_config(app, testing)
+    _init_extensions(app)
+    _register_blueprints(app)
+    _attach_error_handlers(app)
+    _disable_caching_when_debugging(app)
+    _disable_strict_trailing_slashes(app)
 
-    # load instance config (if present)
-    config.from_pyfile('config.py', silent=True)
+    return app
 
-    # load test config (if testing)
+def _load_config(app, testing):
+    conf = app.config
+
+    conf.from_object('config.Default')
+
+    conf.from_pyfile('config.py', silent=True)
+
     if testing:
-        config.from_object('config.Test')
+        conf.from_object('config.Test')
 
-    # load environment variables (if present)
-    environ = os.environ
-    config.update({
-        'CONTACT_EMAIL': environ.get('CONTACT_EMAIL', config.get('CONTACT_EMAIL')),
-        'DEBUG': environ.get('DEBUG', str(config.get('DEBUG'))).lower() == 'true',
-        'ENV': environ.get('ENV', config.get('ENV')),
-        'MAIL_DEFAULT_SENDER': environ.get('MAIL_DEFAULT_SENDER', config.get('MAIL_DEFAULT_SENDER')),
-        'MAIL_PASSWORD': environ.get('MAIL_PASSWORD', config.get('MAIL_PASSWORD')),
-        'MAIL_PORT': int(environ.get('MAIL_PORT', config.get('MAIL_PORT'))),
-        'MAIL_SERVER': environ.get('MAIL_SERVER', config.get('MAIL_SERVER')),
-        'MAIL_SUPPRESS_SEND':
-            environ.get('MAIL_SUPPRESS_SEND', str(config.get('MAIL_SUPPRESS_SEND'))).lower() == 'true',
-        'MAIL_USE_SSL': environ.get('MAIL_USE_SSL', str(config.get('MAIL_USE_SSL'))).lower() == 'true',
-        'MAIL_USE_TLS': environ.get('MAIL_USE_TLS', str(config.get('MAIL_USE_TLS'))).lower() == 'true',
-        'MAIL_USERNAME': environ.get('MAIL_USERNAME', config.get('MAIL_USERNAME')),
-        'MONGODB_DB': environ.get('MONGODB_DB', config.get('MONGODB_DB')),
-        'MONGODB_HOST': environ.get('MONGODB_HOST', config.get('MONGODB_HOST')),
-        'MONGODB_PASSWORD': environ.get('MONGODB_PASSWORD', config.get('MONGODB_PASSWORD')),
-        'MONGODB_PORT': int(environ.get('MONGODB_PORT', config.get('MONGODB_PORT'))),
-        'MONGODB_USERNAME': environ.get('MONGODB_USERNAME', config.get('MONGODB_USERNAME')),
-        'SECRET_KEY': environ.get('SECRET_KEY', config.get('SECRET_KEY')),
-        'SERVER_NAME': environ.get('SERVER_NAME', config.get('SERVER_NAME')),
-        'SESSION_COOKIE_DOMAIN': environ.get('SESSION_COOKIE_DOMAIN', config.get('SESSION_COOKIE_DOMAIN')),
-        'WTF_CSRF_ENABLED': environ.get('WTF_CSRF_ENABLED', str(config.get('WTF_CSRF_ENABLED'))).lower() == 'true',
+    env = os.environ
+    conf.update({
+        'CONTACT_EMAIL': env.get('CONTACT_EMAIL', conf.get('CONTACT_EMAIL')),
+        'DEBUG': env.get('DEBUG', str(conf.get('DEBUG'))).lower() == 'true',
+        'ENV': env.get('ENV', conf.get('ENV')),
+        'MAIL_DEFAULT_SENDER': env.get('MAIL_DEFAULT_SENDER', conf.get('MAIL_DEFAULT_SENDER')),
+        'MAIL_PASSWORD': env.get('MAIL_PASSWORD', conf.get('MAIL_PASSWORD')),
+        'MAIL_PORT': int(env.get('MAIL_PORT', conf.get('MAIL_PORT'))),
+        'MAIL_SERVER': env.get('MAIL_SERVER', conf.get('MAIL_SERVER')),
+        'MAIL_SUPPRESS_SEND': env.get('MAIL_SUPPRESS_SEND', str(conf.get('MAIL_SUPPRESS_SEND'))).lower() == 'true',
+        'MAIL_USE_SSL': env.get('MAIL_USE_SSL', str(conf.get('MAIL_USE_SSL'))).lower() == 'true',
+        'MAIL_USE_TLS': env.get('MAIL_USE_TLS', str(conf.get('MAIL_USE_TLS'))).lower() == 'true',
+        'MAIL_USERNAME': env.get('MAIL_USERNAME', conf.get('MAIL_USERNAME')),
+        'MONGODB_DB': env.get('MONGODB_DB', conf.get('MONGODB_DB')),
+        'MONGODB_HOST': env.get('MONGODB_HOST', conf.get('MONGODB_HOST')),
+        'MONGODB_PASSWORD': env.get('MONGODB_PASSWORD', conf.get('MONGODB_PASSWORD')),
+        'MONGODB_PORT': int(env.get('MONGODB_PORT', conf.get('MONGODB_PORT'))),
+        'MONGODB_USERNAME': env.get('MONGODB_USERNAME', conf.get('MONGODB_USERNAME')),
+        'SECRET_KEY': env.get('SECRET_KEY', conf.get('SECRET_KEY')),
+        'SERVER_NAME': env.get('SERVER_NAME', conf.get('SERVER_NAME')),
+        'SESSION_COOKIE_DOMAIN': env.get('SESSION_COOKIE_DOMAIN', conf.get('SESSION_COOKIE_DOMAIN')),
+        'TESTING': testing,
+        'VERSION': version,
+        'WTF_CSRF_ENABLED': env.get('WTF_CSRF_ENABLED', str(conf.get('WTF_CSRF_ENABLED'))).lower() == 'true',
     })
 
-    config.update({'TESTING': testing, 'VERSION': version})
-
-    # init extensions
+def _init_extensions(app):
     assets_extension.init_app(app)
     login_manager_extension.init_app(app)
     mail_extension.init_app(app)
     mongoengine_extension.init_app(app)
 
-    # disable strict trailing slashes e.g. so /auth/login and /auth/login/ both resolve to same endpoint
-    app.url_map.strict_slashes = False
-
-    # register blueprints
+def _register_blueprints(app):
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(contact_blueprint)
     app.register_blueprint(home_blueprint)
     app.register_blueprint(user_blueprint)
 
-    # attach 403 error handler
+def _attach_error_handlers(app):
     @app.errorhandler(403)
-    def handle_403(error):
-        return render_template('error/403.html', error=error), 403
-
-    # attach 404 error handler
     @app.errorhandler(404)
-    def handle_404(error):
-        return render_template('error/404.html', error=error), 404
-
-    # attach 500 error handler
     @app.errorhandler(500)
-    def handle_500(error):
-        return render_template('error/500.html', error=error), 500
+    def handle_error(error):
+        return render_template('error/{}.html'.format(error.code), error=error), error.code
 
-    # disable caching when debugging
+def _disable_caching_when_debugging(app):
     if app.debug:
         @app.after_request
         def after_request(response):
@@ -101,4 +89,5 @@ def create_app(testing=False):
             response.headers['Pragma'] = 'no-cache'
             return response
 
-    return app
+def _disable_strict_trailing_slashes(app):
+    app.url_map.strict_slashes = False

@@ -1,7 +1,3 @@
-"""
-Exports User data models.
-"""
-
 from datetime import datetime
 
 from bson.objectid import ObjectId
@@ -10,9 +6,6 @@ from mongoengine import BooleanField, DateTimeField, Document, EmailField, Objec
 from passlib.hash import sha256_crypt
 
 class User(Document, UserMixin):
-    """
-    User model.
-    """
 
     active = BooleanField(required=True, default=False)
     auth_id = ObjectIdField(required=True, default=ObjectId, unique=True)
@@ -32,15 +25,7 @@ class User(Document, UserMixin):
 
     @staticmethod
     def encrypt_password(password):
-        """
-        Encrypts password.
-        """
-
         return sha256_crypt.hash(password)
 
     def verify_password(self, password):
-        """
-        Verifies user against the password.
-        """
-
         return False if password is None else sha256_crypt.verify(password, self.password)

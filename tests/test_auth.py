@@ -121,7 +121,7 @@ class TestAuth(TestBase):
         data = self.get_mock_sign_up_data(email=email)
         self.assert_sign_up_POST_unsuccessful(data)
 
-    @mock.patch('dawdle.blueprints.auth.mail')
+    @mock.patch('dawdle.utils.mail')
     def test_sign_up_POST_error_sending_email(self, mail_mock):
         mail_mock.send.side_effect = RuntimeError('some error')
         data = self.get_mock_sign_up_data()
@@ -173,8 +173,8 @@ class TestAuth(TestBase):
         data = self.get_mock_verify_resend_data(email=self.user.email)
         self.assert_verify_resend_POST_response(data, 400)
 
-    @mock.patch('dawdle.blueprints.auth.mail')
-    def test_sign_up_POST_error_sending_email(self, mail_mock):
+    @mock.patch('dawdle.utils.mail')
+    def test_verify_resend_POST_error_sending_email(self, mail_mock):
         mail_mock.send.side_effect = RuntimeError('some error')
         user = self.create_user(active=False)
         data = self.get_mock_verify_resend_data(email=user.email)
@@ -348,33 +348,32 @@ class TestAuth(TestBase):
     # reset_password_GET tests.
     #
 
-    def assert_reset_password_GET_unsuccessful(self, token):
+    def assert_reset_password_GET_response(self, token, status_code):
         response = self.client.get(url_for('auth.reset_password_GET', token=token))
-        assert response.status_code == 404
+        assert response.status_code == status_code
 
     def test_reset_password_GET(self):
         token = self.get_reset_password_token(auth_id=str(self.user.auth_id))
-        response = self.client.get(url_for('auth.reset_password_GET', token=token))
-        assert response.status_code == 200
+        self.assert_reset_password_GET_response(token, 200)
 
     def test_reset_password_GET_invalid_token(self):
         token = 'invalid token'
-        self.assert_reset_password_GET_unsuccessful(token)
+        self.assert_reset_password_GET_response(token, 404)
 
     def test_reset_password_GET_invalid_auth_id(self):
         token = self.get_reset_password_token('invalid auth id')
-        self.assert_reset_password_GET_unsuccessful(token)
+        self.assert_reset_password_GET_response(token, 404)
 
     def test_reset_password_GET_expired_token(self):
         token = self.get_reset_password_token(auth_id=str(self.user.auth_id), expires_in=1)
         time.sleep(2)
-        self.assert_reset_password_GET_unsuccessful(token)
+        self.assert_reset_password_GET_response(token, 404)
 
     def test_reset_password_GET_account_does_not_exist(self):
         user = self.create_user(active=False)
         user.delete()
         token = self.get_reset_password_token(str(user.auth_id))
-        self.assert_reset_password_GET_unsuccessful(token)
+        self.assert_reset_password_GET_response(token, 404)
 
     #
     # reset_password_POST tests.

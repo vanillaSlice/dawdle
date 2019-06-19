@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-pylint $(dirname $0)/../dawdle/
+DIR=$(dirname $0)
+pylint ${DIR}/../*.py ${DIR}/../dawdle/ ${DIR}/../tests/

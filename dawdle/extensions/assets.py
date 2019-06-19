@@ -1,7 +1,3 @@
-"""
-Flask-Assets extension.
-"""
-
 from flask_assets import Bundle, Environment
 
 assets = Environment()

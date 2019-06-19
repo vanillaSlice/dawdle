@@ -1,15 +1,8 @@
-"""
-Exports Contact forms.
-"""
-
 from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length
 
 class ContactForm(FlaskForm):
-    """
-    Contact form.
-    """
 
     email = StringField('Email', validators=[
         DataRequired(message='Please enter an email'),

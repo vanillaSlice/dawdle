@@ -1,23 +1,17 @@
-"""
-Exports Auth forms.
-"""
-
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, StringField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 from wtforms.widgets import PasswordInput
 
 from dawdle.models.user import User
+from dawdle.utils import trim
 
 class SignUpForm(FlaskForm):
-    """
-    Sign Up form.
-    """
 
     name = StringField('Name', validators=[
         DataRequired(message='Please enter a name'),
         Length(min=1, max=50, message='Your name must be between 1 and 50 characters'),
-    ], filters=[lambda s: ' '.join(s.split())])
+    ], filters=[trim])
 
     email = StringField('Email', validators=[
         DataRequired(message='Please enter an email'),
@@ -40,9 +34,6 @@ class SignUpForm(FlaskForm):
         return True
 
 class VerifyResendForm(FlaskForm):
-    """
-    Verify Resend form.
-    """
 
     email = StringField('Email', validators=[
         DataRequired(message='Please enter an email'),
@@ -70,9 +61,6 @@ class VerifyResendForm(FlaskForm):
         return True
 
 class LoginForm(FlaskForm):
-    """
-    Login form.
-    """
 
     email = StringField('Email', validators=[
         DataRequired(message='Please enter an email'),
@@ -107,9 +95,6 @@ class LoginForm(FlaskForm):
         return True
 
 class ResetPasswordRequestForm(FlaskForm):
-    """
-    Reset Password Request form.
-    """
 
     email = StringField('Email', validators=[
         DataRequired(message='Please enter an email'),
@@ -133,9 +118,6 @@ class ResetPasswordRequestForm(FlaskForm):
         return True
 
 class ResetPasswordForm(FlaskForm):
-    """
-    Reset Password form.
-    """
 
     password = StringField('Password', validators=[
         DataRequired(message='Please enter a password'),

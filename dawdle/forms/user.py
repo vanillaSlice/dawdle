@@ -1,7 +1,3 @@
-"""
-Exports User forms.
-"""
-
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField
@@ -9,33 +5,24 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length
 from wtforms.widgets import PasswordInput
 
 from dawdle.models.user import User
+from dawdle.utils import trim
 
 class UpdateAccountDetailsForm(FlaskForm):
-    """
-    Update Account Details form.
-    """
 
     name = StringField('Name', validators=[
         DataRequired(message='Please enter a name'),
         Length(min=1, max=50, message='Your name must be between 1 and 50 characters'),
-    ], filters=[lambda s: ' '.join(s.split())])
+    ], filters=[trim])
 
     initials = StringField('Initials', validators=[
         DataRequired(message='Please enter initials'),
         Length(min=1, max=4, message='Your initials must be between 1 and 4 characters'),
-    ], filters=[lambda s: ' '.join(s.split())])
+    ], filters=[trim])
 
     def update_needed(self):
-        """
-        Returns if the data in the form means that the user needs updating.
-        """
-
         return self.name.data != current_user.name or self.initials.data != current_user.initials
 
 class UpdateEmailForm(FlaskForm):
-    """
-    Update Email form.
-    """
 
     email = StringField('Email', validators=[
         DataRequired(message='Please enter an email'),
@@ -61,16 +48,9 @@ class UpdateEmailForm(FlaskForm):
         return True
 
     def update_needed(self):
-        """
-        Returns if the data in the form means that the user needs updating.
-        """
-
         return self.email.data != current_user.email
 
 class UpdatePasswordForm(FlaskForm):
-    """
-    Update Password form.
-    """
 
     current_password = StringField('Current Password', validators=[
         DataRequired(message='Please enter your current password'),
@@ -97,16 +77,9 @@ class UpdatePasswordForm(FlaskForm):
         return True
 
     def update_needed(self):
-        """
-        Returns if the data in the form means that the user needs updating.
-        """
-
         return not current_user.verify_password(self.new_password.data)
 
 class DeleteUserForm(FlaskForm):
-    """
-    Delete User form.
-    """
 
     password = StringField('Password Confirmation', validators=[
         DataRequired(message='Please enter your password'),

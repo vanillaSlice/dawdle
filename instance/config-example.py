@@ -1,7 +1,3 @@
-"""
-Local config properties.
-"""
-
 CONTACT_EMAIL = None
 DEBUG = True
 ENV = 'local'

@@ -10,12 +10,10 @@ class TestBase:
     def setup_class(cls):
         cls.fake = Faker()
 
-        # set up test app instance
         cls.app = create_app(testing=True)
         cls.app.app_context().push()
         cls.client = cls.app.test_client()
 
-        # set up a test user and login
         cls.password = cls.fake.password()
         cls.user = cls.create_user(password=cls.password)
         cls.login()
@@ -35,6 +33,13 @@ class TestBase:
         return user.save()
 
     @classmethod
+    def as_new_user(cls):
+        password = cls.fake.password()
+        user = cls.create_user(active=True, password=password)
+        cls.login(email=user.email, password=password)
+        return user, password
+
+    @classmethod
     def login(cls, **kwargs):
         email = kwargs.get('email', cls.user.email)
         password = kwargs.get('password', cls.password)
@@ -42,19 +47,12 @@ class TestBase:
         cls.logged_in = cls.user.email == email and cls.password == password
 
     @classmethod
-    def with_new_user(cls):
-        password = cls.fake.password()
-        user = cls.create_user(active=True, password=password)
-        cls.login(email=user.email, password=password)
-        return user, password
-
-    @classmethod
     def logout(cls):
         cls.client.get(url_for('auth.logout_GET'))
         cls.logged_in = False
 
     @classmethod
-    def clear_db(self):
+    def clear_db(cls):
         User.objects.delete()
 
     def setup_method(self):

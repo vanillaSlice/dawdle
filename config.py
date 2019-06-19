@@ -1,14 +1,4 @@
-"""
-Contains default and test config properties. To add local instance
-config properties create a file 'instance/config.py' or export the
-properties as environment variables (note that environment variables
-will take precedence).
-"""
-
 class Default:
-    """
-    Default config properties.
-    """
 
     CONTACT_EMAIL = None
     DEBUG = False
@@ -32,9 +22,6 @@ class Default:
     WTF_CSRF_ENABLED = True
 
 class Test:
-    """
-    Test config properties.
-    """
 
     CONTACT_EMAIL = None
     DEBUG = True

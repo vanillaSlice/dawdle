@@ -4,6 +4,9 @@ max-line-length=120
 [MESSAGES CONTROL]
 disable=bare-except,
         invalid-name,
+        missing-docstring,
         no-member,
+        too-few-public-methods,
+        too-many-public-methods,
         unused-argument,
         unused-variable,
