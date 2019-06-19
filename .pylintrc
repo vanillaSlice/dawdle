@@ -5,6 +5,5 @@ max-line-length=120
 disable=bare-except,
         invalid-name,
         no-member,
-        protected-access,
         unused-argument,
         unused-variable,

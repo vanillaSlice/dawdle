@@ -14,7 +14,6 @@ from dawdle.extensions.assets import assets as assets_extension
 from dawdle.extensions.login import login_manager as login_manager_extension
 from dawdle.extensions.mail import mail as mail_extension
 from dawdle.extensions.mongoengine import mongoengine as mongoengine_extension
-from dawdle.extensions.principal import principal
 from dawdle.version import version
 
 def create_app(testing=False):
@@ -68,7 +67,6 @@ def create_app(testing=False):
     login_manager_extension.init_app(app)
     mail_extension.init_app(app)
     mongoengine_extension.init_app(app)
-    principal.init_app(app)
 
     # disable strict trailing slashes e.g. so /auth/login and /auth/login/ both resolve to same endpoint
     app.url_map.strict_slashes = False
