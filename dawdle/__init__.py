@@ -11,11 +11,12 @@ from dawdle.extensions.login import login_manager as login_manager_extension
 from dawdle.extensions.mail import mail as mail_extension
 from dawdle.extensions.mongoengine import mongoengine as mongoengine_extension
 
-version = '0.1.0'
+version = 'v0.1.0'
 
 def create_app(testing=False):
     app = Flask(__name__, instance_relative_config=True)
 
+    _attach_context_processors(app)
     _load_config(app, testing)
     _init_extensions(app)
     _register_blueprints(app)
@@ -25,15 +26,17 @@ def create_app(testing=False):
 
     return app
 
+def _attach_context_processors(app):
+    @app.context_processor
+    def inject_version():
+        return dict(version=version)
+
 def _load_config(app, testing):
     conf = app.config
 
     conf.from_object('config.Default')
 
     conf.from_pyfile('config.py', silent=True)
-
-    if testing:
-        conf.from_object('config.Test')
 
     env = os.environ
     conf.update({
@@ -56,10 +59,12 @@ def _load_config(app, testing):
         'SECRET_KEY': env.get('SECRET_KEY', conf.get('SECRET_KEY')),
         'SERVER_NAME': env.get('SERVER_NAME', conf.get('SERVER_NAME')),
         'SESSION_COOKIE_DOMAIN': env.get('SESSION_COOKIE_DOMAIN', conf.get('SESSION_COOKIE_DOMAIN')),
-        'TESTING': testing,
-        'VERSION': version,
         'WTF_CSRF_ENABLED': env.get('WTF_CSRF_ENABLED', str(conf.get('WTF_CSRF_ENABLED'))).lower() == 'true',
     })
+
+    if testing:
+        conf.from_object('config.Test')
+        conf.update({'TESTING': True})
 
 def _init_extensions(app):
     assets_extension.init_app(app)

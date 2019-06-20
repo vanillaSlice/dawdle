@@ -7,9 +7,9 @@ from passlib.hash import sha256_crypt
 
 class User(Document, UserMixin):
 
-    active = BooleanField(required=True, default=False)
-    auth_id = ObjectIdField(required=True, default=ObjectId, unique=True)
-    created = DateTimeField(required=True, default=datetime.utcnow)
+    active = BooleanField(default=False)
+    auth_id = ObjectIdField(default=ObjectId, unique=True)
+    created = DateTimeField(default=datetime.utcnow)
     email = EmailField(required=True)
     initials = StringField(required=True, min_length=1, max_length=4)
     last_updated = DateTimeField()

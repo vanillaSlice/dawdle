@@ -18,12 +18,20 @@ def index_POST():
     if not form.validate_on_submit():
         return render_template('contact/index.html', form=form), 400
 
-    message = Message('Dawdle: {}'.format(form.subject.data), recipients=[current_app.config['CONTACT_EMAIL']])
-    message.body = 'From: {}\n\n{}'.format(form.email.data, form.message.data)
-    try:
-        mail.send(message)
-        flash('We have received your message. Somebody will get back to you shortly.', 'success')
-        return redirect(url_for('contact.index_GET'))
-    except:
+    sent_email = _send_email(form)
+
+    if not sent_email:
         flash('Could not send message. Please try again.', 'danger')
         return render_template('contact/index.html', form=form), 500
+
+    flash('We have received your message. Somebody will get back to you shortly.', 'success')
+    return redirect(url_for('contact.index_GET'))
+
+def _send_email(form):
+    try:
+        message = Message('Dawdle: {}'.format(form.subject.data), recipients=[current_app.config['CONTACT_EMAIL']])
+        message.body = 'From: {}\n\n{}'.format(form.email.data, form.message.data)
+        mail.send(message)
+        return True
+    except:
+        return False
