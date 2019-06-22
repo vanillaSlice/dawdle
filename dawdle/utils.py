@@ -4,9 +4,12 @@ from bson.errors import InvalidId
 from bson.objectid import ObjectId
 from flask import current_app, flash, render_template, request
 from flask_mail import Message
-from itsdangerous import URLSafeSerializer
+from itsdangerous import (BadSignature,
+                          TimedJSONWebSignatureSerializer,
+                          URLSafeSerializer)
 
 from dawdle.extensions.mail import mail
+
 
 def to_ObjectId(value):
     try:
@@ -14,26 +17,96 @@ def to_ObjectId(value):
     except InvalidId:
         return ObjectId(None)
 
+
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
-    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc
+    return test_url.scheme in ('http', 'https') and \
+        ref_url.netloc == test_url.netloc
+
 
 def trim(s):
     return ' '.join(s.split())
 
-def send_verification_email(user, redirect_target=None):
-    token = URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))
-    message = Message('Dawdle Verification', recipients=[user.email])
-    message.html = render_template('auth/verify-email.html', user=user, token=token, redirect_target=redirect_target)
+
+def serialize_verification_token(user):
+    return URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))
+
+
+def deserialize_verification_token(token):
     try:
-        mail.send(message)
-        flash('A verification email has been sent to {}. '.format(user.email) +
-              'Please verify your email before logging in to Dawdle.', 'info')
+        auth_id = URLSafeSerializer(current_app.secret_key).loads(token)
+        return to_ObjectId(auth_id)
+    except BadSignature:
+        return to_ObjectId(None)
+
+
+def send_verification_email(user, redirect_target=None):
+    try:
+        recipients = [user.email]
+        msg = Message('Dawdle Verification', recipients=recipients)
+        msg.html = render_template(
+            'auth/verify-email.html',
+            user=user,
+            token=serialize_verification_token(user),
+            redirect_target=redirect_target,
+        )
+        mail.send(msg)
+        flash(
+            'A verification email has been sent to {}. Please verify your '
+            'email before logging in to Dawdle.'.format(user.email),
+            'info',
+        )
         return True
-    except:
-        flash('Could not send a verification email to {}. '.format(user.email) +
-              'Please try again.', 'danger')
+    except Exception:
+        flash(
+            'Could not send a verification email to {}. Please try again.'
+            .format(user.email),
+            'danger',
+        )
+        return False
+
+
+def serialize_password_reset_token(user):
+    return TimedJSONWebSignatureSerializer(
+        current_app.secret_key,
+        expires_in=600,
+    ).dumps(str(user.auth_id)).decode('utf-8')
+
+
+def deserialize_password_reset_token(token):
+    try:
+        auth_id = TimedJSONWebSignatureSerializer(
+            current_app.secret_key,
+            expires_in=600,
+        ).loads(token)
+        return to_ObjectId(auth_id)
+    except BadSignature:
+        return to_ObjectId(None)
+
+
+def send_password_reset_email(user):
+    try:
+        recipients = [user.email]
+        msg = Message('Dawdle Password Reset', recipients=[user.email])
+        msg.html = render_template(
+            'auth/reset-password-email.html',
+            user=user,
+            token=serialize_password_reset_token(user),
+        )
+        mail.send(msg)
+        flash(
+            'A password reset email has been sent to {}. This will expire in '
+            '10 minutes.'.format(user.email),
+            'info',
+        )
+        return True
+    except Exception:
+        flash(
+            'Could not send a password reset email to {}. Please try again.'
+            .format(user.email),
+            'danger',
+        )
         return False
 
 
