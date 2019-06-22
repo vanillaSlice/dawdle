@@ -21,4 +21,10 @@ $(document).ready(function() {
       $(fieldElement.data('help')).toggleClass('is-danger', state);
     }
   }
+
+  // truncate text
+  $('.js-shave').shave(150, { spaces: false });
+  $(window).on('resize', _.debounce(function() {
+    $('.js-shave').shave(150, { spaces: false });
+  }, 250, { leading: true }));
 });

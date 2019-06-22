@@ -11,11 +11,28 @@
 {% set container_classes='boards has-background-primary' %}
 
 {% block content %}
-  <div class="hero-body has-text-centered">
+  <div class="body">
     <div class="container">
-      <h1 class="title has-text-white">
-        Coming soon...
-      </h1>
+      <div class="columns">
+        <div class="column is-12-tablet is-10-desktop is-offset-1-desktop is-paddingless">
+          <h2 class="title has-text-white is-size-4">
+            <i class="fas fa-user"></i> Personal Boards
+          </h2>
+          <div class="columns is-multiline">
+            {% for board in current_user.boards %}
+              <div class="column is-4">
+                <a href="{{ url_for('user.boards_GET') }}">
+                  <div class="board box">
+                    <p class="js-shave">
+                      {{ board.name }}
+                    </p>
+                  </div>
+                </a>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}
