@@ -2,8 +2,14 @@ from datetime import datetime
 
 from bson.objectid import ObjectId
 from flask_login import UserMixin
-from mongoengine import BooleanField, DateTimeField, Document, EmailField, ObjectIdField, StringField
+from mongoengine import (BooleanField,
+                         DateTimeField,
+                         Document,
+                         EmailField,
+                         ObjectIdField,
+                         StringField)
 from passlib.hash import sha256_crypt
+
 
 class User(Document, UserMixin):
 
@@ -24,8 +30,15 @@ class User(Document, UserMixin):
         return str(self.auth_id)
 
     @staticmethod
+    def create_initials(name):
+        return ''.join([c[0].upper() for c in name.split(' ')])[:4]
+
+    @staticmethod
     def encrypt_password(password):
         return sha256_crypt.hash(password)
 
     def verify_password(self, password):
-        return False if password is None else sha256_crypt.verify(password, self.password)
+        if not password:
+            return False
+
+        return sha256_crypt.verify(password, self.password)

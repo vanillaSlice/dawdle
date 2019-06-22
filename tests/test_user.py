@@ -96,7 +96,7 @@ class TestUser(TestBase):
         response = self.client.post(url_for('user.settings_account_details_POST'), data=data)
         user = User.objects(id=user.id).first()
         assert response.status_code == 400
-        assert user.last_updated is None
+        assert not user.last_updated
 
     def assert_settings_account_details_POST_no_update(self, user_id, data):
         response = self.client.post(url_for('user.settings_account_details_POST'), data=data)
@@ -257,7 +257,7 @@ class TestUser(TestBase):
         response = self.client.post(url_for('user.settings_update_password_POST'), data=data)
         user = User.objects(auth_id=auth_id).first()
         assert response.status_code == 400
-        assert user.last_updated is None
+        assert not user.last_updated
 
     def assert_settings_update_password_POST_no_update(self, user_id, auth_id, data):
         response = self.client.post(url_for('user.settings_update_password_POST'), data=data)

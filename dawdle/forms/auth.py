@@ -6,39 +6,64 @@ from wtforms.widgets import PasswordInput
 from dawdle.models.user import User
 from dawdle.utils import trim
 
+
 class SignUpForm(FlaskForm):
 
-    name = StringField('Name', validators=[
-        DataRequired(message='Please enter a name'),
-        Length(min=1, max=50, message='Your name must be between 1 and 50 characters'),
-    ], filters=[trim])
+    name = StringField(
+        'Name',
+        validators=[
+            DataRequired(message='Please enter a name'),
+            Length(
+                min=1,
+                max=50,
+                message='Your name must be between 1 and 50 characters',
+            ),
+        ],
+        filters=[trim],
+    )
 
-    email = StringField('Email', validators=[
-        DataRequired(message='Please enter an email'),
-        Email(message='Please enter a valid email'),
-    ])
+    email = StringField(
+        'Email',
+        validators=[
+            DataRequired(message='Please enter an email'),
+            Email(message='Please enter a valid email'),
+        ],
+    )
 
-    password = StringField('Password', validators=[
-        DataRequired(message='Please enter a password'),
-        Length(min=8, message='Your password must be at least 8 characters'),
-    ], widget=PasswordInput(hide_value=False))
+    password = StringField(
+        'Password',
+        validators=[
+            DataRequired(message='Please enter a password'),
+            Length(
+                min=8,
+                message='Your password must be at least 8 characters',
+            ),
+        ],
+        widget=PasswordInput(hide_value=False),
+    )
 
     def validate_on_submit(self):
         if not super().validate_on_submit():
             return False
 
         if User.objects(email=self.email.data).first():
-            self.email.errors.append('There is already an account with this email')
+            self.email.errors.append(
+                'There is already an account with this email',
+            )
             return False
 
         return True
 
+
 class VerifyResendForm(FlaskForm):
 
-    email = StringField('Email', validators=[
-        DataRequired(message='Please enter an email'),
-        Email(message='Please enter a valid email'),
-    ])
+    email = StringField(
+        'Email',
+        validators=[
+            DataRequired(message='Please enter an email'),
+            Email(message='Please enter a valid email'),
+        ],
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -50,7 +75,7 @@ class VerifyResendForm(FlaskForm):
 
         self.user = User.objects(email=self.email.data).first()
 
-        if self.user is None:
+        if not self.user:
             self.email.errors.append('There is no account with this email')
             return False
 
@@ -60,16 +85,24 @@ class VerifyResendForm(FlaskForm):
 
         return True
 
+
 class LoginForm(FlaskForm):
 
-    email = StringField('Email', validators=[
-        DataRequired(message='Please enter an email'),
-        Email(message='Please enter a valid email'),
-    ])
+    email = StringField(
+        'Email',
+        validators=[
+            DataRequired(message='Please enter an email'),
+            Email(message='Please enter a valid email'),
+        ],
+    )
 
-    password = StringField('Password', validators=[
-        DataRequired(message='Please enter a password'),
-    ], widget=PasswordInput(hide_value=False))
+    password = StringField(
+        'Password',
+        validators=[
+            DataRequired(message='Please enter a password'),
+        ],
+        widget=PasswordInput(hide_value=False),
+    )
 
     remember_me = BooleanField('Remember Me')
 
@@ -83,23 +116,28 @@ class LoginForm(FlaskForm):
 
         self.user = User.objects(email=self.email.data).first()
 
-        if self.user is None or not self.user.verify_password(self.password.data):
+        if not self.user or not self.user.verify_password(self.password.data):
             self.email.errors.append('Incorrect email')
             self.password.errors.append('Incorrect password')
             return False
 
         if not self.user.is_active:
-            self.email.errors.append('Please verify your email before logging in')
+            self.email.errors.append(
+                'Please verify your email before logging in',
+            )
             return False
 
         return True
 
+
 class ResetPasswordRequestForm(FlaskForm):
 
-    email = StringField('Email', validators=[
-        DataRequired(message='Please enter an email'),
-        Email(message='Please enter a valid email'),
-    ])
+    email = StringField(
+        'Email', validators=[
+            DataRequired(message='Please enter an email'),
+            Email(message='Please enter a valid email'),
+        ],
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -111,20 +149,35 @@ class ResetPasswordRequestForm(FlaskForm):
 
         self.user = User.objects(email=self.email.data).first()
 
-        if self.user is None:
+        if not self.user:
             self.email.errors.append('There is no account with this email')
             return False
 
         return True
 
+
 class ResetPasswordForm(FlaskForm):
 
-    password = StringField('Password', validators=[
-        DataRequired(message='Please enter a password'),
-        Length(min=8, message='Your password must be at least 8 characters'),
-    ], widget=PasswordInput(hide_value=False))
+    password = StringField(
+        'Password',
+        validators=[
+            DataRequired(message='Please enter a password'),
+            Length(
+                min=8,
+                message='Your password must be at least 8 characters',
+            ),
+        ],
+        widget=PasswordInput(hide_value=False),
+    )
 
-    confirmation = StringField('Confirmation', validators=[
-        DataRequired(message='Please enter password confirmation'),
-        EqualTo('password', message='Password and confirmation must match'),
-    ], widget=PasswordInput(hide_value=False))
+    confirmation = StringField(
+        'Confirmation',
+        validators=[
+            DataRequired(message='Please enter password confirmation'),
+            EqualTo(
+                'password',
+                message='Password and confirmation must match',
+            ),
+        ],
+        widget=PasswordInput(hide_value=False),
+    )
