@@ -3,6 +3,7 @@ from flask_login import current_user
 
 home = Blueprint('home', __name__, url_prefix='/')
 
+
 @home.route('/')
 def index_GET():
     if current_user.is_authenticated:

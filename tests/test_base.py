@@ -4,6 +4,7 @@ from flask import url_for
 from dawdle import create_app
 from dawdle.models.user import User
 
+
 class TestBase:
 
     @classmethod
@@ -27,9 +28,14 @@ class TestBase:
         user = User()
         user.active = kwargs.get('active', True)
         user.email = kwargs.get('email', cls.fake.email())
-        user.initials = kwargs.get('initials', cls.fake.pystr(min_chars=1, max_chars=4))
+        user.initials = kwargs.get(
+            'initials',
+            cls.fake.pystr(min_chars=1, max_chars=4),
+        )
         user.name = kwargs.get('name', cls.fake.name())
-        user.password = User.encrypt_password(kwargs.get('password', cls.fake.password()))
+        user.password = User.encrypt_password(
+            kwargs.get('password', cls.fake.password()),
+        )
         return user.save()
 
     @classmethod
@@ -43,7 +49,8 @@ class TestBase:
     def login(cls, **kwargs):
         email = kwargs.get('email', cls.user.email)
         password = kwargs.get('password', cls.password)
-        cls.client.post(url_for('auth.login_POST'), data={'email': email, 'password': password})
+        data = {'email': email, 'password': password}
+        cls.client.post(url_for('auth.login_POST'), data=data)
         cls.logged_in = cls.user.email == email and cls.password == password
 
     @classmethod
