@@ -35,3 +35,20 @@ def send_verification_email(user, redirect_target=None):
         flash('Could not send a verification email to {}. '.format(user.email) +
               'Please try again.', 'danger')
         return False
+
+
+def send_contact_email(subject, email, message):
+    try:
+        recipients = [current_app.config['CONTACT_EMAIL']]
+        msg = Message('Dawdle: {}'.format(subject), recipients=recipients)
+        msg.body = 'From: {}\n\n{}'.format(email, message)
+        mail.send(msg)
+        flash(
+            'We have received your message. '
+            'Somebody will get back to you shortly.',
+            'success',
+        )
+        return True
+    except Exception:
+        flash('Could not send message. Please try again.', 'danger')
+        return False
