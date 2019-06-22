@@ -15,7 +15,9 @@
 
 .boards .board {
   height: 12rem;
-  hyphens: auto;
+  -webkit-hyphens: auto;
+      -ms-hyphens: auto;
+          hyphens: auto;
   overflow: hidden;
   word-wrap: break-word;
 }
