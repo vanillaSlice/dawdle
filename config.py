@@ -21,6 +21,7 @@ class Default:
     SESSION_COOKIE_DOMAIN = '127.0.0.1:5000'
     WTF_CSRF_ENABLED = True
 
+
 class Test:
 
     CONTACT_EMAIL = None
