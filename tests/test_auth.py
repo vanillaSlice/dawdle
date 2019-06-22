@@ -27,17 +27,17 @@ class TestAuth(TestBase):
         del data['name']
         self._assert_sign_up_POST_unsuccessful(data)
 
-    def test_sign_up_POST_name_length_equal_to_minimum(self):
+    def test_sign_up_POST_name_equal_to_min(self):
         name = self.fake.pystr(min_chars=1, max_chars=1)
         data = self._get_mock_sign_up_data(name=name)
         self._assert_sign_up_POST_successful(data)
 
-    def test_sign_up_POST_name_length_equal_to_maximum(self):
+    def test_sign_up_POST_name_equal_to_max(self):
         name = self.fake.pystr(min_chars=50, max_chars=50)
         data = self._get_mock_sign_up_data(name=name)
         self._assert_sign_up_POST_successful(data)
 
-    def test_sign_up_POST_name_length_greater_than_maximum(self):
+    def test_sign_up_POST_name_greater_than_max(self):
         name = self.fake.pystr(min_chars=51, max_chars=51)
         data = self._get_mock_sign_up_data(name=name)
         self._assert_sign_up_POST_unsuccessful(data)
@@ -57,12 +57,12 @@ class TestAuth(TestBase):
         del data['password']
         self._assert_sign_up_POST_unsuccessful(data)
 
-    def test_sign_up_POST_password_length_less_than_minimum(self):
+    def test_sign_up_POST_password_less_than_min(self):
         password = self.fake.pystr(min_chars=7, max_chars=7)
         data = self._get_mock_sign_up_data(password=password)
         self._assert_sign_up_POST_unsuccessful(data)
 
-    def test_sign_up_POST_password_length_equal_to_minimum(self):
+    def test_sign_up_POST_password_equal_to_min(self):
         password = self.fake.pystr(min_chars=8, max_chars=8)
         data = self._get_mock_sign_up_data(password=password)
         self._assert_sign_up_POST_successful(data)
@@ -435,7 +435,7 @@ class TestAuth(TestBase):
         del data['password']
         self._assert_reset_password_POST_unsuccessful(user.auth_id, data)
 
-    def test_reset_password_POST_password_length_less_than_minimum(self):
+    def test_reset_password_POST_password_less_than_min(self):
         user = self.create_user(active=True)
         password = self.fake.pystr(min_chars=7, max_chars=7)
         data = self._get_mock_reset_password_data(
@@ -444,7 +444,7 @@ class TestAuth(TestBase):
         )
         self._assert_reset_password_POST_unsuccessful(user.auth_id, data)
 
-    def test_reset_password_POST_password_length_equal_to_minimum(self):
+    def test_reset_password_POST_password_equal_to_min(self):
         user = self.create_user(active=True)
         password = self.fake.pystr(min_chars=8, max_chars=8)
         data = self._get_mock_reset_password_data(

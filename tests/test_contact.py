@@ -35,17 +35,17 @@ class TestContact(TestBase):
         del data['subject']
         self._assert_index_POST_response(data, 400)
 
-    def test_index_POST_subject_length_equal_to_minimum(self):
+    def test_index_POST_subject_equal_to_min(self):
         subject = self.fake.pystr(min_chars=1, max_chars=1)
         data = self._get_mock_contact_data(subject=subject)
         self._assert_index_POST_response(data, 302)
 
-    def test_index_POST_subject_length_equal_to_maximum(self):
+    def test_index_POST_subject_equal_to_max(self):
         subject = self.fake.pystr(min_chars=256, max_chars=256)
         data = self._get_mock_contact_data(subject=subject)
         self._assert_index_POST_response(data, 302)
 
-    def test_index_POST_subject_length_greater_than_maximum(self):
+    def test_index_POST_subject_greater_than_max(self):
         subject = self.fake.pystr(min_chars=257, max_chars=257)
         data = self._get_mock_contact_data(subject=subject)
         self._assert_index_POST_response(data, 400)
@@ -55,17 +55,17 @@ class TestContact(TestBase):
         del data['message']
         self._assert_index_POST_response(data, 400)
 
-    def test_index_POST_message_length_equal_to_minimum(self):
+    def test_index_POST_message_equal_to_min(self):
         message = self.fake.pystr(min_chars=1, max_chars=1)
         data = self._get_mock_contact_data(message=message)
         self._assert_index_POST_response(data, 302)
 
-    def test_index_POST_message_length_equal_to_maximum(self):
+    def test_index_POST_message_equal_to_max(self):
         message = self.fake.pystr(min_chars=1000, max_chars=1000)
         data = self._get_mock_contact_data(message=message)
         self._assert_index_POST_response(data, 302)
 
-    def test_index_POST_message_length_greater_than_maximum(self):
+    def test_index_POST_message_greater_than_max(self):
         message = self.fake.pystr(min_chars=1001, max_chars=1001)
         data = self._get_mock_contact_data(message=message)
         self._assert_index_POST_response(data, 400)

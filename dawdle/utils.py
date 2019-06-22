@@ -110,6 +110,19 @@ def send_password_reset_email(user):
         return False
 
 
+def send_delete_account_email(user):
+    try:
+        recipients = [user.email]
+        msg = Message('Dawdle Account Deleted', recipients=recipients)
+        msg.body = 'Hello {},\n\nYour Dawdle account has been deleted. ' \
+            'We\'re sorry to see you go :( You can always come back!' \
+            .format(user.name)
+        mail.send(msg)
+        return True
+    except Exception:
+        return False
+
+
 def send_contact_email(subject, email, message):
     try:
         recipients = [current_app.config['CONTACT_EMAIL']]
