@@ -6,15 +6,21 @@ from mongoengine import (BooleanField,
                          DateTimeField,
                          Document,
                          EmailField,
+                         ListField,
                          ObjectIdField,
+                         PULL,
+                         ReferenceField,
                          StringField)
 from passlib.hash import sha256_crypt
+
+from dawdle.models.board import Board
 
 
 class User(Document, UserMixin):
 
     active = BooleanField(default=False)
     auth_id = ObjectIdField(default=ObjectId, unique=True)
+    boards = ListField(ReferenceField(Board, reverse_delete_rule=PULL))
     created = DateTimeField(default=datetime.utcnow)
     email = EmailField(required=True)
     initials = StringField(required=True, min_length=1, max_length=4)
@@ -42,3 +48,9 @@ class User(Document, UserMixin):
             return False
 
         return sha256_crypt.verify(password, self.password)
+
+    def delete(self, signal_kwargs=None, **write_concern):
+        for board in self.boards:
+            board.delete()
+
+        super().delete(signal_kwargs, **write_concern)

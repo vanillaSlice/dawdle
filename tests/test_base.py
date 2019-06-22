@@ -1,7 +1,9 @@
+from bson.objectid import ObjectId
 from faker import Faker
 from flask import url_for
 
 from dawdle import create_app
+from dawdle.models.board import Board
 from dawdle.models.user import User
 
 
@@ -39,9 +41,27 @@ class TestBase:
         return user.save()
 
     @classmethod
+    def create_boards(cls, owner_id, min_boards=1, max_boards=1):
+        num = cls.fake.pyint(min_boards, max_boards)
+        boards = []
+        for n in range(num):
+            boards.append(cls.create_board(owner_id=owner_id))
+        return boards
+
+    @classmethod
+    def create_board(cls, **kwargs):
+        board = Board()
+        board.name = kwargs.get(
+            'name',
+            cls.fake.pystr(min_chars=1, max_chars=256),
+        )
+        board.owner_id = kwargs.get('owner_id', ObjectId())
+        return board.save()
+
+    @classmethod
     def as_new_user(cls):
         password = cls.fake.password()
-        user = cls.create_user(active=True, password=password)
+        user = cls.create_user(password=password)
         cls.login(email=user.email, password=password)
         return user, password
 
@@ -60,6 +80,7 @@ class TestBase:
 
     @classmethod
     def clear_db(cls):
+        Board.objects.delete()
         User.objects.delete()
 
     def setup_method(self):

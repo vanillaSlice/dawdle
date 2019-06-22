@@ -2,7 +2,7 @@ from unittest import mock
 
 from flask import url_for
 
-from dawdle.models.user import User
+from dawdle.models.user import Board, User
 from tests.test_base import TestBase
 
 
@@ -459,39 +459,58 @@ class TestUser(TestBase):
 
     def test_settings_delete_account_POST_not_authenticated(self):
         self.logout()
-        data = self._get_mock_delete_account_data()
-        self._assert_settings_delete_account_POST_response(data, 302)
+        response = self.client.post(
+            url_for('user.settings_delete_account_POST'),
+        )
+        assert response.status_code == 302
 
     def test_settings_delete_account_POST_no_password(self):
         self.as_new_user()
         data = self._get_mock_delete_account_data()
         del data['password']
-        self._assert_settings_delete_account_POST_response(data, 400)
+        self._assert_settings_delete_account_POST_unsuccessful(data)
 
     def test_settings_delete_account_POST_incorrect_password(self):
         self.as_new_user()
         data = self._get_mock_delete_account_data(password='wrong')
-        self._assert_settings_delete_account_POST_response(data, 400)
+        self._assert_settings_delete_account_POST_unsuccessful(data)
 
     def test_settings_delete_account_POST_success(self):
         user, password = self.as_new_user()
         self.login(email=user.email, password=password)
         data = self._get_mock_delete_account_data(password=password)
-        self._assert_settings_delete_account_POST_response(data, 302)
+        self._assert_settings_delete_account_POST_successful(user, data)
+
+    def test_settings_delete_account_POST_with_boards(self):
+        user, password = self.as_new_user()
+        user.boards = self.create_boards(user.id, max_boards=4)
+        user.save()
+        self.login(email=user.email, password=password)
+        data = self._get_mock_delete_account_data(password=password)
+        self._assert_settings_delete_account_POST_successful(user, data)
 
     @mock.patch('dawdle.utils.mail')
     def test_settings_delete_account_POST_error_sending_email(self, mail_mock):
         mail_mock.send.side_effect = RuntimeError('some error')
         user, password = self.as_new_user()
         data = self._get_mock_delete_account_data(password=password)
-        self._assert_settings_delete_account_POST_response(data, 302)
+        self._assert_settings_delete_account_POST_successful(user, data)
 
     def _get_mock_delete_account_data(self, **kwargs):
         return {'password': kwargs.get('password', self.fake.password())}
 
-    def _assert_settings_delete_account_POST_response(self, data, status_code):
+    def _assert_settings_delete_account_POST_successful(self, user, data):
+        assert Board.objects(owner_id=user.id).count() == len(user.boards)
         response = self.client.post(
             url_for('user.settings_delete_account_POST'),
             data=data,
         )
-        assert response.status_code == status_code
+        assert response.status_code == 302
+        assert Board.objects(owner_id=user.id).count() == 0
+
+    def _assert_settings_delete_account_POST_unsuccessful(self, data):
+        response = self.client.post(
+            url_for('user.settings_delete_account_POST'),
+            data=data,
+        )
+        assert response.status_code == 400
