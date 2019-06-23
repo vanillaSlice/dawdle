@@ -96,6 +96,7 @@ def _register_blueprints(app):
 
 
 def _attach_error_handlers(app):
+    @app.errorhandler(400)
     @app.errorhandler(403)
     @app.errorhandler(404)
     @app.errorhandler(500)

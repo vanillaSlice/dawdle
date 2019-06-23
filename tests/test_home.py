@@ -11,15 +11,15 @@ class TestHome(TestBase):
 
     def test_index_GET_not_authenticated(self):
         self.logout()
-        self._assert_index_GET_ok(b'Welcome to Dawdle!')
+        self._assert_index_GET_ok('Welcome to Dawdle!')
 
-    def test_index_GET(self):
-        self._assert_index_GET_ok(b'Personal Boards')
+    def test_index_GET_authenticated(self):
+        self._assert_index_GET_ok('Personal Boards')
 
-    def _assert_index_GET_ok(self, text):
+    def _assert_index_GET_ok(self, expected_text):
         response = self.client.get(
             url_for('home.index_GET'),
             follow_redirects=True,
         )
         assert response.status_code == 200
-        assert text in response.data
+        assert expected_text.encode() in response.data
