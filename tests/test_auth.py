@@ -305,7 +305,7 @@ class TestAuth(TestBase):
         self._assert_login_POST_bad_request(data, 'Please enter a password')
 
     def test_login_POST_account_does_not_exist(self):
-        user = self.create_user(password='user password', active=True)
+        user = self.create_user(password='user password')
         user.delete()
         data = self._get_mock_login_data(
             email=user.email,
@@ -567,7 +567,7 @@ class TestAuth(TestBase):
         self._assert_reset_password_POST_not_found(token, data)
 
     def test_reset_password_POST_no_password(self):
-        user = self.create_user(active=True)
+        user = self.create_user()
         data = self._get_mock_reset_password_data()
         del data['password']
         self._assert_reset_password_POST_bad_request(
@@ -577,7 +577,7 @@ class TestAuth(TestBase):
         )
 
     def test_reset_password_POST_password_less_than_min(self):
-        user = self.create_user(active=True)
+        user = self.create_user()
         password = self.fake.pystr(min_chars=7, max_chars=7)
         data = self._get_mock_reset_password_data(
             password=password,
@@ -590,7 +590,7 @@ class TestAuth(TestBase):
         )
 
     def test_reset_password_POST_password_equal_to_min(self):
-        user = self.create_user(active=True)
+        user = self.create_user()
         password = self.fake.pystr(min_chars=8, max_chars=8)
         data = self._get_mock_reset_password_data(
             password=password,
@@ -599,7 +599,7 @@ class TestAuth(TestBase):
         self._assert_reset_password_POST_ok(user.id, user.auth_id, data)
 
     def test_reset_password_POST_password_and_confirmation_dont_match(self):
-        user = self.create_user(active=True)
+        user = self.create_user()
         password = 'password'
         confirmation = 'confirmation'
         data = self._get_mock_reset_password_data(
@@ -613,7 +613,7 @@ class TestAuth(TestBase):
         )
 
     def test_reset_password_POST_success(self):
-        user = self.create_user(active=True)
+        user = self.create_user()
         password = self.fake.password()
         data = self._get_mock_reset_password_data(
             password=password,

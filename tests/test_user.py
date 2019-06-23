@@ -14,14 +14,18 @@ class TestUser(TestBase):
 
     def test_boards_GET_not_authenticated(self):
         self.logout()
-        self._assert_boards_GET_response(302)
+        self._assert_boards_GET_ok('Log In to Dawdle')
 
-    def test_boards_GET(self):
-        self._assert_boards_GET_response(200)
+    def test_boards_GET_authenticated(self):
+        self._assert_boards_GET_ok('Personal Boards')
 
-    def _assert_boards_GET_response(self, status_code):
-        response = self.client.get(url_for('user.boards_GET'))
-        assert response.status_code == status_code
+    def _assert_boards_GET_ok(self, expected_text):
+        response = self.client.get(
+            url_for('user.boards_GET'),
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert expected_text.encode() in response.data
 
     #
     # settings_GET tests.
@@ -29,14 +33,18 @@ class TestUser(TestBase):
 
     def test_settings_GET_not_authenticated(self):
         self.logout()
-        self._assert_settings_GET_response(302)
+        self._assert_settings_GET_ok('Log In to Dawdle')
 
-    def test_settings_GET(self):
-        self._assert_settings_GET_response(302)
+    def test_settings_GET_authenticated(self):
+        self._assert_settings_GET_ok('Account Details | Dawdle')
 
-    def _assert_settings_GET_response(self, status_code):
-        response = self.client.get(url_for('user.settings_GET'))
-        assert response.status_code == status_code
+    def _assert_settings_GET_ok(self, expected_text):
+        response = self.client.get(
+            url_for('user.settings_GET'),
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert expected_text.encode() in response.data
 
     #
     # settings_account_details_GET tests.
@@ -44,50 +52,75 @@ class TestUser(TestBase):
 
     def test_settings_account_details_GET_not_authenticated(self):
         self.logout()
-        self._assert_settings_account_details_GET_response(302)
+        self._assert_settings_account_details_GET_ok('Log In to Dawdle')
 
-    def test_settings_account_details_GET(self):
-        self._assert_settings_account_details_GET_response(200)
+    def test_settings_account_details_GET_authenticated(self):
+        self._assert_settings_account_details_GET_ok(
+            'Account Details | Dawdle',
+        )
 
-    def _assert_settings_account_details_GET_response(self, status_code):
+    def _assert_settings_account_details_GET_ok(self, expected_text):
         response = self.client.get(
             url_for('user.settings_account_details_GET'),
+            follow_redirects=True,
         )
-        assert response.status_code == status_code
+        assert response.status_code == 200
+        assert expected_text.encode() in response.data
 
     #
     # settings_account_details_POST tests.
     #
 
+    def test_settings_account_details_POST_not_authenticated(self):
+        self.logout()
+        data = self._get_mock_account_details_data()
+        response = self._send_settings_account_details_POST_request(data)
+        assert response.status_code == 200
+        assert b'Log In to Dawdle' in response.data
+
     def test_settings_account_details_POST_name_equal_to_min(self):
+        user, password = self.as_new_user()
         name = self.fake.pystr(min_chars=1, max_chars=1)
         data = self._get_mock_account_details_data(name=name)
-        self._assert_settings_account_details_POST_successful(data)
+        self._assert_settings_account_details_POST_ok(user.id, data)
 
     def test_settings_account_details_POST_name_equal_to_max(self):
+        user, password = self.as_new_user()
         name = self.fake.pystr(min_chars=50, max_chars=50)
         data = self._get_mock_account_details_data(name=name)
-        self._assert_settings_account_details_POST_successful(data)
+        self._assert_settings_account_details_POST_ok(user.id, data)
 
     def test_settings_account_details_POST_name_greater_than_max(self):
+        user, password = self.as_new_user()
         name = self.fake.pystr(min_chars=51, max_chars=51)
         data = self._get_mock_account_details_data(name=name)
-        self._assert_settings_account_details_POST_unsuccessful(data)
+        self._assert_settings_account_details_POST_bad_request(
+            user.id,
+            data,
+            'Your name must be between 1 and 50 characters',
+        )
 
     def test_settings_account_details_POST_initials_equal_to_min(self):
+        user, password = self.as_new_user()
         initials = self.fake.pystr(min_chars=1, max_chars=1)
         data = self._get_mock_account_details_data(initials=initials)
-        self._assert_settings_account_details_POST_successful(data)
+        self._assert_settings_account_details_POST_ok(user.id, data)
 
     def test_settings_account_details_POST_initials_equal_to_max(self):
+        user, password = self.as_new_user()
         initials = self.fake.pystr(min_chars=4, max_chars=4)
         data = self._get_mock_account_details_data(initials=initials)
-        self._assert_settings_account_details_POST_successful(data)
+        self._assert_settings_account_details_POST_ok(user.id, data)
 
     def test_settings_account_details_POST_initials_greater_than_max(self):
+        user, password = self.as_new_user()
         initials = self.fake.pystr(min_chars=5, max_chars=5)
         data = self._get_mock_account_details_data(initials=initials)
-        self._assert_settings_account_details_POST_unsuccessful(data)
+        self._assert_settings_account_details_POST_bad_request(
+            user.id,
+            data,
+            'Your initials must be between 1 and 4 characters',
+        )
 
     def test_settings_account_details_POST_no_update(self):
         user, password = self.as_new_user()
@@ -95,11 +128,16 @@ class TestUser(TestBase):
             name=user.name,
             initials=user.initials,
         )
-        self._assert_settings_account_details_POST_no_update(user.id, data)
+        self._assert_settings_account_details_POST_ok(
+            user.id,
+            data,
+            updated=False,
+        )
 
     def test_settings_account_details_POST_success(self):
+        user, password = self.as_new_user()
         data = self._get_mock_account_details_data()
-        self._assert_settings_account_details_POST_successful(data)
+        self._assert_settings_account_details_POST_ok(user.id, data)
 
     def _get_mock_account_details_data(self, **kwargs):
         return {
@@ -110,38 +148,38 @@ class TestUser(TestBase):
             ),
         }
 
-    def _assert_settings_account_details_POST_successful(self, data):
-        user, password = self.as_new_user()
-        response = self.client.post(
+    def _send_settings_account_details_POST_request(self, data):
+        return self.client.post(
             url_for('user.settings_account_details_POST'),
             data=data,
+            follow_redirects=True,
         )
-        user = User.objects(id=user.id).first()
-        assert response.status_code == 302
-        assert user.initials == data['initials']
-        assert user.last_updated
-        assert user.name == data['name']
 
-    def _assert_settings_account_details_POST_unsuccessful(self, data):
-        user, password = self.as_new_user()
-        response = self.client.post(
-            url_for('user.settings_account_details_POST'),
-            data=data,
-        )
-        user = User.objects(id=user.id).first()
-        assert response.status_code == 400
-        assert not user.last_updated
-
-    def _assert_settings_account_details_POST_no_update(self, user_id, data):
-        response = self.client.post(
-            url_for('user.settings_account_details_POST'),
-            data=data,
-        )
+    def _assert_settings_account_details_POST_ok(self,
+                                                 user_id,
+                                                 data,
+                                                 updated=True):
+        response = self._send_settings_account_details_POST_request(data)
         user = User.objects(id=user_id).first()
-        assert response.status_code == 302
+        assert response.status_code == 200
         assert user.initials == data['initials']
-        assert not user.last_updated
         assert user.name == data['name']
+        if updated:
+            assert b'Your account details have been updated' in response.data
+            assert user.last_updated
+        else:
+            assert b'No update needed' in response.data
+            assert not user.last_updated
+
+    def _assert_settings_account_details_POST_bad_request(self,
+                                                          user_id,
+                                                          data,
+                                                          expected_text):
+        response = self._send_settings_account_details_POST_request(data)
+        user = User.objects(id=user_id).first()
+        assert response.status_code == 400
+        assert expected_text.encode() in response.data
+        assert not user.last_updated
 
     #
     # settings_update_email_GET tests.
@@ -149,14 +187,18 @@ class TestUser(TestBase):
 
     def test_settings_update_email_GET_not_authenticated(self):
         self.logout()
-        self._assert_settings_update_email_GET_response(302)
+        self._assert_settings_update_email_GET_ok('Log In to Dawdle')
 
-    def test_settings_update_email_GET(self):
-        self._assert_settings_update_email_GET_response(200)
+    def test_settings_update_email_GET_authenticated(self):
+        self._assert_settings_update_email_GET_ok('Update Email | Dawdle')
 
-    def _assert_settings_update_email_GET_response(self, status_code):
-        response = self.client.get(url_for('user.settings_update_email_GET'))
-        assert response.status_code == status_code
+    def _assert_settings_update_email_GET_ok(self, expected_text):
+        response = self.client.get(
+            url_for('user.settings_update_email_GET'),
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert expected_text.encode() in response.data
 
     #
     # settings_update_email_POST tests.
@@ -164,58 +206,60 @@ class TestUser(TestBase):
 
     def test_settings_update_email_POST_not_authenticated(self):
         self.logout()
-        response = self.client.post(url_for('user.settings_update_email_POST'))
-        assert response.status_code == 302
+        data = self._get_mock_update_email_data()
+        response = self._send_settings_update_email_POST_request(data)
+        assert response.status_code == 200
+        assert b'Log In to Dawdle' in response.data
 
     def test_settings_update_email_POST_invalid_email(self):
         user, password = self.as_new_user()
         email = self.fake.sentence()
         data = self._get_mock_update_email_data(email=email, password=password)
-        self._assert_settings_update_email_POST_unsuccessful(
+        self._assert_settings_update_email_POST_bad_request(
             user.id,
             user.auth_id,
             data,
+            'Please enter a valid email',
         )
 
     def test_settings_update_email_POST_incorrect_password(self):
         user, password = self.as_new_user()
         email = self.fake.email()
         data = self._get_mock_update_email_data(email=email, password='wrong')
-        self._assert_settings_update_email_POST_unsuccessful(
+        self._assert_settings_update_email_POST_bad_request(
             user.id,
             user.auth_id,
             data,
+            'Incorrect password',
         )
 
     def test_settings_update_email_POST_account_already_exists(self):
         user, password = self.as_new_user()
         email = self.user.email
         data = self._get_mock_update_email_data(email=email, password=password)
-        self._assert_settings_update_email_POST_unsuccessful(
+        self._assert_settings_update_email_POST_bad_request(
             user.id,
             user.auth_id,
             data,
+            'There is already an account with this email',
         )
 
     def test_settings_update_email_POST_no_update(self):
         user, password = self.as_new_user()
         email = user.email
         data = self._get_mock_update_email_data(email=email, password=password)
-        self._assert_settings_update_email_POST_no_update(
+        self._assert_settings_update_email_POST_ok(
             user.id,
             user.auth_id,
             data,
+            updated=False,
         )
 
     def test_settings_update_email_POST_success(self):
         user, password = self.as_new_user()
         email = self.fake.email()
         data = self._get_mock_update_email_data(email=email, password=password)
-        self._assert_settings_update_email_POST_successful(
-            user.id,
-            user.auth_id,
-            data,
-        )
+        self._assert_settings_update_email_POST_ok(user.id, user.auth_id, data)
 
     def _get_mock_update_email_data(self, **kwargs):
         return {
@@ -223,49 +267,45 @@ class TestUser(TestBase):
             'password': kwargs.get('password', self.fake.password()),
         }
 
-    def _assert_settings_update_email_POST_successful(self,
-                                                      user_id,
-                                                      auth_id,
-                                                      data):
-        response = self.client.post(
-            url_for('user.settings_update_email_POST'),
-            data=data,
-        )
-        user = User.objects(id=user_id).first()
-        assert response.status_code == 302
-        assert not user.is_active
-        assert user.auth_id != auth_id
-        assert user.email == data['email']
-        assert user.last_updated
 
-    def _assert_settings_update_email_POST_unsuccessful(self,
-                                                        user_id,
-                                                        auth_id,
-                                                        data):
-        response = self.client.post(
+    def _send_settings_update_email_POST_request(self, data):
+        return self.client.post(
             url_for('user.settings_update_email_POST'),
             data=data,
+            follow_redirects=True,
         )
+
+    def _assert_settings_update_email_POST_ok(self,
+                                              user_id,
+                                              auth_id,
+                                              data,
+                                              updated=True):
+        response = self._send_settings_update_email_POST_request(data)
+        user = User.objects(id=user_id).first()
+        assert response.status_code == 200
+        assert user.email == data['email']
+        if updated:
+            assert not user.is_active
+            assert user.auth_id != auth_id
+            assert user.last_updated
+        else:
+            assert user.is_active
+            assert user.auth_id == auth_id
+            assert not user.last_updated
+
+
+    def _assert_settings_update_email_POST_bad_request(self,
+                                                       user_id,
+                                                       auth_id,
+                                                       data,
+                                                       expected_text):
+        response = self._send_settings_update_email_POST_request(data)
         user = User.objects(id=user_id).first()
         assert response.status_code == 400
+        assert expected_text.encode() in response.data
         assert user.is_active
         assert user.auth_id == auth_id
         assert user.email != data['email']
-        assert not user.last_updated
-
-    def _assert_settings_update_email_POST_no_update(self,
-                                                     user_id,
-                                                     auth_id,
-                                                     data):
-        response = self.client.post(
-            url_for('user.settings_update_email_POST'),
-            data=data,
-        )
-        user = User.objects(id=user_id).first()
-        assert response.status_code == 302
-        assert user.is_active
-        assert user.auth_id == auth_id
-        assert user.email == data['email']
         assert not user.last_updated
 
     #
@@ -274,16 +314,21 @@ class TestUser(TestBase):
 
     def test_settings_update_password_GET_not_authenticated(self):
         self.logout()
-        self._assert_settings_update_password_GET_response(302)
+        self._assert_settings_update_password_GET_ok('Log In to Dawdle')
 
-    def test_settings_update_password_GET(self):
-        self._assert_settings_update_password_GET_response(200)
+    def test_settings_update_password_GET_authenticated(self):
+        self._assert_settings_update_password_GET_ok(
+            'Update Password | Dawdle',
+        )
 
-    def _assert_settings_update_password_GET_response(self, status_code):
+    def _assert_settings_update_password_GET_ok(self, expected_text):
         response = self.client.get(
             url_for('user.settings_update_password_GET'),
+            follow_redirects=True,
         )
-        assert response.status_code == status_code
+        assert response.status_code == 200
+        assert expected_text.encode() in response.data
+
 
     #
     # settings_update_password_POST tests.
@@ -444,14 +489,19 @@ class TestUser(TestBase):
 
     def test_settings_delete_account_GET_not_authenticated(self):
         self.logout()
-        self._assert_settings_delete_account_GET_response(302)
+        self._assert_settings_delete_account_GET_ok('Log In to Dawdle')
 
-    def test_settings_delete_account_GET(self):
-        self._assert_settings_delete_account_GET_response(200)
+    def test_settings_delete_account_GET_authenticated(self):
+        self._assert_settings_delete_account_GET_ok('Delete Account | Dawdle')
 
-    def _assert_settings_delete_account_GET_response(self, status_code):
-        response = self.client.get(url_for('user.settings_delete_account_GET'))
-        assert response.status_code == status_code
+    def _assert_settings_delete_account_GET_ok(self, expected_text):
+        response = self.client.get(
+            url_for('user.settings_delete_account_GET'),
+            follow_redirects=True,
+        )
+        assert response.status_code == 200
+        assert expected_text.encode() in response.data
+
 
     #
     # settings_delete_account_POST tests.
