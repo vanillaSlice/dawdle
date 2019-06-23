@@ -390,41 +390,65 @@ class TestAuth(TestBase):
     # reset_password_request_GET tests.
     #
 
-    def test_reset_password_request_GET(self):
+    def test_reset_password_request_GET_not_authenticated(self):
+        self.logout()
+        self._assert_reset_password_request_GET_ok()
+
+    def test_reset_password_request_GET_authenticated(self):
+        self._assert_reset_password_request_GET_ok()
+
+    def _assert_reset_password_request_GET_ok(self):
         response = self.client.get(url_for('auth.reset_password_request_GET'))
         assert response.status_code == 200
+        assert b'Reset Your Dawdle Password' in response.data
+        assert self.logged_in == (self.user.email.encode() in response.data)
 
     #
     # reset_password_request_POST tests.
     #
 
-    def test_reset_password_request_POST_no_email(self):
+    def test_reset_password_request_POST_no_email_not_authenticated(self):
+        self.logout()
         data = self._get_mock_reset_password_request_data()
         del data['email']
-        self._assert_reset_password_request_POST_response(data, 400)
+        self._assert_reset_password_request_POST_bad_request(
+            data,
+            'Please enter an email',
+        )
+
+    def test_reset_password_request_POST_no_email_authenticated(self):
+        data = self._get_mock_reset_password_request_data()
+        del data['email']
+        self._assert_reset_password_request_POST_ok(data)
 
     def test_reset_password_request_POST_invalid_email(self):
         email = self.fake.sentence()
         data = self._get_mock_reset_password_request_data(email=email)
-        self._assert_reset_password_request_POST_response(data, 400)
+        self._assert_reset_password_request_POST_bad_request(
+            data,
+            'Please enter a valid email',
+        )
 
     def test_reset_password_request_POST_account_does_not_exist(self):
         user = self.create_user(active=False)
         user.delete()
         data = self._get_mock_reset_password_request_data(email=user.email)
-        self._assert_reset_password_request_POST_response(data, 400)
+        self._assert_reset_password_request_POST_bad_request(
+            data,
+            'There is no account with this email',
+        )
 
     @mock.patch('dawdle.utils.mail')
     def test_reset_password_request_POST_error_sending_email(self, mail_mock):
         mail_mock.send.side_effect = RuntimeError('some error')
         user = self.create_user(active=False)
         data = self._get_mock_reset_password_request_data(email=user.email)
-        self._assert_reset_password_request_POST_response(data, 500)
+        self._assert_reset_password_request_POST_internal_server_error(data)
 
     def test_reset_password_request_POST_success(self):
         user = self.create_user(active=False)
         data = self._get_mock_reset_password_request_data(email=user.email)
-        self._assert_reset_password_request_POST_response(data, 200)
+        self._assert_reset_password_request_POST_ok(data)
 
     def _get_mock_reset_password_request_data(self, **kwargs):
         return {'email': kwargs.get('email', self.fake.email())}
@@ -437,21 +461,45 @@ class TestAuth(TestBase):
         )
         assert response.status_code == status_code
 
+    def _send_reset_password_request_POST_request(self, data):
+        return self.client.post(
+            url_for('auth.reset_password_request_POST'),
+            data=data,
+            follow_redirects=True,
+        )
+
+    def _assert_reset_password_request_POST_ok(self, data):
+        response = self._send_reset_password_request_POST_request(data)
+        assert response.status_code == 200
+        assert b'A password reset email has been sent' in response.data
+
+    def _assert_reset_password_request_POST_bad_request(self,
+                                                        data,
+                                                        expected_text):
+        response = self._send_reset_password_request_POST_request(data)
+        assert response.status_code == 400
+        assert expected_text.encode() in response.data
+
+    def _assert_reset_password_request_POST_internal_server_error(self, data):
+        response = self._send_reset_password_request_POST_request(data)
+        assert response.status_code == 500
+        assert b'Could not send a password reset email' in response.data
+
     #
     # reset_password_GET tests.
     #
 
     def test_reset_password_GET(self):
         token = self._get_reset_password_token(auth_id=str(self.user.auth_id))
-        self._assert_reset_password_GET_response(token, 200)
+        self._assert_reset_password_GET_ok(token)
 
     def test_reset_password_GET_invalid_token(self):
         token = 'invalid token'
-        self._assert_reset_password_GET_response(token, 404)
+        self._assert_reset_password_GET_not_found(token)
 
     def test_reset_password_GET_invalid_auth_id(self):
         token = self._get_reset_password_token('invalid auth id')
-        self._assert_reset_password_GET_response(token, 404)
+        self._assert_reset_password_GET_not_found(token)
 
     def test_reset_password_GET_expired_token(self):
         token = self._get_reset_password_token(
@@ -459,13 +507,13 @@ class TestAuth(TestBase):
             expires_in=1,
         )
         time.sleep(2)
-        self._assert_reset_password_GET_response(token, 404)
+        self._assert_reset_password_GET_not_found(token)
 
     def test_reset_password_GET_account_does_not_exist(self):
         user = self.create_user(active=False)
         user.delete()
         token = self._get_reset_password_token(str(user.auth_id))
-        self._assert_reset_password_GET_response(token, 404)
+        self._assert_reset_password_GET_not_found(token)
 
     def _get_reset_password_token(self, auth_id, expires_in=3600):
         return TimedJSONWebSignatureSerializer(
@@ -473,12 +521,20 @@ class TestAuth(TestBase):
             expires_in,
         ).dumps(auth_id).decode('utf-8')
 
-    def _assert_reset_password_GET_response(self, token, status_code):
-        response = self.client.get(url_for(
-            'auth.reset_password_GET',
-            token=token,
-        ))
-        assert response.status_code == status_code
+    def _send_reset_password_GET_request(self, token):
+        return self.client.get(
+            url_for('auth.reset_password_GET', token=token),
+        )
+
+    def _assert_reset_password_GET_ok(self, token):
+        response = self._send_reset_password_GET_request(token)
+        assert response.status_code == 200
+        assert b'Reset Your Dawdle Password' in response.data
+
+    def _assert_reset_password_GET_not_found(self, token):
+        response = self._send_reset_password_GET_request(token)
+        assert response.status_code == 404
+        assert b'Not Found' in response.data
 
     #
     # reset_password_POST tests.
@@ -487,12 +543,12 @@ class TestAuth(TestBase):
     def test_reset_password_POST_invalid_token(self):
         data = self._get_mock_reset_password_data()
         token = 'invalid token'
-        self._assert_reset_password_POST_bad_token(token, data)
+        self._assert_reset_password_POST_not_found(token, data)
 
     def test_reset_password_POST_invalid_auth_id(self):
         data = self._get_mock_reset_password_data()
         token = self._get_reset_password_token('invalid auth id')
-        self._assert_reset_password_POST_bad_token(token, data)
+        self._assert_reset_password_POST_not_found(token, data)
 
     def test_reset_password_POST_expired_token(self):
         data = self._get_mock_reset_password_data()
@@ -501,20 +557,24 @@ class TestAuth(TestBase):
             expires_in=1,
         )
         time.sleep(2)
-        self._assert_reset_password_POST_bad_token(token, data)
+        self._assert_reset_password_POST_not_found(token, data)
 
     def test_reset_password_POST_account_does_not_exist(self):
         data = self._get_mock_reset_password_data()
         user = self.create_user(active=False)
         user.delete()
         token = self._get_reset_password_token(str(user.auth_id))
-        self._assert_reset_password_POST_bad_token(token, data)
+        self._assert_reset_password_POST_not_found(token, data)
 
     def test_reset_password_POST_no_password(self):
         user = self.create_user(active=True)
         data = self._get_mock_reset_password_data()
         del data['password']
-        self._assert_reset_password_POST_unsuccessful(user.auth_id, data)
+        self._assert_reset_password_POST_bad_request(
+            user.auth_id,
+            data,
+            'Please enter a password',
+        )
 
     def test_reset_password_POST_password_less_than_min(self):
         user = self.create_user(active=True)
@@ -523,7 +583,11 @@ class TestAuth(TestBase):
             password=password,
             confirmation=password,
         )
-        self._assert_reset_password_POST_unsuccessful(user.auth_id, data)
+        self._assert_reset_password_POST_bad_request(
+            user.auth_id,
+            data,
+            'Your password must be at least 8 characters',
+        )
 
     def test_reset_password_POST_password_equal_to_min(self):
         user = self.create_user(active=True)
@@ -532,11 +596,7 @@ class TestAuth(TestBase):
             password=password,
             confirmation=password,
         )
-        self._assert_reset_password_POST_successful(
-            user.id,
-            user.auth_id,
-            data,
-        )
+        self._assert_reset_password_POST_ok(user.id, user.auth_id, data)
 
     def test_reset_password_POST_password_and_confirmation_dont_match(self):
         user = self.create_user(active=True)
@@ -546,7 +606,11 @@ class TestAuth(TestBase):
             password=password,
             confirmation=confirmation,
         )
-        self._assert_reset_password_POST_unsuccessful(user.auth_id, data)
+        self._assert_reset_password_POST_bad_request(
+            user.auth_id,
+            data,
+            'Password and confirmation must match',
+        )
 
     def test_reset_password_POST_success(self):
         user = self.create_user(active=True)
@@ -555,11 +619,7 @@ class TestAuth(TestBase):
             password=password,
             confirmation=password,
         )
-        self._assert_reset_password_POST_successful(
-            user.id,
-            user.auth_id,
-            data,
-        )
+        self._assert_reset_password_POST_ok(user.id, user.auth_id, data)
 
     def _get_mock_reset_password_data(self, **kwargs):
         return {
@@ -567,32 +627,36 @@ class TestAuth(TestBase):
             'confirmation': kwargs.get('confirmation', self.fake.password()),
         }
 
-    def _assert_reset_password_POST_successful(self, user_id, auth_id, data):
-        token = self._get_reset_password_token(auth_id=str(auth_id))
-        response = self.client.post(
+    def _send_reset_password_POST_request(self, data, token):
+        return self.client.post(
             url_for('auth.reset_password_POST', token=token),
             data=data,
+            follow_redirects=True,
         )
+
+    def _assert_reset_password_POST_ok(self, user_id, auth_id, data):
+        token = self._get_reset_password_token(auth_id=str(auth_id))
+        response = self._send_reset_password_POST_request(data, token)
         user = User.objects(id=user_id).first()
-        assert response.status_code == 302
+        assert response.status_code == 200
+        assert b'Your password has been reset' in response.data
         assert user.auth_id != auth_id
         assert user.last_updated
         assert user.verify_password(data['password'])
 
-    def _assert_reset_password_POST_unsuccessful(self, auth_id, data):
+    def _assert_reset_password_POST_bad_request(self,
+                                                auth_id,
+                                                data,
+                                                expected_text):
         token = self._get_reset_password_token(auth_id=str(auth_id))
-        response = self.client.post(
-            url_for('auth.reset_password_POST', token=token),
-            data=data,
-        )
+        response = self._send_reset_password_POST_request(data, token)
         user = User.objects(auth_id=auth_id).first()
         assert response.status_code == 400
+        assert expected_text.encode() in response.data
         assert not user.last_updated
         assert not user.verify_password(data.get('password'))
 
-    def _assert_reset_password_POST_bad_token(self, token, data):
-        response = self.client.post(
-            url_for('auth.reset_password_POST', token=token),
-            data=data,
-        )
+    def _assert_reset_password_POST_not_found(self, token, data):
+        response = self._send_reset_password_POST_request(data, token)
         assert response.status_code == 404
+        assert b'Not Found' in response.data
