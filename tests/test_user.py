@@ -267,7 +267,6 @@ class TestUser(TestBase):
             'password': kwargs.get('password', self.fake.password()),
         }
 
-
     def _send_settings_update_email_POST_request(self, data):
         return self.client.post(
             url_for('user.settings_update_email_POST'),
@@ -285,14 +284,15 @@ class TestUser(TestBase):
         assert response.status_code == 200
         assert user.email == data['email']
         if updated:
+            assert b'A verification email has been sent' in response.data
             assert not user.is_active
             assert user.auth_id != auth_id
             assert user.last_updated
         else:
+            assert b'No update needed' in response.data
             assert user.is_active
             assert user.auth_id == auth_id
             assert not user.last_updated
-
 
     def _assert_settings_update_email_POST_bad_request(self,
                                                        user_id,
@@ -329,17 +329,16 @@ class TestUser(TestBase):
         assert response.status_code == 200
         assert expected_text.encode() in response.data
 
-
     #
     # settings_update_password_POST tests.
     #
 
     def test_settings_update_password_POST_not_authenticated(self):
         self.logout()
-        response = self.client.post(
-            url_for('user.settings_update_password_POST'),
-        )
-        assert response.status_code == 302
+        data = self._get_mock_update_password_data()
+        response = self._send_settings_update_password_POST_request(data)
+        assert response.status_code == 200
+        assert b'Log In to Dawdle' in response.data
 
     def test_settings_update_password_POST_incorrect_current_password(self):
         user, password = self.as_new_user()
@@ -351,9 +350,10 @@ class TestUser(TestBase):
             new_password=new_password,
             confirmation=confirmation,
         )
-        self._assert_settings_update_password_POST_unsuccessful(
+        self._assert_settings_update_password_POST_bad_request(
             user.auth_id,
             data,
+            'Incorrect current password',
         )
 
     def test_settings_update_password_POST_new_password_less_than_min(self):
@@ -366,9 +366,10 @@ class TestUser(TestBase):
             new_password=new_password,
             confirmation=confirmation,
         )
-        self._assert_settings_update_password_POST_unsuccessful(
+        self._assert_settings_update_password_POST_bad_request(
             user.auth_id,
             data,
+            'Your new password must be at least 8 characters',
         )
 
     def test_settings_update_password_POST_new_password_equal_to_min(self):
@@ -381,7 +382,7 @@ class TestUser(TestBase):
             new_password=new_password,
             confirmation=confirmation,
         )
-        self._assert_settings_update_password_POST_successful(
+        self._assert_settings_update_password_POST_ok(
             user.id,
             user.auth_id,
             data,
@@ -397,9 +398,10 @@ class TestUser(TestBase):
             new_password=new_password,
             confirmation=confirmation,
         )
-        self._assert_settings_update_password_POST_unsuccessful(
+        self._assert_settings_update_password_POST_bad_request(
             user.auth_id,
             data,
+            'New password and confirmation must match',
         )
 
     def test_settings_update_password_POST_no_update(self):
@@ -412,10 +414,11 @@ class TestUser(TestBase):
             new_password=new_password,
             confirmation=confirmation,
         )
-        self._assert_settings_update_password_POST_no_update(
+        self._assert_settings_update_password_POST_ok(
             user.id,
             user.auth_id,
             data,
+            updated=False,
         )
 
     def test_settings_update_password_POST_success(self):
@@ -428,7 +431,7 @@ class TestUser(TestBase):
             new_password=new_password,
             confirmation=confirmation,
         )
-        self._assert_settings_update_password_POST_successful(
+        self._assert_settings_update_password_POST_ok(
             user.id,
             user.auth_id,
             data,
@@ -444,44 +447,40 @@ class TestUser(TestBase):
             'confirmation': kwargs.get('confirmation', self.fake.password()),
         }
 
-    def _assert_settings_update_password_POST_successful(self,
-                                                         user_id,
-                                                         auth_id,
-                                                         data):
-        response = self.client.post(
+    def _send_settings_update_password_POST_request(self, data):
+        return self.client.post(
             url_for('user.settings_update_password_POST'),
             data=data,
+            follow_redirects=True,
         )
-        user = User.objects(id=user_id).first()
-        assert response.status_code == 302
-        assert user.auth_id != auth_id
-        assert user.last_updated
-        assert user.verify_password(data['new_password'])
 
-    def _assert_settings_update_password_POST_unsuccessful(self,
-                                                           auth_id,
-                                                           data):
-        response = self.client.post(
-            url_for('user.settings_update_password_POST'),
-            data=data,
-        )
+    def _assert_settings_update_password_POST_ok(self,
+                                                 user_id,
+                                                 auth_id,
+                                                 data,
+                                                 updated=True):
+        response = self._send_settings_update_password_POST_request(data)
+        user = User.objects(id=user_id).first()
+        assert response.status_code == 200
+        assert user.verify_password(data['new_password'])
+        if updated:
+            assert b'Your password has been updated' in response.data
+            assert user.auth_id != auth_id
+            assert user.last_updated
+        else:
+            assert b'No update needed' in response.data
+            assert user.auth_id == auth_id
+            assert not user.last_updated
+
+    def _assert_settings_update_password_POST_bad_request(self,
+                                                          auth_id,
+                                                          data,
+                                                          expected_text):
+        response = self._send_settings_update_password_POST_request(data)
         user = User.objects(auth_id=auth_id).first()
         assert response.status_code == 400
+        assert expected_text.encode() in response.data
         assert not user.last_updated
-
-    def _assert_settings_update_password_POST_no_update(self,
-                                                        user_id,
-                                                        auth_id,
-                                                        data):
-        response = self.client.post(
-            url_for('user.settings_update_password_POST'),
-            data=data,
-        )
-        user = User.objects(id=user_id).first()
-        assert response.status_code == 302
-        assert user.auth_id == auth_id
-        assert not user.last_updated
-        assert user.verify_password(data['current_password'])
 
     #
     # settings_delete_account_GET tests.
@@ -502,34 +501,39 @@ class TestUser(TestBase):
         assert response.status_code == 200
         assert expected_text.encode() in response.data
 
-
     #
     # settings_delete_account_POST tests.
     #
 
     def test_settings_delete_account_POST_not_authenticated(self):
         self.logout()
-        response = self.client.post(
-            url_for('user.settings_delete_account_POST'),
-        )
-        assert response.status_code == 302
+        data = self._get_mock_delete_account_data()
+        response = self._send_settings_delete_account_POST_request(data)
+        assert response.status_code == 200
+        assert b'Log In to Dawdle' in response.data
 
     def test_settings_delete_account_POST_no_password(self):
         self.as_new_user()
         data = self._get_mock_delete_account_data()
         del data['password']
-        self._assert_settings_delete_account_POST_unsuccessful(data)
+        self._assert_settings_delete_account_POST_bad_request(
+            data,
+            'Please enter your password',
+        )
 
     def test_settings_delete_account_POST_incorrect_password(self):
         self.as_new_user()
         data = self._get_mock_delete_account_data(password='wrong')
-        self._assert_settings_delete_account_POST_unsuccessful(data)
+        self._assert_settings_delete_account_POST_bad_request(
+            data,
+            'Incorrect password',
+        )
 
     def test_settings_delete_account_POST_success(self):
         user, password = self.as_new_user()
         self.login(email=user.email, password=password)
         data = self._get_mock_delete_account_data(password=password)
-        self._assert_settings_delete_account_POST_successful(user, data)
+        self._assert_settings_delete_account_POST_ok(user, data)
 
     def test_settings_delete_account_POST_with_boards(self):
         user, password = self.as_new_user()
@@ -537,30 +541,35 @@ class TestUser(TestBase):
         user.save()
         self.login(email=user.email, password=password)
         data = self._get_mock_delete_account_data(password=password)
-        self._assert_settings_delete_account_POST_successful(user, data)
+        self._assert_settings_delete_account_POST_ok(user, data)
 
     @mock.patch('dawdle.utils.mail')
     def test_settings_delete_account_POST_error_sending_email(self, mail_mock):
         mail_mock.send.side_effect = RuntimeError('some error')
         user, password = self.as_new_user()
         data = self._get_mock_delete_account_data(password=password)
-        self._assert_settings_delete_account_POST_successful(user, data)
+        self._assert_settings_delete_account_POST_ok(user, data)
 
     def _get_mock_delete_account_data(self, **kwargs):
         return {'password': kwargs.get('password', self.fake.password())}
 
-    def _assert_settings_delete_account_POST_successful(self, user, data):
-        assert Board.objects(owner_id=user.id).count() == len(user.boards)
-        response = self.client.post(
+    def _send_settings_delete_account_POST_request(self, data):
+        return self.client.post(
             url_for('user.settings_delete_account_POST'),
             data=data,
+            follow_redirects=True,
         )
-        assert response.status_code == 302
+
+    def _assert_settings_delete_account_POST_ok(self, user, data):
+        assert Board.objects(owner_id=user.id).count() == len(user.boards)
+        response = self._send_settings_delete_account_POST_request(data)
+        assert response.status_code == 200
+        assert b'Your account has been deleted' in response.data
         assert Board.objects(owner_id=user.id).count() == 0
 
-    def _assert_settings_delete_account_POST_unsuccessful(self, data):
-        response = self.client.post(
-            url_for('user.settings_delete_account_POST'),
-            data=data,
-        )
+    def _assert_settings_delete_account_POST_bad_request(self,
+                                                         data,
+                                                         expected_text):
+        response = self._send_settings_delete_account_POST_request(data)
         assert response.status_code == 400
+        assert expected_text.encode() in response.data
