@@ -1,5 +1,6 @@
 .header .user-link {
   background-color: transparent !important;
+  cursor: initial;
 }
 
 .header .user-icon {
@@ -8,4 +9,10 @@
   padding-left: 1em;
   padding-right: 1em;
   padding-top: calc(0.375em - 1px);
+}
+
+@media (min-width: 1024px) {
+  .header .user-link {
+    cursor: pointer;
+  }
 }

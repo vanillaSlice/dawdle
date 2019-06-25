@@ -23,11 +23,11 @@
       <div class="navbar-end">
         {% if current_user.is_authenticated %}
           <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link user-link">
+            <div class="navbar-link user-link">
               <span class="user-icon has-background-primary has-text-white">
                 {{ current_user.initials }}
               </span>
-            </a>
+            </div>
             <div class="navbar-dropdown is-right">
               <a class="navbar-item" href="{{ url_for('user.settings_GET') }}">
                 Settings
