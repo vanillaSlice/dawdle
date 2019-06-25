@@ -79,9 +79,9 @@ def settings_update_email_POST():
         flash('No update needed.', 'info')
         return redirect(url_for('user.settings_update_email_POST'))
 
-    form.populate_obj(current_user)
     current_user.active = False
     current_user.auth_id = ObjectId()
+    current_user.email = form.email.data
     current_user.last_updated = datetime.utcnow()
     current_user.save()
 
