@@ -1,12 +1,6 @@
 {% extends 'shared/base.html' %}
 
-{% block styles %}
-  {% assets 'error_css' %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet">
-  {% endassets %}
-{% endblock %}
-
-{% set container_classes='error hero is-danger is-fullheight-with-navbar' %}
+{% set container_classes='error hero is-danger has-background-pattern-danger is-fullheight-with-navbar' %}
 
 {% block content %}
   <div class="hero-body">
