@@ -7,9 +7,3 @@
 .home .notification.is-success {
   background-color: #209cee;
 }
-
-.home .text {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}

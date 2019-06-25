@@ -101,7 +101,10 @@ def _attach_error_handlers(app):
     @app.errorhandler(404)
     @app.errorhandler(500)
     def handle_error(error):
-        return render_template('error/{}.html'.format(error.code)), error.code
+        return render_template(
+            'error/{}.html'.format(error.code),
+            error=error,
+        ), error.code
 
 
 def _disable_strict_trailing_slashes(app):
