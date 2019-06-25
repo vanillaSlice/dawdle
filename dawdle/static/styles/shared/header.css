@@ -1,3 +1,7 @@
+.header .user-link {
+  background-color: transparent !important;
+}
+
 .header .user-icon {
   border-radius: 290486px;
   padding-bottom: calc(0.375em - 1px);

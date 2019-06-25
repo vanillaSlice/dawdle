@@ -15,7 +15,7 @@
 {% block content %}
   <div class="hero-body">
     <div class="container">
-      <div class="column is-12-tablet is-6-desktop is-offset-3-desktop is-paddingless">
+      <div class="column is-10-tablet is-offset-1-tablet is-6-desktop is-offset-3-desktop is-paddingless">
         <div class="box">
           {{ render_form_errors(form) }}
           <h1 class="title">
@@ -34,13 +34,13 @@
                                  type='text',
                                  minlength='1',
                                  maxlength='256',
-                                 placeholder='e.g. A subject this is',
+                                 placeholder='e.g. The Force',
                                  left_icon_classes='fas fa-pencil-alt') }}
             {{ render_form_field(form.message,
                                  rows='10',
                                  minlength='1',
                                  maxlength='1000',
-                                 placeholder='e.g. A message this is',
+                                 placeholder='e.g. May the Force be with you.',
                                  left_icon_classes='fas fa-pencil-alt') }}
             <div class="field content">
               <div class="control">
