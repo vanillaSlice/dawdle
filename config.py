@@ -5,7 +5,7 @@ class Default:
     MAIL_DEFAULT_SENDER = None
     MAIL_PASSWORD = None
     MAIL_PORT = 587
-    MAIL_SERVER = 'smtp.googlemail.com'
+    MAIL_SERVER = 'smtp.gmail.com'
     MAIL_SUPPRESS_SEND = False
     MAIL_USE_SSL = False
     MAIL_USE_TLS = True
@@ -28,7 +28,7 @@ class Test:
     MAIL_DEFAULT_SENDER = 'dawdle'
     MAIL_PASSWORD = None
     MAIL_PORT = 587
-    MAIL_SERVER = 'smtp.googlemail.com'
+    MAIL_SERVER = 'smtp.gmail.com'
     MAIL_SUPPRESS_SEND = True
     MAIL_USE_SSL = False
     MAIL_USE_TLS = True

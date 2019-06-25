@@ -24,7 +24,7 @@ The following properties can be configured:
 | `MAIL_DEFAULT_SENDER`   | The default address to send emails from.                         | `None`                |
 | `MAIL_PASSWORD`         | The mail sender's password.                                      | `None`                |
 | `MAIL_PORT`             | The mail server port.                                            | `587`                 |
-| `MAIL_SERVER`           | The mail server host name.                                       | `smtp.googlemail.com` |
+| `MAIL_SERVER`           | The mail server host name.                                       | `smtp.gmail.com`      |
 | `MAIL_SUPPRESS_SEND`    | If mail sending should be suppressed.                            | `False`               |
 | `MAIL_USE_SSL`          | If using mail SSL.                                               | `False`               |
 | `MAIL_USE_TLS`          | If using mail TLS.                                               | `True`                |
@@ -58,7 +58,7 @@ You don't need your own mail server for this. You can use a Gmail account with t
 MAIL_DEFAULT_SENDER = <Gmail address>
 MAIL_PASSWORD = <Gmail password>
 MAIL_PORT = 587
-MAIL_SERVER = 'smtp.googlemail.com'
+MAIL_SERVER = 'smtp.gmail.com'
 MAIL_SUPPRESS_SEND = False
 MAIL_USE_SSL = False
 MAIL_USE_TLS = True
