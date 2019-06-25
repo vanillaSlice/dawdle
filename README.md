@@ -23,11 +23,11 @@ The following properties can be configured:
 | `ENV`                   | Environment the app is running in.                               | `production`          |
 | `MAIL_DEFAULT_SENDER`   | The default address to send emails from.                         | `None`                |
 | `MAIL_PASSWORD`         | The mail sender's password.                                      | `None`                |
-| `MAIL_PORT`             | The mail server port.                                            | `587`                 |
+| `MAIL_PORT`             | The mail server port.                                            | `465`                 |
 | `MAIL_SERVER`           | The mail server host name.                                       | `smtp.gmail.com`      |
 | `MAIL_SUPPRESS_SEND`    | If mail sending should be suppressed.                            | `False`               |
-| `MAIL_USE_SSL`          | If using mail SSL.                                               | `False`               |
-| `MAIL_USE_TLS`          | If using mail TLS.                                               | `True`                |
+| `MAIL_USE_SSL`          | If using mail SSL.                                               | `True`                |
+| `MAIL_USE_TLS`          | If using mail TLS.                                               | `False`               |
 | `MAIL_USERNAME`         | The mail sender's username.                                      | `None`                |
 | `MONGODB_DB`            | The MongoDB database name.                                       | `dawdle`              |
 | `MONGODB_HOST`          | The MongoDB host name.                                           | `127.0.0.1`           |
@@ -57,11 +57,11 @@ You don't need your own mail server for this. You can use a Gmail account with t
 ```
 MAIL_DEFAULT_SENDER = <Gmail address>
 MAIL_PASSWORD = <Gmail password>
-MAIL_PORT = 587
+MAIL_PORT = 465
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_SUPPRESS_SEND = False
-MAIL_USE_SSL = False
-MAIL_USE_TLS = True
+MAIL_USE_SSL = True
+MAIL_USE_TLS = False
 MAIL_USERNAME = <Gmail address>
 ```
 
