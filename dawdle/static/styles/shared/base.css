@@ -8,7 +8,16 @@
   color: #fff;
 }
 
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
 .notification .content ul {
   margin-left: 0.5em;
   margin-top: 0;
+}
+
+.alt-title-font {
+  font-family: 'Fredoka One', sans-serif;
+  font-weight: normal !important;
 }
