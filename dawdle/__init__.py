@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import abort, Flask, render_template
 
 version = 'v0.1.0'
 
@@ -95,6 +95,10 @@ def _register_blueprints(app):
 
 
 def _attach_error_handlers(app):
+    @app.errorhandler(Exception)
+    def handle_exception(_):
+        abort(500)
+
     @app.errorhandler(400)
     @app.errorhandler(403)
     @app.errorhandler(404)
