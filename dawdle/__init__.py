@@ -39,7 +39,6 @@ def _load_config(app, testing):
         return int(load_env_var(key))
 
     app.config.update({
-        'CONTACT_EMAIL': load_env_var('CONTACT_EMAIL'),
         'DEBUG': load_env_var_bool('DEBUG'),
         'ENV': load_env_var('ENV'),
         'MAIL_DEFAULT_SENDER': load_env_var('MAIL_DEFAULT_SENDER'),

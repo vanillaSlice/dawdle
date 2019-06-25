@@ -1,6 +1,5 @@
 class Default:
 
-    CONTACT_EMAIL = None
     DEBUG = False
     ENV = 'production'
     MAIL_DEFAULT_SENDER = None
@@ -24,7 +23,6 @@ class Default:
 
 class Test:
 
-    CONTACT_EMAIL = None
     DEBUG = True
     ENV = 'test'
     MAIL_DEFAULT_SENDER = 'dawdle'

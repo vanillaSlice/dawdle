@@ -126,7 +126,7 @@ def send_delete_account_email(user):
 
 def send_contact_email(subject, email, message):
     try:
-        recipients = [current_app.config['CONTACT_EMAIL']]
+        recipients = [current_app.config['MAIL_USERNAME']]
         msg = Message('Dawdle: {}'.format(subject), recipients=recipients)
         msg.body = 'From: {}\n\n{}'.format(email, message)
         mail.send(msg)
