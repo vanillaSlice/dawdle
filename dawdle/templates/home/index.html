@@ -1,19 +1,29 @@
 {% extends 'shared/base.html' %}
 
-{% set container_classes='home hero is-primary has-background-pattern-primary is-fullheight-with-navbar' %}
+{% block styles %}
+  {% assets 'home_css' %}
+    <link href="{{ ASSET_URL }}" rel="stylesheet">
+  {% endassets %}
+{% endblock %}
+
+{% set container_classes='home hero is-primary is-fullheight-with-navbar' %}
 
 {% block content %}
   <div class="hero-body">
     <div class="container">
-      <div class="columns is-vcentered">
-        <div class="column is-6">
+      <div class="columns is-multiline">
+        <div class="column is-6-tablet is-offset-3-tablet is-4-desktop is-offset-4-desktop">
+          <img src="{{ url_for('static', filename='images/home/home.svg') }}"
+            alt="Dawdle: A place to organise your projects"></img>
+        </div>
+        <div class="column is-12 has-text-centered">
           <h1 class="title is-size-1">
             Welcome to Dawdle!
           </h1>
-          <h2 class="subtitle is-size-4 has-text-white alt-title">
+          <h2 class="subtitle is-size-4 has-text-white has-alt-title">
             A place to organise your projects.
           </h2>
-          <div class="buttons">
+          <div class="buttons is-centered">
             <a class="button is-info has-text-weight-bold" href="{{ url_for('auth.sign_up_GET') }}">
               Sign Up
             </a>
@@ -21,10 +31,6 @@
               Log In
             </a>
           </div>
-        </div>
-        <div class="column is-6">
-          <img src="{{ url_for('static', filename='images/home/home.svg') }}"
-            alt="Dawdle: A place to organise your projects"></img>
         </div>
       </div>
     </div>

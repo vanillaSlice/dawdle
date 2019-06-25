@@ -3,6 +3,11 @@ from flask_assets import Bundle, Environment
 assets = Environment()
 
 assets.register({
+    'home_css': Bundle(
+        'styles/home/*.css',
+        filters='cssmin',
+        output='build/home.min.css',
+    ),
     'user_css': Bundle(
         'styles/user/*.css',
         filters='cssmin',
