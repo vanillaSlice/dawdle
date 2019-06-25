@@ -114,9 +114,10 @@ def send_delete_account_email(user):
     try:
         recipients = [user.email]
         msg = Message('Dawdle Account Deleted', recipients=recipients)
-        msg.body = 'Hello {},\n\nYour Dawdle account has been deleted. ' \
-            'We\'re sorry to see you go :( You can always come back!' \
-            .format(user.name)
+        msg.html = render_template(
+            'user/settings-delete-account-email.html',
+            user=user,
+        )
         mail.send(msg)
         return True
     except Exception:
