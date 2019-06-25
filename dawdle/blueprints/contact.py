@@ -2,7 +2,7 @@ from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
 from dawdle.forms.contact import ContactForm
-from dawdle.utils import send_contact_email
+from dawdle.utils import send_contact_emails
 
 contact = Blueprint('contact', __name__, url_prefix='/contact')
 
@@ -20,7 +20,7 @@ def index_POST():
     if not form.validate_on_submit():
         return render_template('contact/index.html', form=form), 400
 
-    sent_email = send_contact_email(
+    sent_email = send_contact_emails(
         subject=form.subject.data,
         email=form.email.data,
         message=form.message.data,
