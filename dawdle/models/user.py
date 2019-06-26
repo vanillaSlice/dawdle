@@ -22,7 +22,7 @@ class User(Document, UserMixin):
     auth_id = ObjectIdField(default=ObjectId, unique=True)
     boards = ListField(ReferenceField(Board, reverse_delete_rule=PULL))
     created = DateTimeField(default=datetime.utcnow)
-    email = EmailField(required=True)
+    email = EmailField(required=True, unique=True)
     initials = StringField(required=True, min_length=1, max_length=4)
     last_updated = DateTimeField()
     name = StringField(required=True, min_length=1, max_length=50)
