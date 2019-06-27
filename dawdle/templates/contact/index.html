@@ -18,7 +18,7 @@
           <h2 class="subtitle">
             Got a question? Feel free to send us a message.
           </h2>
-          <form method="POST" class="content">
+          <form method="POST" class="content js-form">
             {{ form.csrf_token }}
             {{ render_form_field(form.email,
                                  type='email',
@@ -38,7 +38,7 @@
                                  left_icon_classes='fas fa-pencil-alt') }}
             <div class="field content">
               <div class="control">
-                <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold">
+                <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold js-submit">
                   Send
                 </button>
               </div>

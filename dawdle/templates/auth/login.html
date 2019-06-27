@@ -18,7 +18,7 @@
           <h2 class="subtitle">
             <a href="{{ url_for('auth.sign_up_GET') }}">or create an account</a>
           </h2>
-          <form method="POST" class="content">
+          <form method="POST" class="content js-form">
             {{ form.csrf_token }}
             {{ render_form_field(form.email,
                                  type='email',
@@ -31,7 +31,7 @@
             {{ render_form_checkbox(form.remember_me, type='checkbox') }}
             <div class="field content">
               <div class="control">
-                <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold">
+                <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold js-submit">
                   Log In
                 </button>
               </div>

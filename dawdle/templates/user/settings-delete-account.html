@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block settings_content %}
-  <form method="POST">
+  <form method="POST" class="js-form">
     {{ form.csrf_token }}
     {{ render_form_field(form.password,
                          type='password',
@@ -19,7 +19,7 @@
                          left_icon_classes='fas fa-lock') }}
     <div class="field content">
       <div class="control">
-        <button type="submit" class="button is-fullwidth is-danger has-text-weight-bold">
+        <button type="submit" class="button is-fullwidth is-danger has-text-weight-bold js-submit">
           Delete Account
         </button>
       </div>

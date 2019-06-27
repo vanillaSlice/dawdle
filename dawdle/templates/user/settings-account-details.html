@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block settings_content %}
-  <form method="POST">
+  <form method="POST" class="js-form">
     {{ form.csrf_token }}
     {{ render_form_field(form.name,
                          type='text',
@@ -27,7 +27,7 @@
                          left_icon_classes='fas fa-font') }}
     <div class="field content">
       <div class="control">
-        <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold">
+        <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold js-submit">
           Update Details
         </button>
       </div>

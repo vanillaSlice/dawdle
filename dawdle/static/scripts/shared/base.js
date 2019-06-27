@@ -5,6 +5,11 @@ $(document).ready(function() {
     $(this).parent().remove();
   });
 
+  // disables submit button when form submitted to prevent double clicks
+  $('.js-form').submit(function() {
+    $(this).find('.js-submit').attr('disabled', true);
+  });
+
   // adds error class to form field when invalid
   $('.js-form-field').on('invalid', function() {
     toggleFieldElementErrorClass($(this), true);

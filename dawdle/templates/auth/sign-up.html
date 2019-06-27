@@ -18,7 +18,7 @@
           <h2 class="subtitle">
             <a href="{{ url_for('auth.login_GET') }}">or sign in to your account</a>
           </h2>
-          <form method="POST">
+          <form method="POST" class="js-form">
             {{ form.csrf_token }}
             {{ render_form_field(form.name,
                                  type='text',
@@ -38,7 +38,7 @@
                                  help='Minimum 8 characters') }}
             <div class="field content">
               <div class="control">
-                <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold">
+                <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold js-submit">
                   Create New Account
                 </button>
               </div>
