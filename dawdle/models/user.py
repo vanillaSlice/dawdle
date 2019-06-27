@@ -18,10 +18,10 @@ from dawdle.models.board import Board
 
 class User(Document, UserMixin):
 
-    active = BooleanField(default=False)
-    auth_id = ObjectIdField(default=ObjectId, unique=True)
+    active = BooleanField(required=True, default=False)
+    auth_id = ObjectIdField(required=True, default=ObjectId, unique=True)
     boards = ListField(ReferenceField(Board, reverse_delete_rule=PULL))
-    created = DateTimeField(default=datetime.utcnow)
+    created = DateTimeField(required=True, default=datetime.utcnow)
     email = EmailField(required=True, unique=True)
     initials = StringField(required=True, min_length=1, max_length=4)
     last_updated = DateTimeField()
