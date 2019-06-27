@@ -25,8 +25,20 @@ def is_safe_url(target):
         ref_url.netloc == test_url.netloc
 
 
-def trim(s):
+def normalize_whitespace(s):
     return ' '.join(s.split())
+
+
+def remove_whitespace(s):
+    return ''.join(s.split())
+
+
+def strip(s):
+    return s.strip()
+
+
+def upper(s):
+    return s.upper()
 
 
 def serialize_verification_token(user):

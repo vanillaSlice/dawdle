@@ -33,7 +33,7 @@ class TestBase:
         user.initials = kwargs.get(
             'initials',
             cls.fake.pystr(min_chars=1, max_chars=4),
-        )
+        ).upper()
         user.name = kwargs.get('name', cls.fake.name())
         user.password = User.encrypt_password(
             kwargs.get('password', cls.fake.password()),

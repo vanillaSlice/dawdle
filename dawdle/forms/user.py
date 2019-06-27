@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length
 from wtforms.widgets import PasswordInput
 
 from dawdle.models.user import User
-from dawdle.utils import trim
+from dawdle.utils import normalize_whitespace, remove_whitespace, upper
 
 
 class UpdateAccountDetailsForm(FlaskForm):
@@ -20,7 +20,7 @@ class UpdateAccountDetailsForm(FlaskForm):
                 message='Your name must be between 1 and 50 characters',
             ),
         ],
-        filters=[trim],
+        filters=[normalize_whitespace],
     )
 
     initials = StringField(
@@ -33,7 +33,7 @@ class UpdateAccountDetailsForm(FlaskForm):
                 message='Your initials must be between 1 and 4 characters',
             ),
         ],
-        filters=[trim],
+        filters=[remove_whitespace, upper],
     )
 
     def update_needed(self):

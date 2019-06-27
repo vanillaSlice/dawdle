@@ -4,7 +4,7 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length
 from wtforms.widgets import PasswordInput
 
 from dawdle.models.user import User
-from dawdle.utils import trim
+from dawdle.utils import normalize_whitespace
 
 
 class SignUpForm(FlaskForm):
@@ -19,7 +19,7 @@ class SignUpForm(FlaskForm):
                 message='Your name must be between 1 and 50 characters',
             ),
         ],
-        filters=[trim],
+        filters=[normalize_whitespace],
     )
 
     email = StringField(

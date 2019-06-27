@@ -162,7 +162,7 @@ class TestUser(TestBase):
         response = self._send_settings_account_details_POST_request(data)
         user = User.objects(id=user_id).first()
         assert response.status_code == 200
-        assert user.initials == data['initials']
+        assert user.initials == data['initials'].upper()
         assert user.name == data['name']
         if updated:
             assert b'Your account details have been updated' in response.data
