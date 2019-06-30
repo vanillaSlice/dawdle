@@ -11,7 +11,6 @@
     <div class="container">
       <div class="column is-10-tablet is-offset-1-tablet is-6-desktop is-offset-3-desktop is-paddingless">
         <div class="box">
-          {{ render_form_errors(form) }}
           <h1 class="title">
             Verify Your Dawdle Account
           </h1>
@@ -19,6 +18,7 @@
             If you didn't receive an email, submit your email address and we'll send you a
             link to verify your account.
           </h2>
+          {{ render_form_errors(form) }}
           <form method="POST" class="js-form">
             {{ form.csrf_token }}
             {{ render_form_field(form.email,

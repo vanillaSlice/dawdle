@@ -6,11 +6,13 @@
 
 {% set settings_page='delete-account' %}
 
-{% block settings_form_errors %}
-  {{ render_form_errors(form) }}
-{% endblock %}
-
 {% block settings_content %}
+  <div class="notification is-danger">
+    <strong>
+      Deleting your account will delete all of your content which you will not be able to retrieve in the future.
+    </strong>
+  </div>
+  {{ render_form_errors(form) }}
   <form method="POST" class="js-form">
     {{ form.csrf_token }}
     {{ render_form_password(form.password) }}

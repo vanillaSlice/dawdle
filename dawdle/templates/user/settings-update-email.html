@@ -6,11 +6,8 @@
 
 {% set settings_page='update-email' %}
 
-{% block settings_form_errors %}
-  {{ render_form_errors(form) }}
-{% endblock %}
-
 {% block settings_content %}
+  {{ render_form_errors(form) }}
   <form method="POST" class="js-form">
     {{ form.csrf_token }}
     {{ render_form_field(form.email,
