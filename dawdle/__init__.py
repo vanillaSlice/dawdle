@@ -84,6 +84,9 @@ def _register_blueprints(app):
     from dawdle.blueprints.auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    from dawdle.blueprints.board import board_bp
+    app.register_blueprint(board_bp)
+
     from dawdle.blueprints.contact import contact_bp
     app.register_blueprint(contact_bp)
 

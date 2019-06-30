@@ -3,19 +3,21 @@ from urllib.parse import urljoin, urlparse
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
 from flask import current_app, flash, render_template, request
+from flask_login import current_user
 from flask_mail import Message
 from itsdangerous import (BadSignature,
                           TimedJSONWebSignatureSerializer,
                           URLSafeSerializer)
 
 from dawdle.extensions.mail import mail
+from dawdle.models.user import User
 
 
 def to_ObjectId(value):
     try:
         return ObjectId(value)
     except InvalidId:
-        return ObjectId(None)
+        return ObjectId()
 
 
 def is_safe_url(target):
@@ -50,7 +52,7 @@ def deserialize_verification_token(token):
         auth_id = URLSafeSerializer(current_app.secret_key).loads(token)
         return to_ObjectId(auth_id)
     except BadSignature:
-        return to_ObjectId(None)
+        return ObjectId()
 
 
 def send_verification_email(user, redirect_target=None):
@@ -94,7 +96,7 @@ def deserialize_password_reset_token(token):
         ).loads(token)
         return to_ObjectId(auth_id)
     except BadSignature:
-        return to_ObjectId(None)
+        return ObjectId()
 
 
 def send_password_reset_email(user):
@@ -155,3 +157,11 @@ def send_contact_emails(subject, email, message):
     except Exception:
         flash('Could not send message. Please try again.', 'danger')
         return False
+
+
+def has_board_create_permission(owner_id):
+    return to_ObjectId(owner_id) == current_user.id
+
+
+def get_owner_from_id(owner_id):
+    return User.objects(id=to_ObjectId(owner_id)).first()

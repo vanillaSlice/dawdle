@@ -3,7 +3,7 @@ from faker import Faker
 from flask import url_for
 
 from dawdle import create_app
-from dawdle.models.board import Board
+from dawdle.models.board import Board, BoardType
 from dawdle.models.user import User
 
 
@@ -51,11 +51,13 @@ class TestBase:
     @classmethod
     def create_board(cls, **kwargs):
         board = Board()
+        board.created_by = kwargs.get('created_by', ObjectId())
         board.name = kwargs.get(
             'name',
             cls.fake.pystr(min_chars=1, max_chars=256),
         )
         board.owner_id = kwargs.get('owner_id', ObjectId())
+        board.type = kwargs.get('type', BoardType.PERSONAL.id)
         return board.save()
 
     @classmethod

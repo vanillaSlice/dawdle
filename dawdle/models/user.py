@@ -51,6 +51,9 @@ class User(Document, UserMixin):
 
     def delete(self, signal_kwargs=None, **write_concern):
         for board in self.boards:
-            board.delete()
+            try:
+                board.delete()
+            except Exception:
+                continue
 
         super().delete(signal_kwargs, **write_concern)
