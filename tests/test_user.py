@@ -344,11 +344,9 @@ class TestUser(TestBase):
         user, password = self.as_new_user()
         current_password = 'wrong'
         new_password = self.fake.password()
-        confirmation = new_password
         data = self._get_mock_update_password_data(
             current_password=current_password,
             new_password=new_password,
-            confirmation=confirmation,
         )
         self._assert_settings_update_password_POST_bad_request(
             user.auth_id,
@@ -360,11 +358,9 @@ class TestUser(TestBase):
         user, password = self.as_new_user()
         current_password = password
         new_password = self.fake.pystr(min_chars=7, max_chars=7)
-        confirmation = new_password
         data = self._get_mock_update_password_data(
             current_password=current_password,
             new_password=new_password,
-            confirmation=confirmation,
         )
         self._assert_settings_update_password_POST_bad_request(
             user.auth_id,
@@ -376,11 +372,9 @@ class TestUser(TestBase):
         user, password = self.as_new_user()
         current_password = password
         new_password = self.fake.pystr(min_chars=8, max_chars=8)
-        confirmation = new_password
         data = self._get_mock_update_password_data(
             current_password=current_password,
             new_password=new_password,
-            confirmation=confirmation,
         )
         self._assert_settings_update_password_POST_ok(
             user.id,
@@ -388,31 +382,13 @@ class TestUser(TestBase):
             data,
         )
 
-    def test_settings_update_password_POST_dont_match(self):
-        user, password = self.as_new_user()
-        current_password = password
-        new_password = self.fake.password()
-        confirmation = 'wrong'
-        data = self._get_mock_update_password_data(
-            current_password=current_password,
-            new_password=new_password,
-            confirmation=confirmation,
-        )
-        self._assert_settings_update_password_POST_bad_request(
-            user.auth_id,
-            data,
-            'New password and confirmation must match',
-        )
-
     def test_settings_update_password_POST_no_update(self):
         user, password = self.as_new_user()
         current_password = password
         new_password = password
-        confirmation = password
         data = self._get_mock_update_password_data(
             current_password=current_password,
             new_password=new_password,
-            confirmation=confirmation,
         )
         self._assert_settings_update_password_POST_ok(
             user.id,
@@ -425,11 +401,9 @@ class TestUser(TestBase):
         user, password = self.as_new_user()
         current_password = password
         new_password = self.fake.password()
-        confirmation = new_password
         data = self._get_mock_update_password_data(
             current_password=current_password,
             new_password=new_password,
-            confirmation=confirmation,
         )
         self._assert_settings_update_password_POST_ok(
             user.id,
@@ -444,7 +418,6 @@ class TestUser(TestBase):
                 self.fake.password(),
             ),
             'new_password': kwargs.get('new_password', self.fake.password()),
-            'confirmation': kwargs.get('confirmation', self.fake.password()),
         }
 
     def _send_settings_update_password_POST_request(self, data):

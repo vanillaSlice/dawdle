@@ -175,7 +175,7 @@ def reset_password_POST(token):
     if not form.validate_on_submit():
         return render_template('auth/reset-password.html', form=form), 400
 
-    user.password = User.encrypt_password(form.password.data)
+    user.password = User.encrypt_password(form.new_password.data)
     user.auth_id = ObjectId()
     user.last_updated = datetime.utcnow()
     user.save()

@@ -1,7 +1,7 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired, Email, Length
 from wtforms.widgets import PasswordInput
 
 from dawdle.models.user import User
@@ -98,18 +98,6 @@ class UpdatePasswordForm(FlaskForm):
             Length(
                 min=8,
                 message='Your new password must be at least 8 characters',
-            ),
-        ],
-        widget=PasswordInput(hide_value=False),
-    )
-
-    confirmation = StringField(
-        'Confirmation',
-        validators=[
-            DataRequired(message='Please enter new password confirmation'),
-            EqualTo(
-                'new_password',
-                message='New password and confirmation must match',
             ),
         ],
         widget=PasswordInput(hide_value=False),

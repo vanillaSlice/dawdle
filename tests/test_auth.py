@@ -569,62 +569,44 @@ class TestAuth(TestBase):
     def test_reset_password_POST_no_password(self):
         user = self.create_user()
         data = self._get_mock_reset_password_data()
-        del data['password']
+        del data['new_password']
         self._assert_reset_password_POST_bad_request(
             user.auth_id,
             data,
-            'Please enter a password',
+            'Please enter a new password',
         )
 
     def test_reset_password_POST_password_less_than_min(self):
         user = self.create_user()
-        password = self.fake.pystr(min_chars=7, max_chars=7)
+        new_password = self.fake.pystr(min_chars=7, max_chars=7)
         data = self._get_mock_reset_password_data(
-            password=password,
-            confirmation=password,
+            new_password=new_password,
         )
         self._assert_reset_password_POST_bad_request(
             user.auth_id,
             data,
-            'Your password must be at least 8 characters',
+            'Your new password must be at least 8 characters',
         )
 
     def test_reset_password_POST_password_equal_to_min(self):
         user = self.create_user()
-        password = self.fake.pystr(min_chars=8, max_chars=8)
+        new_password = self.fake.pystr(min_chars=8, max_chars=8)
         data = self._get_mock_reset_password_data(
-            password=password,
-            confirmation=password,
+            new_password=new_password,
         )
         self._assert_reset_password_POST_ok(user.id, user.auth_id, data)
 
-    def test_reset_password_POST_password_and_confirmation_dont_match(self):
-        user = self.create_user()
-        password = 'password'
-        confirmation = 'confirmation'
-        data = self._get_mock_reset_password_data(
-            password=password,
-            confirmation=confirmation,
-        )
-        self._assert_reset_password_POST_bad_request(
-            user.auth_id,
-            data,
-            'Password and confirmation must match',
-        )
-
     def test_reset_password_POST_success(self):
         user = self.create_user()
-        password = self.fake.password()
+        new_password = self.fake.password()
         data = self._get_mock_reset_password_data(
-            password=password,
-            confirmation=password,
+            new_password=new_password,
         )
         self._assert_reset_password_POST_ok(user.id, user.auth_id, data)
 
     def _get_mock_reset_password_data(self, **kwargs):
         return {
-            'password': kwargs.get('password', self.fake.password()),
-            'confirmation': kwargs.get('confirmation', self.fake.password()),
+            'new_password': kwargs.get('new_password', self.fake.password()),
         }
 
     def _send_reset_password_POST_request(self, data, token):
@@ -642,7 +624,7 @@ class TestAuth(TestBase):
         assert b'Your password has been reset' in response.data
         assert user.auth_id != auth_id
         assert user.last_updated
-        assert user.verify_password(data['password'])
+        assert user.verify_password(data['new_password'])
 
     def _assert_reset_password_POST_bad_request(self,
                                                 auth_id,
@@ -654,7 +636,7 @@ class TestAuth(TestBase):
         assert response.status_code == 400
         assert expected_text.encode() in response.data
         assert not user.last_updated
-        assert not user.verify_password(data.get('password'))
+        assert not user.verify_password(data.get('new_password'))
 
     def _assert_reset_password_POST_not_found(self, token, data):
         response = self._send_reset_password_POST_request(data, token)

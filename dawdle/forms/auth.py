@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, StringField
-from wtforms.validators import DataRequired, Email, EqualTo, Length
+from wtforms.validators import DataRequired, Email, Length
 from wtforms.widgets import PasswordInput
 
 from dawdle.models.user import User
@@ -158,25 +158,13 @@ class ResetPasswordRequestForm(FlaskForm):
 
 class ResetPasswordForm(FlaskForm):
 
-    password = StringField(
-        'Password',
+    new_password = StringField(
+        'New Password',
         validators=[
-            DataRequired(message='Please enter a password'),
+            DataRequired(message='Please enter a new password'),
             Length(
                 min=8,
-                message='Your password must be at least 8 characters',
-            ),
-        ],
-        widget=PasswordInput(hide_value=False),
-    )
-
-    confirmation = StringField(
-        'Confirmation',
-        validators=[
-            DataRequired(message='Please enter password confirmation'),
-            EqualTo(
-                'password',
-                message='Password and confirmation must match',
+                message='Your new password must be at least 8 characters',
             ),
         ],
         widget=PasswordInput(hide_value=False),
