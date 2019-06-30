@@ -24,8 +24,25 @@ $(document).ready(function() {
     if (state || fieldElement[0].validity.valid) {
       fieldElement.toggleClass('is-danger', state);
       $(fieldElement.data('help')).toggleClass('is-danger', state);
+      fieldElement.parent().parent().find('.js-password-mask').toggleClass('is-danger', state);
     }
   }
+
+  // unmasks password when clicked
+  $('.js-password-mask').click(function() {
+    var buttonElement = $(this);
+    var fieldElement = buttonElement.parent().prev().find('.js-password');
+    var iconElement = buttonElement.find('.js-password-mask-icon');
+    if (fieldElement.attr('type') === 'password') {
+      fieldElement.attr('type', 'text');
+      iconElement.removeClass('fa-eye');
+      iconElement.addClass('fa-eye-slash');
+    } else {
+      fieldElement.attr('type', 'password');
+      iconElement.removeClass('fa-eye-slash');
+      iconElement.addClass('fa-eye');
+    }
+  });
 
   // truncate text
   $('.js-shave').shave(150, { spaces: false });

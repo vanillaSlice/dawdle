@@ -1,6 +1,6 @@
 {% extends 'shared/base.html' %}
 
-{% from 'shared/utils.html' import render_form_checkbox, render_form_errors, render_form_field %}
+{% from 'shared/utils.html' import render_form_checkbox, render_form_errors, render_form_field, render_form_password %}
 
 {% block title %}Log In | Dawdle{% endblock %}
 
@@ -24,10 +24,7 @@
                                  type='email',
                                  placeholder='e.g. han@thefalcon.com',
                                  left_icon_classes='fas fa-envelope') }}
-            {{ render_form_field(form.password,
-                                 type='password',
-                                 placeholder='e.g. ••••••••••••',
-                                 left_icon_classes='fas fa-lock') }}
+            {{ render_form_password(form.password) }}
             {{ render_form_checkbox(form.remember_me, type='checkbox') }}
             <div class="field content">
               <div class="control">
