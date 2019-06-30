@@ -22,15 +22,15 @@ from dawdle.utils import (deserialize_password_reset_token,
                           send_password_reset_email,
                           send_verification_email)
 
-auth = Blueprint('auth', __name__, url_prefix='/auth')
+auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 
-@auth.route('/sign-up')
+@auth_bp.route('/sign-up')
 def sign_up_GET():
     return render_template('auth/sign-up.html', form=SignUpForm(request.form))
 
 
-@auth.route('/sign-up', methods=['POST'])
+@auth_bp.route('/sign-up', methods=['POST'])
 def sign_up_POST():
     form = SignUpForm(request.form)
 
@@ -48,13 +48,13 @@ def sign_up_POST():
     return redirect(url_for('auth.verify_resend_GET', email=form.email.data))
 
 
-@auth.route('/verify/resend')
+@auth_bp.route('/verify/resend')
 def verify_resend_GET():
     form = VerifyResendForm(request.form, email=request.args.get('email'))
     return render_template('auth/verify-resend.html', form=form)
 
 
-@auth.route('/verify/resend', methods=['POST'])
+@auth_bp.route('/verify/resend', methods=['POST'])
 def verify_resend_POST():
     form = VerifyResendForm(request.form, email=request.args.get('email'))
 
@@ -67,7 +67,7 @@ def verify_resend_POST():
     return render_template('auth/verify-resend.html', form=form), status_code
 
 
-@auth.route('/verify/<token>')
+@auth_bp.route('/verify/<token>')
 def verify_GET(token):
     auth_id = deserialize_verification_token(token)
     user = User.objects(auth_id=auth_id).first()
@@ -92,12 +92,12 @@ def verify_GET(token):
     return redirect(next_target or url_for('user.boards_GET'))
 
 
-@auth.route('/login')
+@auth_bp.route('/login')
 def login_GET():
     return render_template('auth/login.html', form=LoginForm(request.form))
 
 
-@auth.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login_POST():
     form = LoginForm(request.form)
 
@@ -114,7 +114,7 @@ def login_POST():
     return redirect(next_target or url_for('user.boards_GET'))
 
 
-@auth.route('/logout')
+@auth_bp.route('/logout')
 def logout_GET():
     logout_user()
 
@@ -123,13 +123,13 @@ def logout_GET():
     return redirect(url_for('home.index_GET'))
 
 
-@auth.route('/reset-password')
+@auth_bp.route('/reset-password')
 def reset_password_request_GET():
     form = ResetPasswordRequestForm(request.form, obj=current_user)
     return render_template('auth/reset-password-request.html', form=form)
 
 
-@auth.route('/reset-password', methods=['POST'])
+@auth_bp.route('/reset-password', methods=['POST'])
 def reset_password_request_POST():
     form = ResetPasswordRequestForm(request.form, obj=current_user)
 
@@ -148,7 +148,7 @@ def reset_password_request_POST():
     ), status_code
 
 
-@auth.route('/reset-password/<token>')
+@auth_bp.route('/reset-password/<token>')
 def reset_password_GET(token):
     auth_id = deserialize_password_reset_token(token)
     user = User.objects(auth_id=auth_id).first()
@@ -162,7 +162,7 @@ def reset_password_GET(token):
     )
 
 
-@auth.route('/reset-password/<token>', methods=['POST'])
+@auth_bp.route('/reset-password/<token>', methods=['POST'])
 def reset_password_POST(token):
     auth_id = deserialize_password_reset_token(token)
     user = User.objects(auth_id=auth_id).first()

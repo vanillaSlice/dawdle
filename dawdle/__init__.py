@@ -81,17 +81,17 @@ def _init_extensions(app):
 
 
 def _register_blueprints(app):
-    from dawdle.blueprints.auth import auth
-    app.register_blueprint(auth)
+    from dawdle.blueprints.auth import auth_bp
+    app.register_blueprint(auth_bp)
 
-    from dawdle.blueprints.contact import contact
-    app.register_blueprint(contact)
+    from dawdle.blueprints.contact import contact_bp
+    app.register_blueprint(contact_bp)
 
-    from dawdle.blueprints.home import home
-    app.register_blueprint(home)
+    from dawdle.blueprints.home import home_bp
+    app.register_blueprint(home_bp)
 
-    from dawdle.blueprints.user import user
-    app.register_blueprint(user)
+    from dawdle.blueprints.user import user_bp
+    app.register_blueprint(user_bp)
 
 
 def _attach_error_handlers(app):

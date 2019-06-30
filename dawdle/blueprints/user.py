@@ -11,29 +11,29 @@ from dawdle.forms.user import (DeleteUserForm,
 from dawdle.models.user import User
 from dawdle.utils import send_delete_account_email, send_verification_email
 
-user = Blueprint('user', __name__, url_prefix='/user')
+user_bp = Blueprint('user', __name__, url_prefix='/user')
 
 
-@user.route('/boards')
+@user_bp.route('/boards')
 @login_required
 def boards_GET():
     return render_template('user/boards.html')
 
 
-@user.route('/settings')
+@user_bp.route('/settings')
 @login_required
 def settings_GET():
     return redirect(url_for('user.settings_account_details_GET'))
 
 
-@user.route('/settings/account-details')
+@user_bp.route('/settings/account-details')
 @login_required
 def settings_account_details_GET():
     form = UpdateAccountDetailsForm(request.form, obj=current_user)
     return render_template('user/settings-account-details.html', form=form)
 
 
-@user.route('/settings/account-details', methods=['POST'])
+@user_bp.route('/settings/account-details', methods=['POST'])
 @login_required
 def settings_account_details_POST():
     form = UpdateAccountDetailsForm(request.form, obj=current_user)
@@ -57,14 +57,14 @@ def settings_account_details_POST():
     return redirect(url_for('user.settings_account_details_POST'))
 
 
-@user.route('/settings/update-email')
+@user_bp.route('/settings/update-email')
 @login_required
 def settings_update_email_GET():
     form = UpdateEmailForm(request.form, email=current_user.email)
     return render_template('user/settings-update-email.html', form=form)
 
 
-@user.route('/settings/update-email', methods=['POST'])
+@user_bp.route('/settings/update-email', methods=['POST'])
 @login_required
 def settings_update_email_POST():
     form = UpdateEmailForm(request.form, email=current_user.email)
@@ -96,14 +96,14 @@ def settings_update_email_POST():
     ))
 
 
-@user.route('/settings/update-password')
+@user_bp.route('/settings/update-password')
 @login_required
 def settings_update_password_GET():
     form = UpdatePasswordForm(request.form)
     return render_template('user/settings-update-password.html', form=form)
 
 
-@user.route('/settings/update-password', methods=['POST'])
+@user_bp.route('/settings/update-password', methods=['POST'])
 @login_required
 def settings_update_password_POST():
     form = UpdatePasswordForm(request.form)
@@ -130,14 +130,14 @@ def settings_update_password_POST():
     return redirect(url_for('user.settings_update_password_POST'))
 
 
-@user.route('/settings/delete-account')
+@user_bp.route('/settings/delete-account')
 @login_required
 def settings_delete_account_GET():
     form = DeleteUserForm(request.form)
     return render_template('user/settings-delete-account.html', form=form)
 
 
-@user.route('/settings/delete-account', methods=['POST'])
+@user_bp.route('/settings/delete-account', methods=['POST'])
 @login_required
 def settings_delete_account_POST():
     form = DeleteUserForm(request.form)
