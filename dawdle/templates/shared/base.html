@@ -21,10 +21,9 @@
   <link href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" rel="stylesheet"
     integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,700%7CFredoka+One&display=swap" rel="stylesheet">
-  {% assets 'shared_css' %}
+  {% assets 'dawdle_css' %}
     <link href="{{ ASSET_URL }}" rel="stylesheet">
   {% endassets %}
-  {% block styles %}{% endblock %}
 </head>
 
 <body>
@@ -52,10 +51,9 @@
     integrity="sha256-7/yoZS3548fXSRXqc/xYzjsmuW3sFKzuvOCHd06Pmps=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shave/2.5.3/jquery.shave.min.js"
     integrity="sha256-vfAHy8DeM92gBftShSriYE5lFMJjHJiqzx9J49ZqFfk=" crossorigin="anonymous"></script>
-  {% assets 'shared_js' %}
+  {% assets 'dawdle_js' %}
     <script src="{{ ASSET_URL }}"></script>
   {% endassets %}
-  {% block scripts %}{% endblock %}
 </body>
 
 </html>

@@ -1,11 +1,5 @@
 {% extends 'shared/base.html' %}
 
-{% block styles %}
-  {% assets 'user_css' %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet">
-  {% endassets %}
-{% endblock %}
-
 {% block title %}Boards | Dawdle{% endblock %}
 
 {% set container_classes='boards has-background-primary has-background-pattern-primary' %}

@@ -47,6 +47,6 @@ $(document).ready(function() {
   function truncateText() {
     $('.js-shave').shave(150, { spaces: false });
   }
-  $(window).on('resize', _.debounce(truncateText, 250, { leading: true }));
   truncateText();
+  $(window).on('resize', _.debounce(truncateText, 250, { leading: true }));
 });

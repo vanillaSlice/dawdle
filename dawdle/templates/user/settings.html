@@ -1,11 +1,5 @@
 {% extends 'shared/base.html' %}
 
-{% block styles %}
-  {% assets 'user_css' %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet">
-  {% endassets %}
-{% endblock %}
-
 {% set container_classes='user-settings has-background-dark' %}
 
 {% block content %}
@@ -46,10 +40,4 @@
       </div>
     </div>
   </div>
-{% endblock %}
-
-{% block scripts %}
-  {% assets 'user_js' %}
-    <script src="{{ ASSET_URL }}"></script>
-  {% endassets %}
 {% endblock %}

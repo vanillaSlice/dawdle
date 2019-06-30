@@ -1,11 +1,5 @@
 {% extends 'shared/base.html' %}
 
-{% block styles %}
-  {% assets 'home_css' %}
-    <link href="{{ ASSET_URL }}" rel="stylesheet">
-  {% endassets %}
-{% endblock %}
-
 {% set container_classes='home hero is-primary is-fullheight-with-navbar' %}
 
 {% block content %}
