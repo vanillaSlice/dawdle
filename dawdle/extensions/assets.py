@@ -13,6 +13,11 @@ assets.register({
         filters='cssmin',
         output='build/user.min.css',
     ),
+    'user_js': Bundle(
+        'scripts/user/*.js',
+        filters='jsmin',
+        output='build/user.min.js',
+    ),
     'shared_css': Bundle(
         'styles/shared/*.css',
         filters='cssmin',
