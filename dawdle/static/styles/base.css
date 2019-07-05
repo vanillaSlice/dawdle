@@ -34,7 +34,8 @@ h1,
   /* background by SVGBackgrounds.com */
 }
 
-.has-background-pattern-primary .notification.is-success {
+.has-background-pattern-primary .notification.is-success,
+.hero.is-primary .notification.is-success {
   background-color: #209cee;
 }
 
@@ -44,6 +45,30 @@ h1,
   /* background by SVGBackgrounds.com */
 }
 
-.has-background-pattern-info .notification.is-info {
+.has-background-pattern-info .notification.is-info,
+.hero.is-info .notification.is-info {
   background-color: #00d1b2;
+}
+
+.header .user-link {
+  background-color: transparent !important;
+  cursor: initial;
+}
+
+.header .user-icon {
+  border-radius: 290486px;
+  padding-bottom: calc(0.375em - 1px);
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-top: calc(0.375em - 1px);
+}
+
+@media (min-width: 1024px) {
+  .header .user-link {
+    cursor: pointer;
+  }
+}
+
+.footer .separator::after {
+  content: '|';
 }
