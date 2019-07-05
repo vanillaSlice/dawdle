@@ -6,33 +6,47 @@
   <div class="body">
     <div class="container">
       <div class="columns is-marginless">
-        <div class="column is-10-tablet is-offset-1-tablet is-8-desktop is-offset-2-desktop is-paddingless">
-          <div class="box">
-            <h1 class="title">User Settings</h1>
-            <div class="tabs js-user-settings-links">
-              <ul>
-                <li class="{{ 'is-active js-active' if settings_page == 'account-details' }}">
-                  <a href="{{ url_for('user.settings_account_details_GET') }}">
+        <div class="column is-4-tablet is-3-desktop is-paddingless">
+          <div class="settings-box box">
+            <aside class="menu">
+              <p class="menu-label">
+                User Settings
+              </p>
+              <ul class="menu-list">
+                <li>
+                  <a href="{{ url_for('user.settings_account_details_GET') }}"
+                    class="{{ 'is-active has-background-primary has-text-weight-bold'
+                      if settings_page == 'account-details' }}">
                     Account Details
                   </a>
                 </li>
-                <li class="{{ 'is-active js-active' if settings_page == 'update-email' }}">
-                  <a href="{{ url_for('user.settings_update_email_GET') }}">
+                <li>
+                  <a href="{{ url_for('user.settings_update_email_GET') }}"
+                    class="{{ 'is-active has-background-primary has-text-weight-bold'
+                      if settings_page == 'update-email' }}">
                     Update Email
                   </a>
                 </li>
-                <li class="{{ 'is-active js-active' if settings_page == 'update-password' }}">
-                  <a href="{{ url_for('user.settings_update_password_GET') }}">
+                <li>
+                  <a href="{{ url_for('user.settings_update_password_GET') }}"
+                    class="{{ 'is-active has-background-primary has-text-weight-bold'
+                      if settings_page == 'update-password' }}">
                     Update Password
                   </a>
                 </li>
-                <li class="{{ 'is-active js-active' if settings_page == 'delete-account' }}">
-                  <a href="{{ url_for('user.settings_delete_account_GET') }}">
+                <li>
+                  <a href="{{ url_for('user.settings_delete_account_GET') }}"
+                    class="{{ 'is-active has-background-primary has-text-weight-bold'
+                      if settings_page == 'delete-account' }}">
                     Delete Account
                   </a>
                 </li>
               </ul>
-            </div>
+            </aside>
+          </div>
+        </div>
+        <div class="column is-7-tablet is-offset-1-tablet is-8-desktop is-offset-1-desktop is-paddingless">
+          <div class="box">
             {% block settings_content %}{% endblock %}
           </div>
         </div>

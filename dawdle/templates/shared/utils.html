@@ -20,8 +20,8 @@
 {% macro render_form_checkbox(field) %}
   <div class="field">
     <div class="control">
-      <label class="checkbox">
-        {{ field(class='checkbox', type='checkbox', **kwargs) | safe }}
+      {{ field(class='is-checkradio', type='checkbox', **kwargs) | safe }}
+      <label class="checkbox" for="{{ field.id }}">
         {{ field.label.text }}
       </label>
     </div>

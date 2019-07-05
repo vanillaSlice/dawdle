@@ -7,3 +7,7 @@
 .user-settings-page .body {
   padding: 3rem 1.5rem;
 }
+
+.user-settings-page .settings-box {
+  margin-bottom: 1rem;
+}
