@@ -53,7 +53,8 @@
       </div>
       <div class="control">
         <button id="js-{{ field.id }}-password-mask" type="button" data-field="#{{ field.id }}"
-          class="button {{ 'is-danger' if field.errors }} js-password-mask" aria-label="Mask/Unmask Password">
+          class="button {{ 'is-danger' if field.errors else 'is-primary' }} js-password-mask"
+          aria-label="Mask/Unmask Password">
           <span class="icon is-small">
             <i class="fas fa-eye js-password-mask-icon"></i>
           </span>
