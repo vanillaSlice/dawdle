@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, url_for
 from flask_login import current_user, login_required
 
 from dawdle.forms.board import CreateBoardForm
@@ -30,7 +30,10 @@ def index_POST():
     owner.boards.append(board)
     owner.save()
 
-    return jsonify(board), 201
+    return jsonify({
+        'id': str(board.id),
+        'url': url_for('board.board_GET', board_id=board.id),
+    }), 201
 
 
 @board_bp.route('/<board_id>')

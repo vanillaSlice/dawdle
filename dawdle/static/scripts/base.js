@@ -75,7 +75,7 @@
     }
   }
 
-  $('.js-password-mask').on('click', handlePasswordMaskClick);
+  $('.js-password-mask').click(handlePasswordMaskClick);
 
   /*
    * Truncation
@@ -90,16 +90,37 @@
   $(window).on('resize', _.debounce(truncateText, 250, { leading: true }));
 
   /*
+   * Modals
+   */
+
+  function toggleModal(element) {
+    element.toggleClass('is-active');
+    $('html, body').toggleClass('is-clipped');
+  }
+
+  function handleModalTriggerClick() {
+    var triggerElement = $(this);
+    var target = triggerElement.data('target');
+    var modalElement = target ? $(target) : triggerElement.parents('.js-modal');
+    triggerElement.blur();
+    toggleModal(modalElement);
+  }
+
+  $('.js-modal-trigger').click(handleModalTriggerClick);
+
+  /*
    * Export functions
    */
 
   window.dawdle = {
-    handleNavbarBurgerClick: handleNavbarBurgerClick,
-    handleNotificationCloseClick: handleNotificationCloseClick,
-    handleFormSubmit: handleFormSubmit,
     handleFieldInput: handleFieldInput,
     handleFieldInvalid: handleFieldInvalid,
+    handleFormSubmit: handleFormSubmit,
+    handleModalTriggerClick: handleModalTriggerClick,
+    handleNavbarBurgerClick: handleNavbarBurgerClick,
+    handleNotificationCloseClick: handleNotificationCloseClick,
     handlePasswordMaskClick: handlePasswordMaskClick,
+    toggleModal: toggleModal,
     truncateText: truncateText,
   };
 })();

@@ -1,5 +1,7 @@
 {% extends 'shared/base.html' %}
 
+{% from 'shared/utils.html' import render_form_field, render_select %}
+
 {% block title %}Boards | Dawdle{% endblock %}
 
 {% set container_classes='boards-page has-background-primary has-background-pattern-primary' %}
@@ -12,11 +14,11 @@
           <h2 class="title has-text-white has-alt-text is-size-4">
             <i class="fas fa-user"></i> Personal Boards
           </h2>
-          <div class="columns is-multiline">
+          <div id="{{ current_user.id }}-boards" class="columns is-multiline">
             {% for board in current_user.boards %}
               <div class="column is-4">
-                <a href="{{ url_for('user.boards_GET') }}">
-                  <div class="board box">
+                <a href="{{ url_for('board.board_GET', board_id=board.id) }}" class="board">
+                  <div class="board-content box">
                     <p class="has-text-weight-bold js-shave">
                       {{ board.name }}
                     </p>
@@ -24,6 +26,46 @@
                 </a>
               </div>
             {% endfor %}
+            <div class="column is-4">
+              <a href="#" class="board-button js-modal-trigger" data-target="#js-create-board-modal">
+                <div class="board-button-content box has-background-grey-lighter">
+                  <p class="has-text-weight-bold">
+                    Create New Board…
+                  </p>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div id="js-create-board-modal" class="modal js-modal">
+            <div class="modal-background js-modal-trigger"></div>
+            <div class="modal-card">
+              <form class="js-create-board-form">
+                <header class="modal-card-head">
+                  <p class="modal-card-title has-alt-text">
+                    Create New Board
+                  </p>
+                  <button type="button" class="delete js-modal-trigger" aria-label="close"></button>
+                </header>
+                <section class="modal-card-body">
+                  {{ form.csrf_token }}
+                  {{ render_form_field(form.name,
+                                       type='text',
+                                       minlength='1',
+                                       maxlength='256',
+                                       placeholder='e.g. Death Star Plans') }}
+                  {{ render_select(form.owner) }}
+                  {{ render_select(form.visibility)}}
+                </section>
+                <footer class="modal-card-foot">
+                  <button type="submit" class="button is-primary has-text-weight-bold js-submit">
+                    Create Board
+                  </button>
+                  <button type="button" class="button js-modal-trigger">
+                    Cancel
+                  </button>
+                </footer>
+              </form>
+            </div>
           </div>
         </div>
       </div>

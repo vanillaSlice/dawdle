@@ -28,29 +28,53 @@ h1,
   margin-bottom: 0;
 }
 
-.input {
+.input,
+.select select {
   border-width: 0.1rem;
   box-shadow: none;
 }
 
-.input:hover {
+.input:hover,
+.select select:hover {
   border-color: #00d1b2;
 }
 
 .input:active,
-.input:focus {
+.input:focus,
+.select select:active,
+.select select:focus {
   border-color: #00d1b2;
   box-shadow: 0 0 0 0.125em rgba(0, 209, 178, 0.25);
 }
 
-.input.is-danger:hover {
+.select:not(.is-multiple):not(.is-loading)::after {
+  border-color: #00d1b2;
+}
+
+.input.is-danger:hover,
+.select.is-danger select:hover {
   border-color: #ff3860;
 }
 
 .input.is-danger:active,
-.input.is-danger:focus {
+.input.is-danger:focus,
+.select.is-danger select:active,
+.select.is-danger select:focus {
   border-color: #ff3860;
   box-shadow: 0 0 0 0.125em rgba(255, 56, 96, 0.25);
+}
+
+.select.is-danger:not(.is-multiple):not(.is-loading)::after {
+  border-color: #ff3860;
+}
+
+.select.is-danger:not(.is-multiple):not(.is-loading):hover::after {
+  border-color: #363636;
+}
+
+.modal {
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .has-background-pattern-primary {
