@@ -1,9 +1,10 @@
+from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import SelectField, StringField
 from wtforms.validators import DataRequired, Length
 
-from dawdle.models.board import BOARD_TYPES
-from dawdle.utils import has_board_create_permission, strip
+from dawdle.models.board import BOARD_VISIBILITIES
+from dawdle.utils import strip
 
 
 class CreateBoardForm(FlaskForm):
@@ -21,26 +22,22 @@ class CreateBoardForm(FlaskForm):
         filters=[strip],
     )
 
-    owner_id = StringField(
-        'Owner Id',
+    owner = SelectField(
+        'Owner',
         validators=[
-            DataRequired(message='Please enter an owner ID'),
+            DataRequired(message='Please select board owner'),
         ],
     )
 
-    type = SelectField(
-        'Type',
-        choices=[(type.id, type.display_name) for type in BOARD_TYPES],
+    visibility = SelectField(
+        'Visibility',
+        choices=[(v.id, v.display_name) for v in BOARD_VISIBILITIES],
+        validators=[
+            DataRequired(message='Please select board visibility'),
+        ],
     )
 
-    def validate_on_submit(self):
-        if not super().validate_on_submit():
-            return False
-
-        if not has_board_create_permission(self.owner_id.data):
-            self.owner_id.errors.append(
-                'Not authorised to create board with given owner ID',
-            )
-            return False
-
-        return True
+    def __init__(self, *args, **kwargs):
+        super(CreateBoardForm, self).__init__(*args, **kwargs)
+        # TODO add teams to choices # pylint: disable=fixme
+        self.owner.choices = [(str(current_user.id), 'Me')]

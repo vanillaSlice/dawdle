@@ -3,7 +3,6 @@ from urllib.parse import urljoin, urlparse
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
 from flask import current_app, flash, render_template, request
-from flask_login import current_user
 from flask_mail import Message
 from itsdangerous import (BadSignature,
                           TimedJSONWebSignatureSerializer,
@@ -157,10 +156,6 @@ def send_contact_emails(subject, email, message):
     except Exception:
         flash('Could not send message. Please try again.', 'danger')
         return False
-
-
-def has_board_create_permission(owner_id):
-    return to_ObjectId(owner_id) == current_user.id
 
 
 def get_owner_from_id(owner_id):

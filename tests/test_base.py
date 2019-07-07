@@ -3,7 +3,7 @@ from faker import Faker
 from flask import url_for
 
 from dawdle import create_app
-from dawdle.models.board import Board, BoardType
+from dawdle.models.board import Board, BoardType, BoardVisibility
 from dawdle.models.user import User
 
 
@@ -58,6 +58,7 @@ class TestBase:
         )
         board.owner_id = kwargs.get('owner_id', ObjectId())
         board.type = kwargs.get('type', BoardType.PERSONAL.id)
+        board.visibility = kwargs.get('visibility', BoardVisibility.PRIVATE.id)
         return board.save()
 
     @classmethod
