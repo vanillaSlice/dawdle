@@ -12,7 +12,7 @@
 }
 
 .boards-page .board-content {
-  height: 12rem;
+  height: 8rem;
   -webkit-hyphens: auto;
       -ms-hyphens: auto;
           hyphens: auto;
@@ -29,5 +29,5 @@
   align-items: center;
   display: flex;
   justify-content: center;
-  height: 12rem;
+  height: 8rem;
 }

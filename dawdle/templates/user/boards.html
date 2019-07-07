@@ -14,9 +14,9 @@
           <h2 class="title has-text-white has-alt-text is-size-4">
             <i class="fas fa-user"></i> Personal Boards
           </h2>
-          <div id="{{ current_user.id }}-boards" class="columns is-multiline">
-            {% for board in current_user.boards %}
-              <div class="column is-4">
+          <div id="{{ current_user.id }}-boards" class="columns is-mobile is-multiline">
+            {% for board in current_user.boards | sort(attribute='name') %}
+              <div class="column is-6-mobile is-4-tablet is-3-desktop">
                 <a href="{{ url_for('board.board_GET', board_id=board.id) }}" class="board">
                   <div class="board-content box">
                     <p class="has-text-weight-bold js-shave">
@@ -26,8 +26,8 @@
                 </a>
               </div>
             {% endfor %}
-            <div class="column is-4">
-              <a href="#" class="board-button js-modal-trigger" data-target="#js-create-board-modal">
+            <div class="column is-6-mobile is-4-tablet is-3-desktop">
+              <a class="board-button js-modal-trigger" data-target="#js-create-board-modal" role="button" tabindex="0">
                 <div class="board-button-content box has-background-grey-lighter">
                   <p class="has-text-weight-bold">
                     Create New Board…

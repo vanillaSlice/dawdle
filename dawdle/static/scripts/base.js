@@ -22,7 +22,7 @@
    */
 
   $('.js-notification-close').click(function() {
-    $(this).parent().remove();
+    $(this).parent().addClass('is-hidden');
   });
 
   /*
@@ -117,7 +117,7 @@
    */
 
   function truncateText() {
-    $('.js-shave').shave(150, { spaces: false });
+    $('.js-shave').shave(100, { spaces: false });
   }
 
   truncateText();
@@ -130,7 +130,7 @@
 
   function toggleModal(modalElement) {
     modalElement.toggleClass('is-active');
-    $('html, body, main').toggleClass('is-clipped');
+    $('html').toggleClass('is-clipped');
   }
 
   $('.js-modal-trigger').click(function() {

@@ -8,6 +8,11 @@
   color: #fff;
 }
 
+html.is-active {
+  position: fixed;
+  width: 100%;
+}
+
 body,
 .input {
   font-family: 'Roboto', sans-serif;
