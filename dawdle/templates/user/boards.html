@@ -47,6 +47,12 @@
                   <button type="button" class="delete js-modal-trigger" aria-label="close"></button>
                 </header>
                 <section class="modal-card-body">
+                  <div class="notification is-danger is-hidden js-form-errors">
+                    <button type="button" class="delete js-notification-close"></button>
+                    <div class="content">
+                      <ul class="js-form-errors-list"></ul>
+                    </div>
+                  </div>
                   {{ form.csrf_token }}
                   {{ render_form_field(form.name,
                                        type='text',

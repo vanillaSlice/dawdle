@@ -1,9 +1,10 @@
 (function() {
 
-  function handleCreateBoardFormSubmit(e) {
+  $('.js-create-board-form').submit(function(e) {
     e.preventDefault();
 
-    var submitElement = $(this).find('.js-submit');
+    var formElement = $(this);
+    var submitElement = formElement.find('.js-submit');
 
     var name = $('#name').val();
     var owner = $('#owner').val();
@@ -16,11 +17,16 @@
     }, function(res) {
       window.location = res.url;
     })
-      .fail(function() {
+      .fail(function(err) {
+        var errors = err.responseJSON || { default: 'Could not create board. Please try again.' }
+        dawdle.renderFormErrors(formElement, errors);
         submitElement.prop('disabled', false);
         submitElement.removeClass('is-loading');
       });
-  }
+  });
 
-  $('.js-create-board-form').submit(handleCreateBoardFormSubmit);
+  $('.js-create-board-form .js-modal-trigger').click(function() {
+    var formElement = $('.js-create-board-form');
+    dawdle.resetFormElement(formElement);
+  });
 })();

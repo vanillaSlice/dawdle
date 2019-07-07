@@ -75,6 +75,43 @@
     togglePasswordMask($(this));
   });
 
+  function renderFormErrors(formElement, errors) {
+    var errorsElement = formElement.find('.js-form-errors');
+    var errorsListElement = formElement.find('.js-form-errors-list');
+
+    var errorsList = '';
+
+    Object.keys(errors).forEach(function(key) {
+      var fieldElement = formElement.find('#' + key);
+      var formFieldContainerElement = fieldElement.parents('.js-form-field-container');
+      var helpElement = formFieldContainerElement.find('.js-help');
+      var passwordMaskElement = formFieldContainerElement.find('.js-password-mask');
+      fieldElement.addClass('is-danger');
+      helpElement.addClass('is-danger');
+      passwordMaskElement.addClass('is-danger');
+      errorsList += '<li class="has-text-weight-bold">' + errors[key] + '</li>';
+    });
+
+    errorsListElement.html(errorsList);
+    errorsElement.removeClass('is-hidden');
+  }
+
+  function resetFormElement(formElement) {
+    var errorsElement = formElement.find('.js-form-errors');
+    var errorsListElement = formElement.find('.js-form-errors-list');
+    var fieldElements = formElement.find('.js-form-field');
+    var helpElements = formElement.find('.js-help');
+    var passwordMaskElements = formElement.find('.js-password-mask');
+
+    formElement.trigger('reset');
+    fieldElements.removeClass('is-danger');
+    helpElements.removeClass('is-danger');
+    passwordMaskElements.removeClass('is-danger');
+
+    errorsListElement.html('');
+    errorsElement.addClass('is-hidden');
+  }
+
   /*
    * Truncation
    */
@@ -109,6 +146,8 @@
    */
 
   window.dawdle = {
+    renderFormErrors: renderFormErrors,
+    resetFormElement: resetFormElement,
     toggleFieldElementErrorClass: toggleFieldElementErrorClass,
     toggleModal: toggleModal,
     toggleNavbar: toggleNavbar,
