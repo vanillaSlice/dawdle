@@ -1,6 +1,6 @@
 {% extends 'shared/base.html' %}
 
-{% from 'shared/utils.html' import render_form_errors, render_form_field %}
+{% from 'shared/utils.html' import render_form_errors, render_form_field, render_textarea %}
 
 {% block title %}Contact | Dawdle{% endblock %}
 
@@ -30,12 +30,12 @@
                                  maxlength='256',
                                  placeholder='e.g. The Force',
                                  left_icon_classes='fas fa-pencil-alt') }}
-            {{ render_form_field(form.message,
-                                 rows='10',
-                                 minlength='1',
-                                 maxlength='1000',
-                                 placeholder='e.g. May the Force be with you.',
-                                 left_icon_classes='fas fa-pencil-alt') }}
+            {{ render_textarea(form.message,
+                               rows='10',
+                               minlength='1',
+                               maxlength='1000',
+                               placeholder='e.g. May the Force be with you.',
+                               left_icon_classes='fas fa-pencil-alt') }}
             <div class="field content">
               <div class="control">
                 <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold js-submit">
