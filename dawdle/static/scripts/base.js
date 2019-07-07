@@ -30,7 +30,9 @@
    */
 
   $('.js-form').submit(function() {
-    $(this).find('.js-submit').prop('disabled', true);
+    var submitElement = $(this).find('.js-submit');
+    submitElement.prop('disabled', true);
+    submitElement.addClass('is-loading');
   });
 
   function toggleFieldElementErrorClass(fieldElement, state) {
