@@ -1,5 +1,3 @@
-import json
-
 from flask import url_for
 
 from dawdle.models.board import Board, BoardType, BoardVisibility
@@ -81,17 +79,17 @@ class TestBoard(TestBase):
 
     def _assert_index_POST_ok(self, data, expected_type=BoardType.PERSONAL):
         response = self._send_index_POST_request(data)
-        response_json = json.loads(response.data.decode())
-        board = Board.objects(id=response_json['id']).first()
+        board_in_response = Board.from_json(response.data.decode())
+        board_saved = Board.objects(id=board_in_response.id).first()
         owner = get_owner_from_id(data['owner'])
         assert response.status_code == 201
-        assert response_json['name'] == data['name']
-        assert board.created_by == self.user.id
-        assert board.name == data['name']
-        assert str(board.owner_id) == data['owner']
-        assert board.type == expected_type.id
-        assert board.visibility == data['visibility']
-        assert board in owner.boards
+        assert board_in_response == board_saved
+        assert board_saved.created_by == self.user.id
+        assert board_saved.name == data['name']
+        assert str(board_saved.owner_id) == data['owner']
+        assert board_saved.type == expected_type.id
+        assert board_saved.visibility == data['visibility']
+        assert board_saved in owner.boards
 
     def _assert_index_POST_bad_request(self, data, expected_text):
         response = self._send_index_POST_request(data)

@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user
 
+from dawdle.forms.board import CreateBoardForm
 from dawdle.forms.user import (DeleteUserForm,
                                UpdateAccountDetailsForm,
                                UpdateEmailForm,
@@ -17,7 +18,8 @@ user_bp = Blueprint('user', __name__, url_prefix='/user')
 @user_bp.route('/boards')
 @login_required
 def boards_GET():
-    return render_template('user/boards.html')
+    form = CreateBoardForm(request.form)
+    return render_template('user/boards.html', form=form)
 
 
 @user_bp.route('/settings')
