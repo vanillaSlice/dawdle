@@ -79,6 +79,9 @@ def _init_extensions(app):
     from dawdle.extensions.mongoengine import mongoengine
     mongoengine.init_app(app)
 
+    from dawdle.extensions.wtf import csrf
+    csrf.init_app(app)
+
 
 def _register_blueprints(app):
     from dawdle.blueprints.auth import auth_bp
