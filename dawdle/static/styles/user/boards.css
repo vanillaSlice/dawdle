@@ -12,7 +12,6 @@
 }
 
 .boards-page .board-content {
-  box-shadow: none;
   height: 8rem;
   -webkit-hyphens: auto;
       -ms-hyphens: auto;
@@ -28,7 +27,6 @@
 
 .boards-page .board-button-content {
   align-items: center;
-  box-shadow: none;
   display: flex;
   justify-content: center;
   height: 8rem;
