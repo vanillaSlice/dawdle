@@ -6,20 +6,15 @@
     var formElement = $(this);
     var submitElement = formElement.find('.js-submit');
 
-    var name = $('#name').val();
-    var owner = $('#owner').val();
-    var visibility = $('#visibility').val();
-
-    $.post('/board/', {
-      name: name,
-      owner: owner,
-      visibility: visibility,
-    }, function(res) {
-      window.location = res.url;
-    })
+    $.post('/board/', formElement.serialize())
+      .done(function(res) {
+        window.location = res.url;
+      })
       .fail(function(err) {
         var errors = err.responseJSON || { default: 'Could not create board. Please try again.' }
         dawdle.renderFormErrors(formElement, errors);
+      })
+      .always(function() {
         submitElement.prop('disabled', false);
         submitElement.removeClass('is-loading');
       });

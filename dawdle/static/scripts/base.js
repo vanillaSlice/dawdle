@@ -77,7 +77,7 @@
 
   function renderFormErrors(formElement, errors) {
     var errorsElement = formElement.find('.js-form-errors');
-    var errorsListElement = formElement.find('.js-form-errors-list');
+    var errorsListElement = errorsElement.find('.js-form-errors-list');
 
     var errorsList = '';
 
@@ -98,7 +98,7 @@
 
   function resetFormElement(formElement) {
     var errorsElement = formElement.find('.js-form-errors');
-    var errorsListElement = formElement.find('.js-form-errors-list');
+    var errorsListElement = errorsElement.find('.js-form-errors-list');
     var fieldElements = formElement.find('.js-form-field');
     var helpElements = formElement.find('.js-help');
     var passwordMaskElements = formElement.find('.js-password-mask');
