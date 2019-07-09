@@ -4,7 +4,7 @@
       <button type="button" class="delete js-notification-close"></button>
       <div class="content">
         <ul class="js-form-errors-list">
-          {% for field_name, field_errors in form.errors.items() %}
+          {% for field_errors in form.errors.values() %}
             {% for error in field_errors %}
               <li class="has-text-weight-bold">
                 {{ error }}
@@ -28,7 +28,7 @@
   </div>
 {% endmacro %}
 
-{% macro render_password(field, show_help=False) %}
+{% macro render_password(field, show_help=False, autofocus=False) %}
   {% set classes = 'input js-form-field js-password' %}
   {% if field.errors %}
     {% set classes = classes + ' is-danger' %}
@@ -37,14 +37,26 @@
     {{ field.label(class='label') }}
     <div class="field has-addons">
       <div class="control is-expanded has-icons-left">
-        {{ field(class=classes,
-                  type='password',
-                  placeholder='e.g. ••••••••••••',
-                  autocomplete='off',
-                  autocorrect='off',
-                  autocapitalize='off',
-                  spellcheck='false',
-                  **kwargs) | safe }}
+        {% if autofocus %}
+          {{ field(class=classes,
+                   type='password',
+                   placeholder='e.g. ••••••••••••',
+                   autocomplete='off',
+                   autocorrect='off',
+                   autocapitalize='off',
+                   spellcheck='false',
+                   autofocus='autofocus',
+                   **kwargs) | safe }}
+        {% else %}
+          {{ field(class=classes,
+                   type='password',
+                   placeholder='e.g. ••••••••••••',
+                   autocomplete='off',
+                   autocorrect='off',
+                   autocapitalize='off',
+                   spellcheck='false',
+                   **kwargs) | safe }}
+        {% endif %}
         <span class="icon is-small is-left">
           <i class="fas fa-lock"></i>
         </span>
@@ -69,7 +81,7 @@
   </div>
 {% endmacro %}
 
-{% macro render_textarea(field, left_icon_classes=None, help=None) %}
+{% macro render_textarea(field, left_icon_classes=None, help=None, autofocus=False) %}
   {% set classes = 'input textarea js-form-field' %}
   {% if field.errors %}
     {% set classes = classes + ' is-danger' %}
@@ -77,7 +89,11 @@
   <div class="field js-form-field-container">
     {{ field.label(class='label') }}
     <div class="control {{ 'has-icons-left' if left_icon_classes }}">
-      {{ field(class=classes, **kwargs) | safe }}
+      {% if autofocus %}
+        {{ field(class=classes, autofocus='autofocus', **kwargs) | safe }}
+      {% else %}
+        {{ field(class=classes, **kwargs) | safe }}
+      {% endif %}
       {% if left_icon_classes %}
         <span class="icon is-small is-left">
           <i class="{{ left_icon_classes }}"></i>
@@ -92,12 +108,16 @@
   </div>
 {% endmacro %}
 
-{% macro render_select(field, left_icon_classes=None, help=None) %}
+{% macro render_select(field, left_icon_classes=None, help=None, autofocus=False) %}
   <div class="field js-form-field-container">
     {{ field.label(class='label') }}
     <div class="control {{ 'has-icons-left' if left_icon_classes }}">
       <div class="select is-fullwidth {{ 'is-danger' if field.errors }} js-form-field ">
-        {{ field(**kwargs) | safe }}
+        {% if autofocus %}
+          {{ field(autofocus='autofocus', **kwargs) | safe }}
+        {% else %}
+          {{ field(**kwargs) | safe }}
+        {% endif %}
         {% if left_icon_classes %}
           <span class="icon is-small is-left">
             <i class="{{ left_icon_classes }}"></i>
@@ -113,7 +133,7 @@
   </div>
 {% endmacro %}
 
-{% macro render_form_field(field, left_icon_classes=None, help=None) %}
+{% macro render_form_field(field, left_icon_classes=None, help=None, autofocus=False) %}
   {% set classes = 'input js-form-field' %}
   {% if field.errors %}
     {% set classes = classes + ' is-danger' %}
@@ -121,7 +141,11 @@
   <div class="field js-form-field-container">
     {{ field.label(class='label') }}
     <div class="control {{ 'has-icons-left' if left_icon_classes }}">
-      {{ field(class=classes, **kwargs) | safe }}
+      {% if autofocus %}
+        {{ field(class=classes, autofocus='autofocus', **kwargs) | safe }}
+      {% else %}
+        {{ field(class=classes, **kwargs) | safe }}
+      {% endif %}
       {% if left_icon_classes %}
         <span class="icon is-small is-left">
           <i class="{{ left_icon_classes }}"></i>

@@ -16,7 +16,8 @@
   {{ render_form_errors(form) }}
   <form method="POST" class="js-form">
     {{ form.csrf_token }}
-    {{ render_password(form.password) }}
+    {% set focus_field = (form.errors.keys() | first) if form.errors else '' %}
+    {{ render_password(form.password, autofocus=(focus_field == 'password')) }}
     <div class="field content">
       <div class="control">
         <button type="submit" class="button is-fullwidth is-danger has-text-weight-bold js-submit">
