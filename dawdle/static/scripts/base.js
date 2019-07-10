@@ -80,23 +80,16 @@
     var errorsListElement = errorsElement.find('.js-form-errors-list');
 
     var errorsList = '';
-    var found = false;
 
     Object.keys(errors).forEach(function(key) {
       var fieldElement = formElement.find('#' + key);
       var formFieldContainerElement = fieldElement.parents('.js-form-field-container');
       var helpElement = formFieldContainerElement.find('.js-help');
       var passwordMaskElement = formFieldContainerElement.find('.js-password-mask');
-
       fieldElement.addClass('is-danger');
       helpElement.addClass('is-danger');
       passwordMaskElement.addClass('is-danger');
       errorsList += '<li class="has-text-weight-bold">' + errors[key] + '</li>';
-
-      if (!found) {
-        fieldElement.focus();
-        found = true;
-      }
     });
 
     errorsListElement.html(errorsList);
@@ -109,7 +102,6 @@
     var fieldElements = formElement.find('.js-form-field');
     var helpElements = formElement.find('.js-help');
     var passwordMaskElements = formElement.find('.js-password-mask');
-    var autofocusElement = formElement.find('[autofocus]');
 
     formElement.trigger('reset');
     fieldElements.removeClass('is-danger');
@@ -118,8 +110,6 @@
 
     errorsListElement.html('');
     errorsElement.addClass('is-hidden');
-
-    autofocusElement.focus();
   }
 
   /*

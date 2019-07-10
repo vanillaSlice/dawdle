@@ -20,13 +20,11 @@
           {{ render_form_errors(form) }}
           <form method="POST" class="content js-form">
             {{ form.csrf_token }}
-            {% set focus_field = (form.errors.keys() | first) if form.errors else 'email' %}
             {{ render_form_field(form.email,
                                  type='email',
                                  placeholder='e.g. han@thefalcon.com',
-                                 left_icon_classes='fas fa-envelope',
-                                 autofocus=(focus_field == 'email')) }}
-            {{ render_password(form.password, autofocus=(focus_field == 'password')) }}
+                                 left_icon_classes='fas fa-envelope') }}
+            {{ render_password(form.password) }}
             {{ render_checkbox(form.remember_me) }}
             <div class="field content">
               <div class="control">

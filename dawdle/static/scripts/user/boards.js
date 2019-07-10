@@ -20,7 +20,7 @@
       });
   });
 
-  $('.js-create-board-form .js-modal-trigger, [data-target="#js-create-board-modal"]').click(function() {
+  $('.js-create-board-form .js-modal-trigger').click(function() {
     var formElement = $('.js-create-board-form');
     dawdle.resetFormElement(formElement);
   });
