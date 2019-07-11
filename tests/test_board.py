@@ -17,8 +17,8 @@ class TestBoard(TestBase):
         self.logout()
         data = self._get_mock_create_board_data()
         response = self._send_index_POST_request(data)
-        assert response.status_code == 200
-        assert b'Log In to Dawdle' in response.data
+        assert response.status_code == 401
+        assert b'Could not create board' in response.data
 
     def test_index_POST_no_name(self):
         data = self._get_mock_create_board_data()

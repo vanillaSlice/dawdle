@@ -11,7 +11,7 @@
         window.location = res.url;
       })
       .fail(function(err) {
-        var errors = err.responseJSON || { default: 'Could not create board. Please try again.' }
+        var errors = err.responseJSON || { error: 'Could not create board. Please try again.' }
         dawdle.renderFormErrors(formElement, errors);
       })
       .always(function() {

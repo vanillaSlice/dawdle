@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, url_for
-from flask_login import current_user, login_required
+from flask_login import current_user
 
 from dawdle.forms.board import CreateBoardForm
 from dawdle.models.board import Board, BoardType
@@ -9,8 +9,13 @@ board_bp = Blueprint('board', __name__, url_prefix='/board')
 
 
 @board_bp.route('/', methods=['POST'])
-@login_required
 def index_POST():
+    if not current_user.is_authenticated:
+        return jsonify({
+            'error': 'Could not create board because you have been logged out.'
+                     ' Please try logging in again.',
+        }), 401
+
     form = CreateBoardForm(request.form)
 
     if not form.validate_on_submit():
