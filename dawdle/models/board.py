@@ -26,6 +26,22 @@ class BoardVisibility:
 BOARD_VISIBILITIES = [BoardVisibility.PRIVATE]
 
 
+_board_permission = namedtuple('BoardPermission', 'id, display_name')
+
+
+class BoardPermission:
+    ADMIN = _board_permission('admin', 'Admin')
+    READ = _board_permission('read', 'Read')
+    WRITE = _board_permission('write', 'Write')
+
+
+BOARD_PERMISSIONS = [
+    BoardPermission.ADMIN,
+    BoardPermission.READ,
+    BoardPermission.WRITE,
+]
+
+
 class Board(Document):
 
     created = DateTimeField(required=True, default=datetime.utcnow)

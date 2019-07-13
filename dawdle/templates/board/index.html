@@ -1,0 +1,16 @@
+{% extends 'shared/base.html' %}
+
+{% block title %}{{ board.name }} | Dawdle{% endblock %}
+
+{% set container_classes='board-page has-background-info has-background-pattern-info' %}
+
+{% block content %}
+  <div class="body">
+    <h1 class="title has-text-white has-alt-text is-size-3">
+      {{ board.name }}
+    </h1>
+    <h2 class="has-text-white has-alt-text is-size-4">
+      Working on it…
+    </h2>
+  </div>
+{% endblock %}

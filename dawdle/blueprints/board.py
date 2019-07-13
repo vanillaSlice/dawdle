@@ -1,9 +1,9 @@
-from flask import Blueprint, jsonify, request, url_for
+from flask import Blueprint, jsonify, render_template, request, url_for
 from flask_login import current_user
 
 from dawdle.forms.board import CreateBoardForm
-from dawdle.models.board import Board, BoardType
-from dawdle.utils import get_owner_from_id
+from dawdle.models.board import Board, BoardPermission, BoardType
+from dawdle.utils import board_permissions_required, get_owner_from_id
 
 board_bp = Blueprint('board', __name__, url_prefix='/board')
 
@@ -42,5 +42,10 @@ def index_POST():
 
 
 @board_bp.route('/<board_id>')
-def board_GET(board_id):
-    return jsonify(board_id)
+@board_permissions_required(BoardPermission.READ)
+def board_GET(board, permissions, **_):
+    return render_template(
+        'board/index.html',
+        board=board,
+        permissions=permissions,
+    )

@@ -1,6 +1,7 @@
 import json
 
 from flask import url_for
+from bson.objectid import ObjectId
 
 from dawdle.models.board import Board, BoardType, BoardVisibility
 from dawdle.utils import get_owner_from_id
@@ -97,3 +98,45 @@ class TestBoard(TestBase):
         response = self._send_index_POST_request(data)
         assert response.status_code == 400
         assert expected_text.encode() in response.data
+
+    #
+    # board_GET tests.
+    #
+
+    def test_board_GET_board_does_not_exist(self):
+        self._assert_board_GET_not_found(ObjectId())
+
+    def test_board_GET_not_authenticated(self):
+        self.logout()
+        board = self.create_board()
+        self._assert_board_GET_forbidden(board.id)
+
+    def test_board_GET_user_without_permissions(self):
+        board = self.create_board()
+        user, _ = self.as_new_user()
+        self._assert_board_GET_forbidden(board.id)
+
+    def test_board_GET_success(self):
+        board = self.create_board(owner_id=self.user.id)
+        self._assert_board_GET_ok(board.id)
+
+    def _send_board_GET_request(self, board_id):
+        return self.client.get(
+            url_for('board.board_GET', board_id=str(board_id)),
+        )
+
+    def _assert_board_GET_ok(self, board_id):
+        response = self._send_board_GET_request(board_id)
+        board = Board.objects(id=board_id).first()
+        assert response.status_code == 200
+        assert board.name.encode() in response.data
+
+    def _assert_board_GET_forbidden(self, board_id):
+        response = self._send_board_GET_request(board_id)
+        assert response.status_code == 403
+        assert b'Not Authorised' in response.data
+
+    def _assert_board_GET_not_found(self, board_id):
+        response = self._send_board_GET_request(board_id)
+        assert response.status_code == 404
+        assert b'Not Found' in response.data
