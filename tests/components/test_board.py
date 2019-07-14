@@ -3,8 +3,8 @@ import json
 from flask import url_for
 from bson.objectid import ObjectId
 
-from dawdle.models.board import Board, BoardType, BoardVisibility
-from dawdle.utils import get_owner_from_id
+from dawdle.components.board.models import Board, BoardType, BoardVisibility
+from dawdle.components.board.utils import get_owner_from_id
 from tests.test_base import TestBase
 
 
@@ -48,6 +48,10 @@ class TestBoard(TestBase):
         data = self._get_mock_create_board_data()
         data['owner'] = ''
         self._assert_index_POST_bad_request(data, 'Please select board owner')
+
+    def test_index_POST_invalid_owner(self):
+        data = self._get_mock_create_board_data(owner='invalid')
+        self._assert_index_POST_bad_request(data, 'Not a valid choice')
 
     def test_index_POST_no_visibility(self):
         data = self._get_mock_create_board_data()

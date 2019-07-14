@@ -3,8 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import SelectField, StringField
 from wtforms.validators import DataRequired, Length
 
-from dawdle.models.board import BOARD_VISIBILITIES
-from dawdle.utils import strip
+from dawdle.components.board.models import BOARD_VISIBILITIES
 
 
 class CreateBoardForm(FlaskForm):
@@ -19,7 +18,7 @@ class CreateBoardForm(FlaskForm):
                 message='Board name must be between 1 and 256 characters',
             ),
         ],
-        filters=[strip],
+        filters=[lambda s: s.strip()],
     )
 
     owner = SelectField(

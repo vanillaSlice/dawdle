@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user
 
-from dawdle.forms.board import CreateBoardForm
+from dawdle.components.board.forms import CreateBoardForm
 from dawdle.forms.user import (DeleteUserForm,
                                UpdateAccountDetailsForm,
                                UpdateEmailForm,

@@ -13,7 +13,7 @@ from mongoengine import (BooleanField,
                          StringField)
 from passlib.hash import sha256_crypt
 
-from dawdle.models.board import Board
+from dawdle.components.board.models import Board
 
 
 class User(Document, UserMixin):
