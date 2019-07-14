@@ -145,6 +145,16 @@
   });
 
   /*
+   * Used to reload previous page when going back on Safari
+   */
+
+  $(window).bind('pageshow', function(event) {
+    if (event.originalEvent.persisted) {
+      window.location.reload();
+    }
+  });
+
+  /*
    * Export functions
    */
 

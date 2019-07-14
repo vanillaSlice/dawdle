@@ -62,15 +62,6 @@
       }
     });
   </script>
-  {% if no_cache %}
-    <script>
-      $(window).bind('pageshow', function(event) {
-        if (event.originalEvent.persisted) {
-          window.location.reload();
-        }
-      });
-    </script>
-  {% endif %}
   {% assets 'dawdle_js' %}
     <script src="{{ ASSET_URL }}"></script>
   {% endassets %}

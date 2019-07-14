@@ -24,7 +24,6 @@ def boards_GET():
     return render_template(
         'user/boards.html',
         form=CreateBoardForm(request.form),
-        no_cache=True,
     )
 
 
