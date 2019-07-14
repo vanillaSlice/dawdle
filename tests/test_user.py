@@ -79,19 +79,19 @@ class TestUser(TestBase):
         assert b'Log In to Dawdle' in response.data
 
     def test_settings_account_details_POST_name_equal_to_min(self):
-        user, password = self.as_new_user()
+        user, _ = self.as_new_user()
         name = self.fake.pystr(min_chars=1, max_chars=1)
         data = self._get_mock_account_details_data(name=name)
         self._assert_settings_account_details_POST_ok(user.id, data)
 
     def test_settings_account_details_POST_name_equal_to_max(self):
-        user, password = self.as_new_user()
+        user, _ = self.as_new_user()
         name = self.fake.pystr(min_chars=50, max_chars=50)
         data = self._get_mock_account_details_data(name=name)
         self._assert_settings_account_details_POST_ok(user.id, data)
 
     def test_settings_account_details_POST_name_greater_than_max(self):
-        user, password = self.as_new_user()
+        user, _ = self.as_new_user()
         name = self.fake.pystr(min_chars=51, max_chars=51)
         data = self._get_mock_account_details_data(name=name)
         self._assert_settings_account_details_POST_bad_request(
@@ -101,19 +101,19 @@ class TestUser(TestBase):
         )
 
     def test_settings_account_details_POST_initials_equal_to_min(self):
-        user, password = self.as_new_user()
+        user, _ = self.as_new_user()
         initials = self.fake.pystr(min_chars=1, max_chars=1)
         data = self._get_mock_account_details_data(initials=initials)
         self._assert_settings_account_details_POST_ok(user.id, data)
 
     def test_settings_account_details_POST_initials_equal_to_max(self):
-        user, password = self.as_new_user()
+        user, _ = self.as_new_user()
         initials = self.fake.pystr(min_chars=4, max_chars=4)
         data = self._get_mock_account_details_data(initials=initials)
         self._assert_settings_account_details_POST_ok(user.id, data)
 
     def test_settings_account_details_POST_initials_greater_than_max(self):
-        user, password = self.as_new_user()
+        user, _ = self.as_new_user()
         initials = self.fake.pystr(min_chars=5, max_chars=5)
         data = self._get_mock_account_details_data(initials=initials)
         self._assert_settings_account_details_POST_bad_request(
@@ -123,7 +123,7 @@ class TestUser(TestBase):
         )
 
     def test_settings_account_details_POST_no_update(self):
-        user, password = self.as_new_user()
+        user, _ = self.as_new_user()
         data = self._get_mock_account_details_data(
             name=user.name,
             initials=user.initials,
@@ -135,7 +135,7 @@ class TestUser(TestBase):
         )
 
     def test_settings_account_details_POST_success(self):
-        user, password = self.as_new_user()
+        user, _ = self.as_new_user()
         data = self._get_mock_account_details_data()
         self._assert_settings_account_details_POST_ok(user.id, data)
 
@@ -223,7 +223,7 @@ class TestUser(TestBase):
         )
 
     def test_settings_update_email_POST_incorrect_password(self):
-        user, password = self.as_new_user()
+        user, _ = self.as_new_user()
         email = self.fake.email()
         data = self._get_mock_update_email_data(email=email, password='wrong')
         self._assert_settings_update_email_POST_bad_request(
@@ -341,7 +341,7 @@ class TestUser(TestBase):
         assert b'Log In to Dawdle' in response.data
 
     def test_settings_update_password_POST_incorrect_current_password(self):
-        user, password = self.as_new_user()
+        user, _ = self.as_new_user()
         current_password = 'wrong'
         new_password = self.fake.password()
         data = self._get_mock_update_password_data(

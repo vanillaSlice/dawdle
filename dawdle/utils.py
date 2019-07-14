@@ -104,7 +104,7 @@ def deserialize_password_reset_token(token):
 def send_password_reset_email(user):
     try:
         recipients = [user.email]
-        msg = Message('Dawdle Password Reset', recipients=[user.email])
+        msg = Message('Dawdle Password Reset', recipients=recipients)
         msg.html = render_template(
             'auth/reset-password-email.html',
             user=user,

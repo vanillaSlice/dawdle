@@ -112,8 +112,7 @@ class TestBoard(TestBase):
         self._assert_board_GET_forbidden(board.id)
 
     def test_board_GET_user_without_permissions(self):
-        board = self.create_board()
-        user, _ = self.as_new_user()
+        board = self.create_board(owner_id=ObjectId())
         self._assert_board_GET_forbidden(board.id)
 
     def test_board_GET_success(self):

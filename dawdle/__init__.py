@@ -20,7 +20,7 @@ def create_app(testing=False):
 
 def _attach_context_processors(app):
     @app.context_processor
-    def inject_version():
+    def inject_version():  # pylint: disable=unused-variable
         return {'version': version}
 
 
@@ -102,14 +102,14 @@ def _register_blueprints(app):
 
 def _attach_error_handlers(app):
     @app.errorhandler(Exception)
-    def handle_exception(_):
+    def handle_exception(_):  # pylint: disable=unused-variable
         abort(500)
 
     @app.errorhandler(400)
     @app.errorhandler(403)
     @app.errorhandler(404)
     @app.errorhandler(500)
-    def handle_error(error):
+    def handle_error(error):  # pylint: disable=unused-variable
         return render_template(
             'error/{}.html'.format(error.code),
             error=error,

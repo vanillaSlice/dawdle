@@ -44,7 +44,7 @@ class TestBase:
     def create_boards(cls, owner_id, min_boards=1, max_boards=1):
         num = cls.fake.pyint(min_boards, max_boards)
         boards = []
-        for n in range(num):
+        for _ in range(num):
             boards.append(cls.create_board(owner_id=owner_id))
         return boards
 
