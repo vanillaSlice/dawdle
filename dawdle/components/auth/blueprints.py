@@ -10,17 +10,17 @@ from flask import (abort,
                    url_for)
 from flask_login import current_user, login_user, logout_user
 
-from dawdle.forms.auth import (LoginForm,
-                               ResetPasswordForm,
-                               ResetPasswordRequestForm,
-                               SignUpForm,
-                               VerifyResendForm)
+from dawdle.components.auth.forms import (LoginForm,
+                                          ResetPasswordForm,
+                                          ResetPasswordRequestForm,
+                                          SignUpForm,
+                                          VerifyResendForm)
 from dawdle.components.user.models import User
-from dawdle.utils import (deserialize_password_reset_token,
-                          deserialize_verification_token,
-                          is_safe_url,
-                          send_password_reset_email,
-                          send_verification_email)
+from dawdle.components.auth.utils import (deserialize_password_reset_token,
+                                          deserialize_verification_token,
+                                          send_password_reset_email,
+                                          send_verification_email)
+from dawdle.utils import is_safe_url
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -50,8 +50,10 @@ def sign_up_POST():
 
 @auth_bp.route('/verify/resend')
 def verify_resend_GET():
-    form = VerifyResendForm(request.form, email=request.args.get('email'))
-    return render_template('auth/verify-resend.html', form=form)
+    return render_template(
+        'auth/verify-resend.html',
+        form=VerifyResendForm(request.form, email=request.args.get('email')),
+    )
 
 
 @auth_bp.route('/verify/resend', methods=['POST'])
@@ -125,8 +127,10 @@ def logout_GET():
 
 @auth_bp.route('/reset-password')
 def reset_password_request_GET():
-    form = ResetPasswordRequestForm(request.form, obj=current_user)
-    return render_template('auth/reset-password-request.html', form=form)
+    return render_template(
+        'auth/reset-password-request.html',
+        form=ResetPasswordRequestForm(request.form, obj=current_user),
+    )
 
 
 @auth_bp.route('/reset-password', methods=['POST'])

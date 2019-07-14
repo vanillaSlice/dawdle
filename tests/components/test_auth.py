@@ -85,7 +85,7 @@ class TestAuth(TestBase):
             'There is already an account with this email',
         )
 
-    @mock.patch('dawdle.utils.mail')
+    @mock.patch('dawdle.components.auth.utils.mail')
     def test_sign_up_POST_error_sending_email(self, mail_mock):
         mail_mock.send.side_effect = RuntimeError('some error')
         data = self._get_mock_sign_up_data()
@@ -180,7 +180,7 @@ class TestAuth(TestBase):
             'This account has already been verified',
         )
 
-    @mock.patch('dawdle.utils.mail')
+    @mock.patch('dawdle.components.auth.utils.mail')
     def test_verify_resend_POST_error_sending_email(self, mail_mock):
         mail_mock.send.side_effect = RuntimeError('some error')
         user = self.create_user(active=False)
@@ -438,7 +438,7 @@ class TestAuth(TestBase):
             'There is no account with this email',
         )
 
-    @mock.patch('dawdle.utils.mail')
+    @mock.patch('dawdle.components.auth.utils.mail')
     def test_reset_password_request_POST_error_sending_email(self, mail_mock):
         mail_mock.send.side_effect = RuntimeError('some error')
         user = self.create_user(active=False)

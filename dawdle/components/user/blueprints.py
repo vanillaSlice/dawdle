@@ -11,7 +11,7 @@ from dawdle.components.user.forms import (DeleteUserForm,
                                           UpdatePasswordForm)
 from dawdle.components.user.models import User
 from dawdle.components.user.utils import send_delete_account_email
-from dawdle.utils import send_verification_email
+from dawdle.components.auth.utils import send_verification_email
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
