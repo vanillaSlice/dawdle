@@ -6,7 +6,8 @@
 [![License](https://img.shields.io/github/license/vanillaSlice/dawdle.svg)](LICENSE)
 
 A project organisation tool built with [Flask](http://flask.pocoo.org/).
-A deployed version can be viewed [here](https://dawdle.mikelowe.xyz/).
+A deployed version can be viewed [here](https://dawdle.mikelowe.xyz/) (it's running on Heroku so may take a moment to
+wake up).
 
 ## Screenshot
 
@@ -18,7 +19,6 @@ The following properties can be configured:
 
 | Name                    | Purpose                                                          | Default               |
 | ----------------------- | ---------------------------------------------------------------- | --------------------- |
-| `None`                |
 | `DEBUG`                 | If debug mode is enabled.                                        | `False`               |
 | `ENV`                   | Environment the app is running in.                               | `production`          |
 | `MAIL_DEFAULT_SENDER`   | The default address to send emails from.                         | `None`                |
@@ -67,6 +67,9 @@ MAIL_USERNAME = <Gmail address>
 
 Make sure to add these to your `instance/config.py` file in order to run locally.
 
+If you have problems sending from your Gmail account then you may need to enable less secure apps.
+You can enable less secure apps by going [here](https://myaccount.google.com/lesssecureapps).
+
 ### Running With or Without Docker
 
 The app can be run [with Docker](#with-docker) or [without Docker](#without-docker).
@@ -98,6 +101,8 @@ You can either:
 or:
 
 * Create a database in the cloud using [MongoDB Atlas](https://www.mongodb.com/cloud/atlas).
+
+Remember to update your `instance/config.py` file with the relevant MongoDB settings.
 
 ##### Running
 
