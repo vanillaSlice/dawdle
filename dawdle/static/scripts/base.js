@@ -102,11 +102,14 @@
     var fieldElements = formElement.find('.js-form-field');
     var helpElements = formElement.find('.js-help');
     var passwordMaskElements = formElement.find('.js-password-mask');
+    var submitElement = formElement.find('.js-submit');
 
     formElement.trigger('reset');
     fieldElements.removeClass('is-danger');
     helpElements.removeClass('is-danger');
     passwordMaskElements.removeClass('is-danger');
+    submitElement.prop('disabled', false);
+    submitElement.removeClass('is-loading');
 
     errorsListElement.html('');
     errorsElement.addClass('is-hidden');

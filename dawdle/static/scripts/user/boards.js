@@ -4,17 +4,18 @@
     e.preventDefault();
 
     var formElement = $(this);
-    var submitElement = formElement.find('.js-submit');
 
     $.post('/board/', formElement.serialize())
       .done(function(res) {
+        var modalElement = $('#js-create-board-modal');
+        dawdle.toggleModal(modalElement);
+        dawdle.resetFormElement(formElement);
         window.location = res.url;
       })
       .fail(function(err) {
+        var submitElement = formElement.find('.js-submit');
         var errors = err.responseJSON || { error: 'Could not create board. Please try again.' }
         dawdle.renderFormErrors(formElement, errors);
-      })
-      .always(function() {
         submitElement.prop('disabled', false);
         submitElement.removeClass('is-loading');
       });
