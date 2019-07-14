@@ -3,7 +3,7 @@ from wtforms import BooleanField, StringField
 from wtforms.validators import DataRequired, Email, Length
 from wtforms.widgets import PasswordInput
 
-from dawdle.models.user import User
+from dawdle.components.user.models import User
 from dawdle.utils import normalize_whitespace
 
 

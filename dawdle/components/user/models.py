@@ -14,6 +14,7 @@ from mongoengine import (BooleanField,
 from passlib.hash import sha256_crypt
 
 from dawdle.components.board.models import Board
+from dawdle.utils import safe_delete_documents
 
 
 class User(Document, UserMixin):
@@ -50,10 +51,5 @@ class User(Document, UserMixin):
         return sha256_crypt.verify(password, self.password)
 
     def delete(self, signal_kwargs=None, **write_concern):
-        for board in self.boards:
-            try:
-                board.delete()
-            except Exception:
-                continue
-
+        safe_delete_documents(self.boards)
         super().delete(signal_kwargs, **write_concern)

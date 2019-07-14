@@ -4,7 +4,7 @@ from flask import url_for
 
 from dawdle import create_app
 from dawdle.components.board.models import Board, BoardType, BoardVisibility
-from dawdle.models.user import User
+from dawdle.components.user.models import User
 
 
 class TestBase:

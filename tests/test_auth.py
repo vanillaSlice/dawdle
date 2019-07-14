@@ -4,7 +4,7 @@ from unittest import mock
 from flask import url_for
 from itsdangerous import TimedJSONWebSignatureSerializer, URLSafeSerializer
 
-from dawdle.models.user import User
+from dawdle.components.user.models import User
 from tests.test_base import TestBase
 
 

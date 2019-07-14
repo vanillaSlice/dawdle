@@ -2,7 +2,8 @@ from unittest import mock
 
 from flask import url_for
 
-from dawdle.models.user import Board, User
+from dawdle.components.board.models import Board
+from dawdle.components.user.models import User
 from tests.test_base import TestBase
 
 
@@ -516,7 +517,7 @@ class TestUser(TestBase):
         data = self._get_mock_delete_account_data(password=password)
         self._assert_settings_delete_account_POST_ok(user, data)
 
-    @mock.patch('dawdle.utils.mail')
+    @mock.patch('dawdle.components.user.utils.mail')
     def test_settings_delete_account_POST_error_sending_email(self, mail_mock):
         mail_mock.send.side_effect = RuntimeError('some error')
         user, password = self.as_new_user()

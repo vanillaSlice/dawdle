@@ -15,7 +15,7 @@ from dawdle.forms.auth import (LoginForm,
                                ResetPasswordRequestForm,
                                SignUpForm,
                                VerifyResendForm)
-from dawdle.models.user import User
+from dawdle.components.user.models import User
 from dawdle.utils import (deserialize_password_reset_token,
                           deserialize_verification_token,
                           is_safe_url,

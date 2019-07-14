@@ -29,14 +29,6 @@ def normalize_whitespace(s):
     return ' '.join(s.split())
 
 
-def remove_whitespace(s):
-    return ''.join(s.split())
-
-
-def upper(s):
-    return s.upper()
-
-
 def serialize_verification_token(user):
     return URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))
 
@@ -118,15 +110,13 @@ def send_password_reset_email(user):
         return False
 
 
-def send_delete_account_email(user):
+def safe_delete_documents(documents):
+    for document in documents:
+        safe_delete_document(document)
+
+
+def safe_delete_document(document):
     try:
-        recipients = [user.email]
-        msg = Message('Dawdle Account Deleted', recipients=recipients)
-        msg.html = render_template(
-            'user/settings-delete-account-email.html',
-            user=user,
-        )
-        mail.send(msg)
-        return True
+        document.delete()
     except Exception:
-        return False
+        pass

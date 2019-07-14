@@ -1,6 +1,6 @@
 from flask_login import LoginManager
 
-from dawdle.models.user import User
+from dawdle.components.user.models import User
 from dawdle.utils import to_ObjectId
 
 login_manager = LoginManager()

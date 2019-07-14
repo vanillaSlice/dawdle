@@ -4,7 +4,7 @@ from flask import abort
 from flask_login import current_user
 
 from dawdle.components.board.models import Board, BOARD_PERMISSIONS
-from dawdle.models.user import User
+from dawdle.components.user.models import User
 from dawdle.utils import to_ObjectId
 
 
