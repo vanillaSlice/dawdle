@@ -93,7 +93,7 @@ def _register_blueprints(app):
     from dawdle.components.contact.blueprints import contact_bp
     app.register_blueprint(contact_bp)
 
-    from dawdle.blueprints.home import home_bp
+    from dawdle.components.home.blueprints import home_bp
     app.register_blueprint(home_bp)
 
     from dawdle.blueprints.user import user_bp
