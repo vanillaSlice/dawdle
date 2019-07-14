@@ -138,6 +138,15 @@ class TestAuth(TestBase):
         assert response.status_code == 200
         assert b'Verify Your Dawdle Account' in response.data
 
+    def test_verify_resend_GET_with_email(self):
+        email = self.fake.email()
+        response = self.client.get(
+            url_for('auth.verify_resend_GET', email=email),
+        )
+        assert response.status_code == 200
+        assert b'Verify Your Dawdle Account' in response.data
+        assert email.encode() in response.data
+
     #
     # verify_resend_POST tests.
     #

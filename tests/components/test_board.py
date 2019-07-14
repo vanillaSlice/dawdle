@@ -120,7 +120,7 @@ class TestBoard(TestBase):
         self._assert_board_GET_forbidden(board.id)
 
     def test_board_GET_success(self):
-        board = self.create_board(owner_id=self.user.id)
+        board = self.create_board()
         self._assert_board_GET_ok(board.id)
 
     def _send_board_GET_request(self, board_id):

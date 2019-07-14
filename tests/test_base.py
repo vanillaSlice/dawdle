@@ -1,4 +1,3 @@
-from bson.objectid import ObjectId
 from faker import Faker
 from flask import url_for
 
@@ -32,7 +31,7 @@ class TestBase:
         user.email = kwargs.get('email', cls.fake.email())
         user.initials = kwargs.get(
             'initials',
-            cls.fake.pystr(min_chars=1, max_chars=4),
+            cls.fake.pystr(min_chars=1, max_chars=4).upper(),
         ).upper()
         user.name = kwargs.get('name', cls.fake.name())
         user.password = User.encrypt_password(
@@ -41,7 +40,10 @@ class TestBase:
         return user.save()
 
     @classmethod
-    def create_boards(cls, owner_id, min_boards=1, max_boards=1):
+    def create_boards(cls, **kwargs):
+        owner_id = kwargs.get('owner_id', cls.user.id)
+        min_boards = kwargs.get('min_boards', 1)
+        max_boards = kwargs.get('max_boards', 4)
         num = cls.fake.pyint(min_boards, max_boards)
         boards = []
         for _ in range(num):
@@ -51,12 +53,12 @@ class TestBase:
     @classmethod
     def create_board(cls, **kwargs):
         board = Board()
-        board.created_by = kwargs.get('created_by', ObjectId())
+        board.created_by = kwargs.get('created_by', cls.user.id)
         board.name = kwargs.get(
             'name',
             cls.fake.pystr(min_chars=1, max_chars=256),
         )
-        board.owner_id = kwargs.get('owner_id', ObjectId())
+        board.owner_id = kwargs.get('owner_id', cls.user.id)
         board.type = kwargs.get('type', BoardType.PERSONAL.id)
         board.visibility = kwargs.get('visibility', BoardVisibility.PRIVATE.id)
         return board.save()

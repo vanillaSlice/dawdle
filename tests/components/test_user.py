@@ -511,7 +511,7 @@ class TestUser(TestBase):
 
     def test_settings_delete_account_POST_with_boards(self):
         user, password = self.as_new_user()
-        user.boards = self.create_boards(user.id, max_boards=4)
+        user.boards = self.create_boards(owner_id=user.id, max_boards=4)
         user.save()
         self.login(email=user.email, password=password)
         data = self._get_mock_delete_account_data(password=password)

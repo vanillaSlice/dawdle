@@ -19,12 +19,12 @@ def is_safe_url(target):
         ref_url.netloc == test_url.netloc
 
 
-def safe_delete_documents(documents):
+def safely_delete_documents(documents):
     for document in documents:
-        safe_delete_document(document)
+        safely_delete_document(document)
 
 
-def safe_delete_document(document):
+def safely_delete_document(document):
     try:
         document.delete()
     except Exception:

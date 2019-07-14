@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user
 
+from dawdle.components.auth.utils import send_verification_email
 from dawdle.components.board.forms import CreateBoardForm
 from dawdle.components.user.forms import (DeleteUserForm,
                                           UpdateAccountDetailsForm,
@@ -11,7 +12,6 @@ from dawdle.components.user.forms import (DeleteUserForm,
                                           UpdatePasswordForm)
 from dawdle.components.user.models import User
 from dawdle.components.user.utils import send_delete_account_email
-from dawdle.components.auth.utils import send_verification_email
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
