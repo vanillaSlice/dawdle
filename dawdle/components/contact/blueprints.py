@@ -1,16 +1,18 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import current_user
 
-from dawdle.forms.contact import ContactForm
-from dawdle.utils import send_contact_emails
+from dawdle.components.contact.forms import ContactForm
+from dawdle.components.contact.utils import send_contact_emails
 
 contact_bp = Blueprint('contact', __name__, url_prefix='/contact')
 
 
 @contact_bp.route('/')
 def index_GET():
-    form = ContactForm(request.form, obj=current_user)
-    return render_template('contact/index.html', form=form)
+    return render_template(
+        'contact/index.html',
+        form=ContactForm(request.form, obj=current_user),
+    )
 
 
 @contact_bp.route('/', methods=['POST'])
@@ -21,8 +23,8 @@ def index_POST():
         return render_template('contact/index.html', form=form), 400
 
     sent_email = send_contact_emails(
-        subject=form.subject.data,
         email=form.email.data,
+        subject=form.subject.data,
         message=form.message.data,
     )
 

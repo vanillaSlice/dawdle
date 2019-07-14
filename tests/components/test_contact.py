@@ -93,7 +93,7 @@ class TestContact(TestBase):
             'Message must be between 1 and 1000 characters',
         )
 
-    @mock.patch('dawdle.utils.mail')
+    @mock.patch('dawdle.components.contact.utils.mail')
     def test_index_POST_error_sending_email(self, mail_mock):
         mail_mock.send.side_effect = RuntimeError('some error')
         data = self._get_mock_contact_data()

@@ -90,7 +90,7 @@ def _register_blueprints(app):
     from dawdle.blueprints.board import board_bp
     app.register_blueprint(board_bp)
 
-    from dawdle.blueprints.contact import contact_bp
+    from dawdle.components.contact.blueprints import contact_bp
     app.register_blueprint(contact_bp)
 
     from dawdle.blueprints.home import home_bp

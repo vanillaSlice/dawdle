@@ -2,8 +2,6 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length
 
-from dawdle.utils import normalize_whitespace, strip
-
 
 class ContactForm(FlaskForm):
 
@@ -25,7 +23,7 @@ class ContactForm(FlaskForm):
                 message='Subject must be between 1 and 256 characters',
             ),
         ],
-        filters=[normalize_whitespace],
+        filters=[lambda s: ' '.join(s.split())],
     )
 
     message = TextAreaField(
@@ -38,5 +36,5 @@ class ContactForm(FlaskForm):
                 message='Message must be between 1 and 1000 characters',
             ),
         ],
-        filters=[strip],
+        filters=[lambda s: s.strip()],
     )

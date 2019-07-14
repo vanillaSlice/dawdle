@@ -140,27 +140,6 @@ def send_delete_account_email(user):
         return False
 
 
-def send_contact_emails(subject, email, message):
-    try:
-        recipients = [current_app.config['MAIL_USERNAME']]
-        msg = Message('Dawdle: {}'.format(subject), recipients=recipients)
-        msg.body = 'From: {}\n\n{}'.format(email, message)
-        mail.send(msg)
-        recipients = [email]
-        msg = Message('Dawdle: {}'.format(subject), recipients=recipients)
-        msg.html = render_template('contact/email.html', message=message)
-        mail.send(msg)
-        flash(
-            'We have received your message. '
-            'Somebody will get back to you shortly.',
-            'success',
-        )
-        return True
-    except Exception:
-        flash('Could not send message. Please try again.', 'danger')
-        return False
-
-
 def get_owner_from_id(owner_id):
     return User.objects(id=to_ObjectId(owner_id)).first()
 
