@@ -1,5 +1,5 @@
 coveralls==1.8.1
-Faker==1.0.7
+Faker==1.0.8
 mongomock==3.16.0
 pycodestyle==2.5.0
 pylint==2.3.1
