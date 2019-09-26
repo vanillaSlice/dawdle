@@ -5,13 +5,17 @@
   ],
   "pip_requirements": {
     "fileMatch": [
-      "^requirements.*\\.txt$"
+      "(^|/)requirements.*\\.txt$"
     ]
   },
-  "docker": {
+  "docker-compose": {
     "fileMatch": [
-      ".*Dockerfile$",
-      "docker-compose.yml"
+      "(^|/)docker-compose\\.yml$"
+    ]
+  },
+  "dockerfile": {
+    "fileMatch": [
+      "(^|/)[^/]*Dockerfile$"
     ]
   },
   "automerge": true,
