@@ -6,5 +6,9 @@
     "fileMatch": [
       "^requirements.*\\.txt$"
     ]
+  },
+  "automerge": true,
+  "major": {
+    "automerge": false
   }
 }
