@@ -3,5 +3,5 @@ Faker==1.0.8
 mongomock==3.18.0
 pycodestyle==2.5.0
 pylint==2.4.1
-pytest==4.6.3
+pytest==4.6.5
 pytest-cov==2.7.1
