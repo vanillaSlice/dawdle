@@ -8,6 +8,12 @@
       "^requirements.*\\.txt$"
     ]
   },
+  "docker": {
+    "fileMatch": [
+      ".*Dockerfile$",
+      "docker-compose.yml"
+    ]
+  },
   "automerge": true,
   "major": {
     "automerge": false
