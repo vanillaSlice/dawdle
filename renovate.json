@@ -1,7 +1,10 @@
 {
   "extends": [
     "config:base",
-    ":prHourlyLimitNone"
+    "docker:enableMajor",
+    ":prHourlyLimitNone",
+    ":rebaseStalePrs",
+    ":automergeMinor"
   ],
   "pip_requirements": {
     "fileMatch": [
@@ -17,10 +20,5 @@
     "fileMatch": [
       "(^|/)[^/]*Dockerfile$"
     ]
-  },
-  "automerge": true,
-  "major": {
-    "automerge": false
-  },
-  "rebaseStalePrs": true
+  }
 }
