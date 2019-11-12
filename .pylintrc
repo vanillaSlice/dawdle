@@ -4,6 +4,7 @@ max-line-length=79
 [MESSAGES CONTROL]
 disable=broad-except,
         duplicate-code,
+        import-outside-toplevel,
         invalid-name,
         missing-docstring,
         no-member,
