@@ -1,4 +1,4 @@
-coveralls==1.8.2
+coveralls==1.9.1
 Faker==2.0.4
 mongomock==3.18.0
 pycodestyle==2.5.0
