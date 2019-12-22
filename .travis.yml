@@ -1,17 +1,13 @@
-language: python
 branches:
   only:
     - master
-python: 3.8
-dist: xenial
+sudo: required
 services:
   - docker
-install:
-  - pip install -r requirements.txt
-  - pip install -r requirements-test.txt
 script:
-  - ./scripts/lint.sh
-  - ./scripts/test.sh
+  - docker build -t vanillaslice/dawdle-test -f ./docker/test.Dockerfile .
+  - docker run vanillaslice/dawdle-test /opt/app/scripts/lint.sh
+  - docker run vanillaslice/dawdle-test /opt/app/scripts/test.sh
 deploy:
   provider: script
   script: ./scripts/deploy.sh

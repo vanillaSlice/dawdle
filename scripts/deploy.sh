@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 docker login --username=_ --password="$HEROKU_API_KEY" registry.heroku.com
 docker build -t registry.heroku.com/dawdle/web -f $(dirname $0)/../docker/prod.Dockerfile .

@@ -118,7 +118,7 @@ Then point your browser to [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
 
 For those of you that are interested, the technology used in this project includes:
 
-* [Python 3.8](https://www.python.org/downloads/release/python-381/)
+* [Python](https://www.python.org/)
 * [Flask](http://flask.pocoo.org/)
 * [MongoDB](https://www.mongodb.com/)
 * [pytest](https://docs.pytest.org/en/latest/)

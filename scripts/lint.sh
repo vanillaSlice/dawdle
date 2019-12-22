@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 DIR=$(dirname $0)
 pycodestyle ${DIR}/../*.py ${DIR}/../dawdle/ ${DIR}/../tests/
