@@ -1,4 +1,5 @@
 FROM python:3.8.1-alpine
+RUN apk update && apk upgrade && apk add bash && apk add git
 WORKDIR /opt/app
 COPY . .
 RUN pip install -r requirements.txt

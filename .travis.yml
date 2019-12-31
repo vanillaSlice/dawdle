@@ -4,7 +4,6 @@ branches:
 sudo: required
 services:
   - docker
-language: python
 script:
   - ./scripts/docker-build-and-test.sh
 deploy:
@@ -12,6 +11,3 @@ deploy:
   script: ./scripts/docker-build-and-deploy.sh
   on:
     branch: master
-after_success:
-  - pip install coveralls
-  - coveralls
