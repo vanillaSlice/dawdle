@@ -5,4 +5,5 @@ set -e
 cd $(dirname $0)/../..
 
 docker build -t vanillaslice/dawdle-test -f ./docker/test.Dockerfile .
-docker run -v $(pwd):/opt/app vanillaslice/dawdle-test /opt/app/scripts/all-tests.sh
+docker run vanillaslice/dawdle-test
+docker cp $(docker ps -l -q):/opt/app/.coverage .coverage.tmp

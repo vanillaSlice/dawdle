@@ -4,4 +4,4 @@ WORKDIR /opt/app
 COPY . .
 RUN pip install -r requirements.txt
 RUN pip install -r requirements-test.txt
-CMD ./scripts/lint.sh && ./scripts/test.sh
+CMD ./scripts/all-tests.sh
