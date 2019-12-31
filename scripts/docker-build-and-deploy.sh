@@ -1,7 +1,11 @@
 #!/usr/bin/env sh
 
+set -e
+
+cd $(dirname $0)/..
+
 docker login --username=_ --password="$HEROKU_API_KEY" registry.heroku.com
-docker build -t registry.heroku.com/dawdle/web -f $(dirname $0)/../docker/prod.Dockerfile .
+docker build -t registry.heroku.com/dawdle/web -f ./docker/prod.Dockerfile .
 docker push registry.heroku.com/dawdle/web
 image_id=$(docker inspect registry.heroku.com/dawdle/web --format={{.Id}})
 payload='{"updates":[{"type":"web","docker_image":"'"$image_id"'"}]}'

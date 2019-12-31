@@ -1,3 +1,7 @@
 #!/usr/bin/env sh
 
-pytest --cov-report term-missing --cov=$(dirname $0)/../dawdle/
+set -e
+
+cd $(dirname $0)/..
+
+pytest

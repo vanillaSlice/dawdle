@@ -5,10 +5,10 @@ sudo: required
 services:
   - docker
 script:
-  - if [[ $TRAVIS_PULL_REQUEST != 'false' ]]; then ./scripts/build-and-test.sh; fi
+  - ./scripts/docker-build-and-test.sh
 deploy:
   provider: script
-  script: ./scripts/deploy.sh
+  script: ./scripts/docker-build-and-deploy.sh
   on:
     branch: master
 after_success:
