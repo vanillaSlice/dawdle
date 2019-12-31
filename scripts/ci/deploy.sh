@@ -2,7 +2,7 @@
 
 set -e
 
-cd $(dirname $0)/..
+cd $(dirname $0)/../..
 
 docker login --username=_ --password="$HEROKU_API_KEY" registry.heroku.com
 docker build -t registry.heroku.com/dawdle/web -f ./docker/prod.Dockerfile .

@@ -6,4 +6,3 @@ cd $(dirname $0)
 
 ./lint.sh
 ./test.sh
-./coverage.sh
