@@ -24,7 +24,7 @@ def deserialize_verification_token(token):
 def send_verification_email(user, redirect_target=None):
     try:
         recipients = [user.email]
-        msg = Message('Dawdle Verification', recipients=recipients)
+        msg = Message('Verification', recipients=recipients)
         msg.html = render_template(
             'auth/verify-email.html',
             user=user,
@@ -68,7 +68,7 @@ def deserialize_password_reset_token(token):
 def send_password_reset_email(user):
     try:
         recipients = [user.email]
-        msg = Message('Dawdle Password Reset', recipients=recipients)
+        msg = Message('Password Reset', recipients=recipients)
         msg.html = render_template(
             'auth/reset-password-email.html',
             user=user,

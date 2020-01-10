@@ -8,13 +8,13 @@ def send_contact_emails(email, subject, message):
     try:
         # send email to us
         recipients = [current_app.config['MAIL_USERNAME']]
-        msg = Message('Dawdle: {}'.format(subject), recipients=recipients)
+        msg = Message(subject, recipients=recipients)
         msg.body = 'From: {}\n\n{}'.format(email, message)
         mail.send(msg)
 
         # send email to user saying we've received their message
         recipients = [email]
-        msg = Message('Dawdle: {}'.format(subject), recipients=recipients)
+        msg = Message(subject, recipients=recipients)
         msg.html = render_template('contact/email.html', message=message)
         mail.send(msg)
 
