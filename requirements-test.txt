@@ -1,4 +1,4 @@
-Faker==4.0.1
+Faker==4.1.0
 mongomock==3.19.0
 pycodestyle==2.5.0
 pylint==2.4.4
