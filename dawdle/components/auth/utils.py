@@ -6,7 +6,7 @@ from itsdangerous import (BadSignature,
                           URLSafeSerializer)
 
 from dawdle.extensions.mail import mail
-from dawdle.utils import to_ObjectId
+from dawdle.utils import get_mail_sender, to_ObjectId
 
 
 def serialize_verification_token(user):
@@ -24,7 +24,9 @@ def deserialize_verification_token(token):
 def send_verification_email(user, redirect_target=None):
     try:
         recipients = [user.email]
-        msg = Message('Verification', recipients=recipients)
+        msg = Message('Verification',
+                      sender=get_mail_sender(),
+                      recipients=recipients)
         msg.html = render_template(
             'auth/verify-email.html',
             user=user,
@@ -68,7 +70,9 @@ def deserialize_password_reset_token(token):
 def send_password_reset_email(user):
     try:
         recipients = [user.email]
-        msg = Message('Password Reset', recipients=recipients)
+        msg = Message('Password Reset',
+                      sender=get_mail_sender(),
+                      recipients=recipients)
         msg.html = render_template(
             'auth/reset-password-email.html',
             user=user,

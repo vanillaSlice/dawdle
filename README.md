@@ -19,6 +19,7 @@ The following properties can be configured:
 
 | Name                    | Purpose                                                          | Default               |
 | ----------------------- | ---------------------------------------------------------------- | --------------------- |
+| `CONTACT_EMAIL`         | The address to send contact emails to.                           | `None`                |
 | `DEBUG`                 | If debug mode is enabled.                                        | `False`               |
 | `ENV`                   | Environment the app is running in.                               | `production`          |
 | `MAIL_DEFAULT_SENDER`   | The default address to send emails from.                         | `None`                |

@@ -3,7 +3,11 @@ from urllib.parse import urljoin, urlparse
 
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
-from flask import make_response, request
+from flask import current_app, make_response, request
+
+
+def get_mail_sender():
+    return ('Dawdle', current_app.config['MAIL_DEFAULT_SENDER'])
 
 
 def to_ObjectId(value):
