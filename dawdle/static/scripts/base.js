@@ -120,7 +120,7 @@
    */
 
   function truncateText() {
-    $('.js-shave').shave(100, { spaces: false });
+    $('.js-shave').shave(50, { spaces: false });
   }
 
   truncateText();
