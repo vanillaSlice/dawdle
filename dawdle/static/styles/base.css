@@ -53,19 +53,19 @@ h1,
 
 .input.is-danger:hover,
 .select.is-danger select:hover {
-  border-color: #ff3860;
+  border-color: #f14668;
 }
 
 .input.is-danger:active,
 .input.is-danger:focus,
 .select.is-danger select:active,
 .select.is-danger select:focus {
-  border-color: #ff3860;
-  box-shadow: 0 0 0 0.125em rgba(255, 56, 96, 0.25);
+  border-color: #f14668;
+  box-shadow: 0 0 0 0.125em rgba(241, 70, 104, 0.25);
 }
 
 .select.is-danger:not(.is-multiple):not(.is-loading)::after {
-  border-color: #ff3860;
+  border-color: #f14668;
 }
 
 .select.is-danger:not(.is-multiple):not(.is-loading):hover::after {
@@ -78,7 +78,7 @@ h1,
 }
 
 .hero.is-primary .notification.is-success {
-  background-color: #209cee;
+  background-color: #3298dc;
 }
 
 .has-background-pattern-info {
