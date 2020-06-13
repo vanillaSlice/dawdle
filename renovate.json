@@ -3,7 +3,8 @@
     "config:base",
     "docker:enableMajor",
     ":prHourlyLimitNone",
-    ":rebaseStalePrs"
+    ":rebaseStalePrs",
+    "group:allNonMajor"
   ],
   "pip_requirements": {
     "fileMatch": [
