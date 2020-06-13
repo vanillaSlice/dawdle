@@ -143,3 +143,49 @@ class TestBoard(TestBase):
         response = self._send_board_GET_request(board_id)
         assert response.status_code == 404
         assert b'Not Found' in response.data
+
+    #
+    # board_delete_POST tests.
+    #
+
+    def test_board_delete_POST_does_not_exist(self):
+        self._assert_board_delete_POST_not_found(ObjectId())
+
+    def test_board_delete_POST_not_authenticated(self):
+        self.logout()
+        board = self.create_board()
+        self._assert_board_delete_POST_forbidden(board.id)
+
+    def test_board_delete_POST_user_without_permissions(self):
+        board = self.create_board(owner_id=ObjectId())
+        self._assert_board_delete_POST_forbidden(board.id)
+
+    def test_board_delete_POST_success(self):
+        user, _ = self.as_new_user()
+        board = self.create_board(owner_id=user.id)
+        user.boards = [board]
+        user.save()
+        self._assert_board_delete_POST_ok(board, user)
+
+    def _send_board_delete_POST_request(self, board_id):
+        return self.client.post(
+            url_for('board.board_delete_POST', board_id=str(board_id)),
+        )
+
+    def _assert_board_delete_POST_ok(self, board, user):
+        assert Board.objects(owner_id=user.id).count() == len(user.boards)
+        response = self._send_board_delete_POST_request(board.id)
+        response_json = json.loads(response.data.decode())
+        assert Board.objects(owner_id=user.id).count() == 0
+        assert response.status_code == 200
+        assert response_json['url'] == '/'
+
+    def _assert_board_delete_POST_forbidden(self, board_id):
+        response = self._send_board_delete_POST_request(board_id)
+        assert response.status_code == 403
+        assert b'Not Authorised' in response.data
+
+    def _assert_board_delete_POST_not_found(self, board_id):
+        response = self._send_board_delete_POST_request(board_id)
+        assert response.status_code == 404
+        assert b'Not Found' in response.data

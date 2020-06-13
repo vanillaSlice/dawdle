@@ -145,6 +145,12 @@
   });
 
   /*
+   * Quickviews
+   */
+
+  bulmaQuickview.attach();
+
+  /*
    * Used to reload previous page when going back on Safari
    */
 

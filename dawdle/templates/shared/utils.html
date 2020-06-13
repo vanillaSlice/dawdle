@@ -1,7 +1,7 @@
 {% macro render_form_errors(form) %}
   {% if form.errors %}
     <div class="notification is-danger js-form-errors">
-      <button type="button" class="delete js-notification-close"></button>
+      <button type="button" class="delete js-notification-close" aria-label="close"></button>
       <div class="content">
         <ul class="js-form-errors-list">
           {% for field_errors in form.errors.values() %}

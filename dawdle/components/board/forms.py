@@ -1,6 +1,6 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import SelectField, StringField
+from wtforms import HiddenField, SelectField, StringField
 from wtforms.validators import DataRequired, Length
 
 from dawdle.components.board.models import BOARD_VISIBILITIES
@@ -40,3 +40,8 @@ class CreateBoardForm(FlaskForm):
         super(CreateBoardForm, self).__init__(*args, **kwargs)
         # TODO add teams to choices # pylint: disable=fixme
         self.owner.choices = [(str(current_user.id), 'Me')]
+
+
+class DeleteBoardForm(FlaskForm):
+
+    delete_board_path = HiddenField()

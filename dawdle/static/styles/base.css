@@ -114,3 +114,11 @@ h1,
 .footer .separator::after {
   content: '|';
 }
+
+.quickview-block {
+  padding: 0 1rem;
+}
+
+.quickview-block:first-child {
+  padding-top: 1.5rem;
+}
