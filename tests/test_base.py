@@ -61,7 +61,14 @@ class TestBase:
         board.owner_id = kwargs.get('owner_id', cls.user.id)
         board.type = kwargs.get('type', BoardType.PERSONAL.id)
         board.visibility = kwargs.get('visibility', BoardVisibility.PRIVATE.id)
-        return board.save()
+        saved_board = board.save()
+
+        user = User.objects(id=saved_board.owner_id).first()
+        if user:
+            user.boards.append(saved_board)
+            user.save()
+
+        return saved_board
 
     @classmethod
     def as_new_user(cls):

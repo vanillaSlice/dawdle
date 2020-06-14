@@ -34,6 +34,10 @@
   {% include 'shared/header.html' %}
 
   <main class="{{ container_classes }}">
+    <div class="notification is-marginless is-radiusless is-hidden has-text-weight-bold js-notification">
+      <button type="button" class="delete js-notification-close" aria-label="close"></button>
+      <span class="js-notification-text"></span>
+    </div>
     {% with messages = get_flashed_messages(with_categories=True) %}
       {% if messages %}
         {% for category, message in messages %}

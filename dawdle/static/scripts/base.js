@@ -25,6 +25,23 @@
     $(this).parent().addClass('is-hidden');
   });
 
+  function renderNotification(message, category) {
+    var notificationElement = $('.js-notification');
+    var textElement = notificationElement.find('.js-notification-text');
+    notificationElement.removeClass('is-' + notificationElement.data('category'));
+    notificationElement.addClass('is-' + category);
+    textElement.html(message);
+    notificationElement.removeClass('is-hidden');
+    notificationElement.data('category', category);
+  }
+
+  function resetNotification() {
+    var notificationElement = $('.js-notification');
+    var textElement = notificationElement.find('.js-notification-text');
+    textElement.html('');
+    notificationElement.addClass('is-hidden');
+  }
+
   /*
    * Forms
    */
@@ -96,7 +113,7 @@
     errorsElement.removeClass('is-hidden');
   }
 
-  function resetFormElement(formElement) {
+  function resetFormElement(formElement, options) {
     var errorsElement = formElement.find('.js-form-errors');
     var errorsListElement = errorsElement.find('.js-form-errors-list');
     var fieldElements = formElement.find('.js-form-field');
@@ -105,6 +122,14 @@
     var submitElement = formElement.find('.js-submit');
 
     formElement.trigger('reset');
+
+    if (options && options.state) {
+      Object.keys(options.state).forEach(function(key) {
+        var fieldElement = formElement.find('#' + key);
+        fieldElement.val(options.state[key]);
+      });
+    }
+
     fieldElements.removeClass('is-danger');
     helpElements.removeClass('is-danger');
     passwordMaskElements.removeClass('is-danger');
@@ -166,7 +191,9 @@
 
   window.dawdle = {
     renderFormErrors: renderFormErrors,
+    renderNotification: renderNotification,
     resetFormElement: resetFormElement,
+    resetNotification: resetNotification,
     toggleFieldElementErrorClass: toggleFieldElementErrorClass,
     toggleModal: toggleModal,
     toggleNavbar: toggleNavbar,

@@ -145,6 +145,132 @@ class TestBoard(TestBase):
         assert b'Not Found' in response.data
 
     #
+    # board_update_POST tests.
+    #
+
+    def test_board_update_POST_does_not_exist(self):
+        self._assert_board_update_POST_not_found(ObjectId())
+
+    def test_board_update_POST_not_authenticated(self):
+        self.logout()
+        board = self.create_board()
+        self._assert_board_update_POST_forbidden(board.id)
+
+    def test_board_update_POST_user_without_permissions(self):
+        board = self.create_board(owner_id=ObjectId())
+        self._assert_board_update_POST_forbidden(board.id)
+
+    def test_board_update_POST_no_name(self):
+        data = self._get_mock_update_board_data()
+        del data['name']
+        self._assert_board_update_POST_bad_request(
+            data,
+            'Please enter a board name',
+        )
+
+    def test_board_update_POST_name_equal_to_min(self):
+        board = self.create_board()
+        name = self.fake.pystr(min_chars=1, max_chars=1)
+        data = self._get_mock_update_board_data(name=name)
+        self._assert_board_update_POST_ok(board, data)
+
+    def test_board_update_POST_name_equal_to_max(self):
+        board = self.create_board()
+        name = self.fake.pystr(min_chars=256, max_chars=256)
+        data = self._get_mock_update_board_data(name=name)
+        self._assert_board_update_POST_ok(board, data)
+
+    def test_board_update_POST_name_greater_than_max(self):
+        name = self.fake.pystr(min_chars=257, max_chars=257)
+        data = self._get_mock_update_board_data(name=name)
+        self._assert_board_update_POST_bad_request(
+            data,
+            'Board name must be between 1 and 256 characters',
+        )
+
+    def test_board_update_POST_no_owner(self):
+        data = self._get_mock_update_board_data()
+        data['owner'] = ''
+        self._assert_board_update_POST_bad_request(
+            data,
+            'Please select board owner',
+        )
+
+    def test_board_update_POST_invalid_owner(self):
+        data = self._get_mock_update_board_data(owner='invalid')
+        self._assert_board_update_POST_bad_request(data, 'Not a valid choice')
+
+    def test_board_update_POST_no_visibility(self):
+        data = self._get_mock_update_board_data()
+        data['visibility'] = ''
+        self._assert_board_update_POST_bad_request(
+            data,
+            'Please select board visibility',
+        )
+
+    def test_board_update_POST_invalid_visibility(self):
+        data = self._get_mock_update_board_data(visibility='invalid')
+        self._assert_board_update_POST_bad_request(data, 'Not a valid choice')
+
+    def test_board_update_POST_no_update(self):
+        board = self.create_board()
+        data = self._get_mock_update_board_data(
+            name=board.name,
+            owner=board.owner_id,
+            visibility=board.visibility,
+        )
+        self._assert_board_update_POST_ok(board, data, updated=False)
+
+    def test_board_update_POST_success(self):
+        board = self.create_board()
+        data = self._get_mock_update_board_data()
+        self._assert_board_update_POST_ok(board, data)
+
+    def _get_mock_update_board_data(self, **kwargs):
+        return {
+            'name': kwargs.get('name', self.fake.name()),
+            'owner': str(kwargs.get('owner', self.user.id)),
+            'visibility': kwargs.get('visibility', 'private'),
+        }
+
+    def _send_board_update_POST_request(self, board_id, data=None):
+        return self.client.post(
+            url_for('board.board_update_POST', board_id=str(board_id)),
+            data=data,
+        )
+
+    def _assert_board_update_POST_ok(self, board, data, updated=True):
+        response = self._send_board_update_POST_request(board.id, data)
+        updated_board = Board.objects(id=board.id).first()
+        assert response.status_code == 200
+        if updated:
+            assert b'This board has been updated' in response.data
+            assert updated_board.name == data['name']
+            assert str(updated_board.owner_id) == data['owner']
+            assert updated_board.visibility == data['visibility']
+        else:
+            assert b'No update needed.' in response.data
+            assert board.name == updated_board.name
+            assert board.owner_id == updated_board.owner_id
+            assert board.visibility == updated_board.visibility
+
+    def _assert_board_update_POST_bad_request(self, data, expected_text):
+        board = self.create_board()
+        response = self._send_board_update_POST_request(board.id, data)
+        assert response.status_code == 400
+        assert expected_text.encode() in response.data
+
+    def _assert_board_update_POST_forbidden(self, board_id):
+        response = self._send_board_update_POST_request(board_id)
+        assert response.status_code == 403
+        assert b'Not Authorised' in response.data
+
+    def _assert_board_update_POST_not_found(self, board_id):
+        response = self._send_board_update_POST_request(board_id)
+        assert response.status_code == 404
+        assert b'Not Found' in response.data
+
+    #
     # board_delete_POST tests.
     #
 
@@ -161,22 +287,19 @@ class TestBoard(TestBase):
         self._assert_board_delete_POST_forbidden(board.id)
 
     def test_board_delete_POST_success(self):
-        user, _ = self.as_new_user()
-        board = self.create_board(owner_id=user.id)
-        user.boards = [board]
-        user.save()
-        self._assert_board_delete_POST_ok(board, user)
+        board = self.create_board()
+        self._assert_board_delete_POST_ok(board)
 
     def _send_board_delete_POST_request(self, board_id):
         return self.client.post(
             url_for('board.board_delete_POST', board_id=str(board_id)),
         )
 
-    def _assert_board_delete_POST_ok(self, board, user):
-        assert Board.objects(owner_id=user.id).count() == len(user.boards)
+    def _assert_board_delete_POST_ok(self, board):
+        assert Board.objects(id=board.id).count() == 1
         response = self._send_board_delete_POST_request(board.id)
         response_json = json.loads(response.data.decode())
-        assert Board.objects(owner_id=user.id).count() == 0
+        assert Board.objects(id=board.id).count() == 0
         assert response.status_code == 200
         assert response_json['url'] == '/'
 

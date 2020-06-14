@@ -1,5 +1,51 @@
 (function() {
 
+  var board;
+
+  $('.js-update-board-form').submit(function(e) {
+    e.preventDefault();
+
+    var formElement = $(this);
+
+    var updateBoardPath = formElement.find('#update_board_path').val();
+
+    $.post(updateBoardPath, formElement.serialize())
+      .done(function(res) {
+        dawdle.renderNotification(res.flash.message, res.flash.category);
+        var boardNameElements = $('.js-board-name');
+        boardNameElements.text(res.board.name);
+        dawdle.truncateText();
+        board = res.board;
+        resetUpdateBoardForm(formElement);
+      })
+      .fail(function(err) {
+        var submitElement = formElement.find('.js-submit');
+        var errors = err.responseJSON || { error: 'Could not update board. Please try again.' }
+        dawdle.resetNotification();
+        dawdle.renderFormErrors(formElement, errors);
+        submitElement.prop('disabled', false);
+        submitElement.removeClass('is-loading');
+      });
+  });
+
+  function resetUpdateBoardForm(formElement) {
+    var options = {};
+    if (board) {
+      options.state = {
+        name: board.name,
+        owner: board.owner_id.$oid,
+        visibility: board.visibility,
+      }
+    }
+
+    dawdle.resetFormElement(formElement, options);
+  }
+
+  $('.js-board-settings-quickview .js-quickview-close').click(function() {
+    var formElement = $('.js-update-board-form');
+    resetUpdateBoardForm(formElement);
+  });
+
   $('.js-delete-board-form').submit(function(e) {
     e.preventDefault();
 

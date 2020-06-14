@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, render_template, request, url_for
 from flask_login import current_user
 
-from dawdle.components.board.forms import CreateBoardForm, DeleteBoardForm
+from dawdle.components.board.forms import (CreateBoardForm, DeleteBoardForm,
+                                           UpdateBoardForm)
 from dawdle.components.board.models import Board, BoardPermission, BoardType
 from dawdle.components.board.utils import (board_permissions_required,
                                            get_owner_from_id)
@@ -46,6 +47,13 @@ def index_POST():
 @board_permissions_required(BoardPermission.READ)
 @no_cache
 def board_GET(board, permissions, **_):
+    update_board_path = url_for('board.board_update_POST', board_id=board.id)
+    update_board_form = UpdateBoardForm(
+        request.form,
+        update_board_path=update_board_path,
+        obj=board,
+    )
+
     delete_board_path = url_for('board.board_delete_POST', board_id=board.id)
     delete_board_form = DeleteBoardForm(
         request.form,
@@ -56,8 +64,38 @@ def board_GET(board, permissions, **_):
         'board/index.html',
         board=board,
         permissions=permissions,
+        update_board_form=update_board_form,
         delete_board_form=delete_board_form,
     )
+
+
+@board_bp.route('/<board_id>', methods=['POST'])
+@board_permissions_required(BoardPermission.WRITE)
+def board_update_POST(board, **_):
+    form = UpdateBoardForm(request.form)
+
+    if not form.validate_on_submit():
+        return jsonify(form.errors), 400
+
+    if not form.update_needed(board):
+        return jsonify({
+            'board': board,
+            'flash': {
+                'category': 'info',
+                'message': 'No update needed.',
+            }
+        }), 200
+
+    form.populate_obj(board)
+    board.save()
+
+    return jsonify({
+        'board': board,
+        'flash': {
+            'category': 'success',
+            'message': 'This board has been updated.',
+        }
+    }), 200
 
 
 @board_bp.route('/<board_id>/delete', methods=['POST'])

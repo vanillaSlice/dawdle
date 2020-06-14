@@ -1,29 +1,63 @@
 {% extends 'shared/base.html' %}
 
+{% from 'shared/utils.html' import render_form_field, render_select %}
+
 {% block title %}{{ board.name }} | Dawdle{% endblock %}
 
 {% set container_classes='board-page has-background-info has-background-pattern-info' %}
 
 {% block content %}
   <div class="body">
-    <h1 class="title has-text-white has-alt-text is-size-3 is-inline js-shave">
-      {{ board.name }}
-    </h1>
+    <div class="columns is-vcentered is-mobile">
+      <div class="column is-9">
+        <h1 class="title has-text-white has-alt-text is-3 js-shave js-board-name">
+          {{ board.name }}
+        </h1>
+      </div>
+      <div class="column is-3">
+        <button class="button is-info is-medium is-pulled-right" data-show="quickview" data-target="board-settings" aria-label="board settings">
+          <span class="icon is-medium">
+            <i class="fas fa-cog" aria-hidden="true"></i>
+          </span>
+        </button>
+      </div>
+    </div>
 
-    <button class="button is-white is-pulled-right" data-show="quickview" data-target="board-settings" aria-label="board settings">
-      <span class="icon is-small">
-        <i class="fas fa-wrench" aria-hidden="true"></i>
-      </span>
-    </button>
-
-    <div class="quickview" id="board-settings">
+    <div class="quickview js-quickview js-board-settings-quickview" id="board-settings">
       <header class="quickview-header">
         <h2 class="title has-alt-text">Board Settings</h2>
-        <button type="button" class="delete" data-dismiss="quickview" aria-label="close"></button>
+        <button type="button" class="delete js-quickview-close" data-dismiss="quickview" aria-label="close"></button>
       </header>
       <div class="quickview-body">
         <div class="quickview-block">
-          <h3 class="title has-alt-text is-size-6">Delete Board</h3>
+          <h3 class="title has-alt-text is-5">Update Board</h3>
+          <form class="js-form js-update-board-form">
+            <div class="notification is-danger is-hidden js-form-errors">
+              <button type="button" class="delete js-notification-close" aria-label="close"></button>
+              <div class="content">
+                <ul class="js-form-errors-list"></ul>
+              </div>
+            </div>
+            {{ update_board_form.csrf_token }}
+            {{ render_form_field(update_board_form.name,
+                                 type='text',
+                                 minlength='1',
+                                 maxlength='256',
+                                 placeholder='e.g. Death Star Plans') }}
+            {{ render_select(update_board_form.owner) }}
+            {{ render_select(update_board_form.visibility)}}
+            <div class="field content">
+              <div class="control">
+                <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold js-submit">
+                  Update Board
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <hr />
+        <div class="quickview-block">
+          <h3 class="title has-alt-text is-5">Delete Board</h3>
           <button type="button" class="button is-fullwidth is-danger has-text-weight-bold js-modal-trigger" data-target="#js-delete-board-modal">
             Delete Board
           </button>
