@@ -90,7 +90,9 @@ class TestBoard(TestBase):
         board = Board.objects(id=response_json['id']).first()
         owner = get_owner_from_id(data['owner'])
         assert response.status_code == 201
-        assert response_json['url'] == '/board/{}'.format(board.id)
+        assert response_json['url'] == \
+            '/board/{}?message=New+board+has+been+created.' \
+            '&category=success'.format(board.id)
         assert board.created_by == self.user.id
         assert board.name == data['name']
         assert str(board.owner_id) == data['owner']
@@ -301,7 +303,8 @@ class TestBoard(TestBase):
         response_json = json.loads(response.data.decode())
         assert Board.objects(id=board.id).count() == 0
         assert response.status_code == 200
-        assert response_json['url'] == '/'
+        assert response_json['url'] == \
+            '/user/boards?message=Board+has+been+deleted.&category=success'
 
     def _assert_board_delete_POST_forbidden(self, board_id):
         response = self._send_board_delete_POST_request(board_id)

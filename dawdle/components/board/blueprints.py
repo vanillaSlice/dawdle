@@ -6,7 +6,7 @@ from dawdle.components.board.forms import (CreateBoardForm, DeleteBoardForm,
 from dawdle.components.board.models import Board, BoardPermission, BoardType
 from dawdle.components.board.utils import (board_permissions_required,
                                            get_owner_from_id)
-from dawdle.utils import no_cache
+from dawdle.utils import flash_params_message, no_cache
 
 board_bp = Blueprint('board', __name__, url_prefix='/board')
 
@@ -39,7 +39,12 @@ def index_POST():
 
     return jsonify({
         'id': str(board.id),
-        'url': url_for('board.board_GET', board_id=board.id),
+        'url': url_for(
+            'board.board_GET',
+            board_id=board.id,
+            message='New board has been created.',
+            category='success',
+        ),
     }), 201
 
 
@@ -47,6 +52,8 @@ def index_POST():
 @board_permissions_required(BoardPermission.READ)
 @no_cache
 def board_GET(board, permissions, **_):
+    flash_params_message()
+
     update_board_path = url_for('board.board_update_POST', board_id=board.id)
     update_board_form = UpdateBoardForm(
         request.form,
@@ -109,5 +116,9 @@ def board_delete_POST(board, **_):
     board.delete()
 
     return jsonify({
-        'url': url_for('home.index_GET'),
+        'url': url_for(
+            'user.boards_GET',
+            message='Board has been deleted.',
+            category='success',
+        ),
     }), 200

@@ -3,7 +3,7 @@ from urllib.parse import urljoin, urlparse
 
 from bson.errors import InvalidId
 from bson.objectid import ObjectId
-from flask import current_app, make_response, request
+from flask import flash, current_app, make_response, request
 
 
 def get_mail_sender():
@@ -46,3 +46,11 @@ def no_cache(view):
         headers['Pragma'] = 'no-cache'
         return response
     return update_wrapper(decorated_function, view)
+
+
+def flash_params_message():
+    message = request.args.get('message')
+    category = request.args.get('category')
+
+    if message:
+        flash(message, category)

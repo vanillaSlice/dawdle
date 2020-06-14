@@ -12,7 +12,7 @@ from dawdle.components.user.forms import (DeleteUserForm,
                                           UpdatePasswordForm)
 from dawdle.components.user.models import User
 from dawdle.components.user.utils import send_delete_account_email
-from dawdle.utils import no_cache
+from dawdle.utils import flash_params_message, no_cache
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
 
@@ -21,6 +21,8 @@ user_bp = Blueprint('user', __name__, url_prefix='/user')
 @login_required
 @no_cache
 def boards_GET():
+    flash_params_message()
+
     return render_template(
         'user/boards.html',
         form=CreateBoardForm(request.form),
