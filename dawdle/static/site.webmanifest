@@ -1,7 +1,7 @@
 {
   "name": "Dawdle",
   "short_name": "Dawdle",
-  "start_url": ".",
+  "start_url": "https://dawdle.mikelowe.xyz/",
   "icons": [
     {
       "src": "./android-chrome-192x192.png",
