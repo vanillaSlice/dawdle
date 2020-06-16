@@ -145,7 +145,9 @@
    */
 
   function truncateText() {
-    $('.js-shave').shave(50, { spaces: false });
+    $('.js-shave-lg').shave(75, { spaces: false });
+    $('.js-shave, .js-shave-md').shave(50, { spaces: false });
+    $('.js-shave-sm').shave(25, { spaces: false });
   }
 
   truncateText();
