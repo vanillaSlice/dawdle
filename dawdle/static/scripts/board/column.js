@@ -66,7 +66,6 @@
     );
   }
 
-
   $(document).on('click', '.js-create-column-form .js-modal-trigger', function() {
     var formElement = $('.js-create-column-form');
     dawdle.resetFormElement(formElement);
