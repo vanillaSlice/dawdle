@@ -13,7 +13,7 @@
     navbarMenuElement.toggleClass('is-active', !isActive);
   }
 
-  $('.js-navbar-burger').click(function() {
+  $(document).on('click', '.js-navbar-burger', function() {
     toggleNavbar($(this).parents('.js-navbar'));
   });
 
@@ -21,7 +21,7 @@
    * Notifications
    */
 
-  $('.js-notification-close').click(function() {
+  $(document).on('click', '.js-notification-close', function() {
     $(this).parent().addClass('is-hidden');
   });
 
@@ -46,7 +46,7 @@
    * Forms
    */
 
-  $('.js-form').submit(function() {
+  $(document).on('submit', '.js-form', function() {
     var submitElement = $(this).find('.js-submit');
     submitElement.prop('disabled', true);
     submitElement.addClass('is-loading');
@@ -88,7 +88,7 @@
     }
   }
 
-  $('.js-password-mask').click(function() {
+  $(document).on('click', '.js-password-mask', function() {
     togglePasswordMask($(this));
   });
 
@@ -163,7 +163,7 @@
     $('html').toggleClass('is-clipped');
   }
 
-  $('.js-modal-trigger').click(function() {
+  $(document).on('click', '.js-modal-trigger', function() {
     var triggerElement = $(this);
     var target = triggerElement.data('target');
     var modalElement = target ? $(target) : triggerElement.parents('.js-modal');

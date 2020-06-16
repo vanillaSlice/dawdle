@@ -1,6 +1,6 @@
 (function() {
 
-  $('.js-create-board-form').submit(function(e) {
+  $(document).on('submit', '.js-create-board-form', function(e) {
     e.preventDefault();
 
     var formElement = $(this);
@@ -21,7 +21,7 @@
       });
   });
 
-  $('.js-create-board-form .js-modal-trigger').click(function() {
+  $(document).on('click', '.js-create-board-form .js-modal-trigger', function() {
     var formElement = $('.js-create-board-form');
     dawdle.resetFormElement(formElement);
   });

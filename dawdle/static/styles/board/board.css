@@ -17,10 +17,14 @@
   width: 18rem;
 }
 
-.board-page .create-column-button-content {
+.board-page .board-column .box {
   background-color: transparent;
-  border: #fff 3px dashed;
+  border: #fff 3px solid;
   color: #fff;
+}
+
+.board-page .create-column-button-content.box {
+  border-style: dashed;
 }
 
 .board-page .create-column-button:focus .create-column-button-content,
