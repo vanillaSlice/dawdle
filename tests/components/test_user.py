@@ -20,13 +20,18 @@ class TestUser(TestBase):
     def test_boards_GET_authenticated(self):
         self._assert_boards_GET_ok('Personal Boards')
 
-    def _assert_boards_GET_ok(self, expected_text):
+    def test_boards_GET_with_message(self):
+        self._assert_boards_GET_ok('Personal Boards', 'Hello World')
+
+    def _assert_boards_GET_ok(self, expected_text, message=None):
         response = self.client.get(
-            url_for('user.boards_GET'),
+            url_for('user.boards_GET', message=message),
             follow_redirects=True,
         )
         assert response.status_code == 200
         assert expected_text.encode() in response.data
+        if message:
+            assert message.encode() in response.data
 
     #
     # settings_GET tests.

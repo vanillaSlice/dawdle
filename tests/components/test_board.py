@@ -125,16 +125,26 @@ class TestBoard(TestBase):
         board = self.create_board()
         self._assert_board_GET_ok(board.id)
 
-    def _send_board_GET_request(self, board_id):
+    def test_board_GET_with_message(self):
+        board = self.create_board()
+        self._assert_board_GET_ok(board.id, 'Hello World')
+
+    def _send_board_GET_request(self, board_id, message=None):
         return self.client.get(
-            url_for('board.board_GET', board_id=str(board_id)),
+            url_for(
+                'board.board_GET',
+                board_id=str(board_id),
+                message=message,
+            ),
         )
 
-    def _assert_board_GET_ok(self, board_id):
-        response = self._send_board_GET_request(board_id)
+    def _assert_board_GET_ok(self, board_id, message=None):
+        response = self._send_board_GET_request(board_id, message)
         board = Board.objects(id=board_id).first()
         assert response.status_code == 200
         assert board.name.encode() in response.data
+        if message:
+            assert message.encode() in response.data
 
     def _assert_board_GET_forbidden(self, board_id):
         response = self._send_board_GET_request(board_id)
