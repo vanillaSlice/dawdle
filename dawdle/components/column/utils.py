@@ -17,6 +17,7 @@ def board_id_from_column_id(func):
             abort(404)
 
         kwargs['board_id'] = str(column.board_id)
+        kwargs['column'] = column
 
         return func(*args, **kwargs)
     return decorated_function

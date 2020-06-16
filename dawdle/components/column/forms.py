@@ -24,3 +24,21 @@ class CreateColumnForm(FlaskForm):
 class DeleteColumnForm(FlaskForm):
 
     pass
+
+
+class UpdateColumnForm(FlaskForm):
+
+    create_column_path = HiddenField()
+
+    name = StringField(
+        'Name',
+        validators=[
+            DataRequired(message='Please enter a column name'),
+            Length(
+                min=1,
+                max=256,
+                message='Column name must be between 1 and 256 characters',
+            ),
+        ],
+        filters=[lambda s: s.strip()],
+    )

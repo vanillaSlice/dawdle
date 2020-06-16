@@ -111,6 +111,89 @@ class TestColumn(TestBase):
         assert b'Not Found' in response.data
 
     #
+    # column_update_POST tests.
+    #
+
+    def test_column_update_POST_does_not_exist(self):
+        self._assert_column_update_POST_not_found(ObjectId())
+
+    def test_column_update_POST_not_authenticated(self):
+        self.logout()
+        column = self.create_column(self.board)
+        self._assert_column_update_POST_forbidden(column.id)
+
+    def test_column_update_POST_user_without_permissions(self):
+        board = self.create_board(owner_id=ObjectId())
+        column = self.create_column(board)
+        self._assert_column_update_POST_forbidden(column.id)
+
+    def test_column_update_POST_no_name(self):
+        data = self._get_mock_update_column_data()
+        del data['name']
+        self._assert_column_update_POST_bad_request(
+            data,
+            'Please enter a column name',
+        )
+
+    def test_column_update_POST_name_equal_to_min(self):
+        column = self.create_column(self.board)
+        name = self.fake.pystr(min_chars=1, max_chars=1)
+        data = self._get_mock_update_column_data(name=name)
+        self._assert_column_update_POST_ok(column, data)
+
+    def test_column_update_POST_name_equal_to_max(self):
+        column = self.create_column(self.board)
+        name = self.fake.pystr(min_chars=256, max_chars=256)
+        data = self._get_mock_update_column_data(name=name)
+        self._assert_column_update_POST_ok(column, data)
+
+    def test_column_update_POST_name_greater_than_max(self):
+        name = self.fake.pystr(min_chars=257, max_chars=257)
+        data = self._get_mock_update_column_data(name=name)
+        self._assert_column_update_POST_bad_request(
+            data,
+            'Column name must be between 1 and 256 characters',
+        )
+
+    def test_column_update_POST_success(self):
+        column = self.create_column(self.board)
+        data = self._get_mock_update_column_data()
+        self._assert_column_update_POST_ok(column, data)
+
+    def _get_mock_update_column_data(self, **kwargs):
+        return {
+            'name': kwargs.get('name', self.fake.name()),
+        }
+
+    def _send_column_update_POST_request(self, column_id, data=None):
+        return self.client.post(
+            url_for('column.column_update_POST', column_id=str(column_id)),
+            data=data,
+        )
+
+    def _assert_column_update_POST_ok(self, column, data):
+        response = self._send_column_update_POST_request(column.id, data)
+        updated_column = Column.objects(id=column.id).first()
+        assert response.status_code == 200
+        assert updated_column.name == data['name']
+
+    def _assert_column_update_POST_bad_request(self, data, expected_text):
+        column = self.create_column(self.board)
+        response = self._send_column_update_POST_request(column.id, data)
+        assert response.status_code == 400
+        assert expected_text.encode() in response.data
+
+    def _assert_column_update_POST_forbidden(self, column_id):
+        response = self._send_column_update_POST_request(column_id)
+        assert response.status_code == 403
+        assert b'Not Authorised' in response.data
+
+    def _assert_column_update_POST_not_found(self, column_id):
+        response = self._send_column_update_POST_request(column_id)
+        assert response.status_code == 404
+        assert b'Not Found' in response.data
+
+    #
     # column_delete_POST tests.
     #
 
