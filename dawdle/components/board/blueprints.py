@@ -77,7 +77,7 @@ def board_GET(board, permissions, **_):
 
 
 @board_bp.route('/<board_id>', methods=['POST'])
-@board_permissions_required(BoardPermission.WRITE)
+@board_permissions_required(BoardPermission.ADMIN)
 def board_update_POST(board, **_):
     form = UpdateBoardForm(request.form)
 
@@ -106,7 +106,7 @@ def board_update_POST(board, **_):
 
 
 @board_bp.route('/<board_id>/delete', methods=['POST'])
-@board_permissions_required(BoardPermission.WRITE)
+@board_permissions_required(BoardPermission.ADMIN)
 def board_delete_POST(board, **_):
     form = DeleteBoardForm(request.form)
 

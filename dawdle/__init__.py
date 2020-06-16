@@ -91,6 +91,9 @@ def _register_blueprints(app):
     from dawdle.components.board.blueprints import board_bp
     app.register_blueprint(board_bp)
 
+    from dawdle.components.column.blueprints import column_bp
+    app.register_blueprint(column_bp)
+
     from dawdle.components.contact.blueprints import contact_bp
     app.register_blueprint(contact_bp)
 

@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import abort
+from flask import abort, request
 from flask_login import current_user
 
 from dawdle.components.board.models import Board, BOARD_PERMISSIONS
@@ -16,7 +16,14 @@ def board_permissions_required(*required_permissions):
     def decorator(func):
         @wraps(func)
         def decorated_function(*args, **kwargs):
-            board = Board.objects(id=to_ObjectId(kwargs['board_id'])).first()
+            if 'board_id' in kwargs:
+                board_id = kwargs['board_id']
+            elif 'board_id' in request.args:
+                board_id = request.args['board_id']
+            else:
+                abort(400)
+
+            board = Board.objects(id=to_ObjectId(board_id)).first()
 
             if not board:
                 abort(404)
