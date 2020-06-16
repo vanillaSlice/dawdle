@@ -11,10 +11,10 @@
   overflow-x: auto;
 }
 
-@media (min-width: 769px) {
-  .board-page .board-column {
-    max-width: 18rem;
-  }
+.board-page .board-column {
+  max-width: 18rem;
+  min-width: 18rem;
+  width: 18rem;
 }
 
 .board-page .create-column-button-content {
