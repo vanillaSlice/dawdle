@@ -5,6 +5,7 @@ from bson.objectid import ObjectId
 
 from dawdle.components.board.models import Board, BoardType, BoardVisibility
 from dawdle.components.board.utils import get_owner_from_id
+from dawdle.components.column.models import Column
 from tests.test_base import TestBase
 
 
@@ -302,6 +303,11 @@ class TestBoard(TestBase):
         board = self.create_board()
         self._assert_board_delete_POST_ok(board)
 
+    def test_board_delete_POST_with_columns(self):
+        board = self.create_board()
+        self.create_columns(board)
+        self._assert_board_delete_POST_ok(board)
+
     def _send_board_delete_POST_request(self, board_id):
         return self.client.post(
             url_for('board.board_delete_POST', board_id=str(board_id)),
@@ -309,9 +315,11 @@ class TestBoard(TestBase):
 
     def _assert_board_delete_POST_ok(self, board):
         assert Board.objects(id=board.id).count() == 1
+        assert Column.objects(board_id=board.id).count() == len(board.columns)
         response = self._send_board_delete_POST_request(board.id)
         response_json = json.loads(response.data.decode())
         assert Board.objects(id=board.id).count() == 0
+        assert Column.objects(board_id=board.id).count() == 0
         assert response.status_code == 200
         assert response_json['url'] == \
             '/user/boards?message=Board+has+been+deleted.&category=success'

@@ -2,7 +2,8 @@ from faker import Faker
 from flask import url_for
 
 from dawdle import create_app
-from dawdle.components.board.models import Board, BoardType, BoardVisibility
+from dawdle.components.board.models import (Board, BoardType, BoardVisibility,
+                                            Column)
 from dawdle.components.user.models import User
 
 
@@ -69,6 +70,32 @@ class TestBase:
             user.save()
 
         return saved_board
+
+    @classmethod
+    def create_columns(cls, board, **kwargs):
+        min_boards = kwargs.get('min_columns', 1)
+        max_boards = kwargs.get('max_columns', 4)
+        num = cls.fake.pyint(min_boards, max_boards)
+        columns = []
+        for _ in range(num):
+            columns.append(cls.create_column(board))
+        return columns
+
+    @classmethod
+    def create_column(cls, board, **kwargs):
+        column = Column()
+        column.board_id = board.id
+        column.created_by = kwargs.get('created_by', cls.user.id)
+        column.name = kwargs.get(
+            'name',
+            cls.fake.pystr(min_chars=1, max_chars=256),
+        )
+        saved_column = column.save()
+
+        board.columns.append(saved_column)
+        board.save()
+
+        return saved_column
 
     @classmethod
     def as_new_user(cls):
