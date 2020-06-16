@@ -1,6 +1,7 @@
 (function() {
 
   var board;
+  var columnId;
 
   /*
    * Create Column
@@ -31,7 +32,7 @@
 
   function addNewColumn(column) {
     $('.js-create-new-column-container').before(
-      '   <div class="board-column column is-fullheight is-12">  '  +
+      '   <div class="board-column column is-fullheight is-12 js-board-column" data-column-id="' + column._id.$oid + '">  '  +
       '     <div class="has-background-info box is-fullwidth is-fullheight px-4 py-4">  '  +
       '       <div class="columns is-vcentered is-mobile">  '  +
       '         <div class="column is-9">  '  +
@@ -52,7 +53,7 @@
       '                   Update Column  '  +
       '                 </a>  '  +
       '                 <hr class="dropdown-divider">  '  +
-      '                 <a href="#" class="dropdown-item js-modal-trigger" data-target="#js-delete-column-modal">  '  +
+      '                 <a href="#" class="dropdown-item js-modal-trigger js-delete-column-modal-trigger" data-target="#js-delete-column-modal">  '  +
       '                   Delete Column  '  +
       '                 </a>  '  +
       '               </div>  '  +
@@ -69,6 +70,46 @@
   $(document).on('click', '.js-create-column-form .js-modal-trigger', function() {
     var formElement = $('.js-create-column-form');
     dawdle.resetFormElement(formElement);
+  });
+
+  /*
+   * Delete Column
+   */
+
+  $(document).on('submit', '.js-delete-column-form', function(e) {
+    e.preventDefault();
+
+    var formElement = $(this);
+
+    var deleteColumnPath = '/column/' + columnId + '/delete';
+
+    $.post(deleteColumnPath, formElement.serialize())
+      .done(function(res) {
+        var modalElement = $('#js-delete-column-modal');
+        dawdle.toggleModal(modalElement);
+        dawdle.resetFormElement(formElement);
+        removeColumn(res.id);
+      })
+      .fail(function(err) {
+        var submitElement = formElement.find('.js-submit');
+        var errors = err.responseJSON || { error: 'Could not delete column. Please try again.' }
+        dawdle.renderFormErrors(formElement, errors);
+        submitElement.prop('disabled', false);
+        submitElement.removeClass('is-loading');
+      });
+  });
+
+  function removeColumn(columnId) {
+    $('[data-column-id=' + columnId+ ']').remove();
+  }
+
+  $(document).on('click', '.js-delete-column-form .js-modal-trigger', function() {
+    var formElement = $('.js-delete-column-form');
+    dawdle.resetFormElement(formElement);
+  });
+
+  $(document).on('click', '.js-delete-column-modal-trigger', function() {
+    columnId = $(this).parents('.js-board-column').data('column-id');
   });
 
   /*

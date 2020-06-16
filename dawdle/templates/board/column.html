@@ -1,4 +1,4 @@
-<div class="board-column column is-fullheight is-12">
+<div class="board-column column is-fullheight is-12 js-board-column" data-column-id="{{ column.id }}">
   <div class="has-background-info box is-fullwidth is-fullheight px-4 py-4">
     <div class="columns is-vcentered is-mobile">
       <div class="column is-9">
@@ -19,7 +19,7 @@
                 Update Column
               </a>
               <hr class="dropdown-divider">
-              <a href="#" class="dropdown-item js-modal-trigger" data-target="#js-delete-column-modal">
+              <a href="#" class="dropdown-item js-modal-trigger js-delete-column-modal-trigger" data-target="#js-delete-column-modal">
                 Delete Column
               </a>
             </div>

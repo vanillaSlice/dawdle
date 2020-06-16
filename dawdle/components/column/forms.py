@@ -19,3 +19,8 @@ class CreateColumnForm(FlaskForm):
         ],
         filters=[lambda s: s.strip()],
     )
+
+
+class DeleteColumnForm(FlaskForm):
+
+    pass

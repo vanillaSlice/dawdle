@@ -109,3 +109,47 @@ class TestColumn(TestBase):
         response = self._send_index_POST_request(data, board_id)
         assert response.status_code == 404
         assert b'Not Found' in response.data
+
+    #
+    # column_delete_POST tests.
+    #
+
+    def test_column_delete_POST_does_not_exist(self):
+        self._assert_column_delete_POST_not_found(ObjectId())
+
+    def test_column_delete_POST_not_authenticated(self):
+        self.logout()
+        column = self.create_column(self.board)
+        self._assert_column_delete_POST_forbidden(column.id)
+
+    def test_column_delete_POST_user_without_permissions(self):
+        board = self.create_board(owner_id=ObjectId())
+        column = self.create_column(board)
+        self._assert_column_delete_POST_forbidden(column.id)
+
+    def test_column_delete_POST_success(self):
+        column = self.create_column(self.board)
+        self._assert_column_delete_POST_ok(column)
+
+    def _send_column_delete_POST_request(self, column_id):
+        return self.client.post(
+            url_for('column.column_delete_POST', column_id=str(column_id)),
+        )
+
+    def _assert_column_delete_POST_ok(self, column):
+        assert Column.objects(id=column.id).count() == 1
+        response = self._send_column_delete_POST_request(column.id)
+        response_json = json.loads(response.data.decode())
+        assert Column.objects(id=column.id).count() == 0
+        assert response.status_code == 200
+        assert response_json['id'] == str(column.id)
+
+    def _assert_column_delete_POST_forbidden(self, column_id):
+        response = self._send_column_delete_POST_request(column_id)
+        assert response.status_code == 403
+        assert b'Not Authorised' in response.data
+
+    def _assert_column_delete_POST_not_found(self, column_id):
+        response = self._send_column_delete_POST_request(column_id)
+        assert response.status_code == 404
+        assert b'Not Found' in response.data
