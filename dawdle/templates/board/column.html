@@ -1,8 +1,8 @@
-<div class="board-column column is-fullheight is-12 js-board-column" data-column-id="{{ column.id }}">
+<div class="board-column column is-fullheight is-12 js-board-column" data-column-id="{{ column.id }}" data-column-name="{{ column.name }}">
   <div class="has-background-info box is-fullwidth is-fullheight px-4 py-4">
     <div class="columns is-vcentered is-mobile">
       <div class="column is-9">
-        <h2 class="title is-6 has-alt-text has-text-white js-shave-sm">{{ column.name }}</h2>
+        <h2 class="title is-6 has-alt-text has-text-white js-shave-sm js-column-name">{{ column.name }}</h2>
       </div>
       <div class="column is-3">
         <div class="dropdown is-hoverable is-right">
@@ -15,7 +15,7 @@
           </div>
           <div class="dropdown-menu" id="dropdown-menu" role="menu">
             <div class="dropdown-content">
-              <a href="#" class="dropdown-item js-modal-trigger" data-target="#js-update-column-modal">
+              <a href="#" class="dropdown-item js-modal-trigger js-update-column-modal-trigger" data-target="#js-update-column-modal">
                 Update Column
               </a>
               <hr class="dropdown-divider">

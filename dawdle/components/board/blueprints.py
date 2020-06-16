@@ -6,7 +6,8 @@ from dawdle.components.board.forms import (CreateBoardForm, DeleteBoardForm,
 from dawdle.components.board.models import Board, BoardPermission, BoardType
 from dawdle.components.board.utils import (board_permissions_required,
                                            get_owner_from_id)
-from dawdle.components.column.forms import CreateColumnForm, DeleteColumnForm
+from dawdle.components.column.forms import (CreateColumnForm, DeleteColumnForm,
+                                            UpdateColumnForm)
 from dawdle.utils import flash_params_message, no_cache
 
 board_bp = Blueprint('board', __name__, url_prefix='/board')
@@ -61,6 +62,8 @@ def board_GET(board, permissions, **_):
         create_column_path=create_column_path,
     )
 
+    update_column_form = UpdateColumnForm(request.form)
+
     delete_column_form = DeleteColumnForm(request.form)
 
     update_board_path = url_for('board.board_update_POST', board_id=board.id)
@@ -81,6 +84,7 @@ def board_GET(board, permissions, **_):
         board=board,
         permissions=permissions,
         create_column_form=create_column_form,
+        update_column_form=update_column_form,
         delete_column_form=delete_column_form,
         update_board_form=update_board_form,
         delete_board_form=delete_board_form,

@@ -1,6 +1,6 @@
 (function() {
 
-  var board;
+  var column;
   var columnId;
 
   /*
@@ -32,11 +32,11 @@
 
   function addNewColumn(column) {
     $('.js-create-new-column-container').before(
-      '   <div class="board-column column is-fullheight is-12 js-board-column" data-column-id="' + column._id.$oid + '">  '  +
+      '   <div class="board-column column is-fullheight is-12 js-board-column" data-column-id="' + column._id.$oid + '" data-column-name="' + column.name + '">  '  +
       '     <div class="has-background-info box is-fullwidth is-fullheight px-4 py-4">  '  +
       '       <div class="columns is-vcentered is-mobile">  '  +
       '         <div class="column is-9">  '  +
-      '           <h2 class="title is-6 has-alt-text has-text-white js-shave-sm">' + column.name + '</h2>  '  +
+      '           <h2 class="title is-6 has-alt-text has-text-white js-shave-sm js-column-name">' + column.name + '</h2>  '  +
       '         </div>  '  +
       '         <div class="column is-3">  '  +
       '           <div class="dropdown is-hoverable is-right">  '  +
@@ -49,7 +49,7 @@
       '             </div>  '  +
       '             <div class="dropdown-menu" id="dropdown-menu" role="menu">  '  +
       '               <div class="dropdown-content">  '  +
-      '                 <a href="#" class="dropdown-item js-modal-trigger" data-target="#js-update-column-modal">  '  +
+      '                 <a href="#" class="dropdown-item js-modal-trigger js-update-column-modal-trigger" data-target="#js-update-column-modal">  '  +
       '                   Update Column  '  +
       '                 </a>  '  +
       '                 <hr class="dropdown-divider">  '  +
@@ -70,6 +70,61 @@
   $(document).on('click', '.js-create-column-form .js-modal-trigger', function() {
     var formElement = $('.js-create-column-form');
     dawdle.resetFormElement(formElement);
+  });
+
+  /*
+   * Update Column
+   */
+
+  $(document).on('submit', '.js-update-column-form', function(e) {
+    e.preventDefault();
+
+    var formElement = $(this);
+
+    var updateColumnPath = '/column/' + columnId;
+
+    $.post(updateColumnPath, formElement.serialize())
+      .done(function(res) {
+        var modalElement = $('#js-update-column-modal');
+        dawdle.toggleModal(modalElement);
+        var columnElement = $('[data-column-id=' + res.column._id.$oid + ']');
+        columnElement.attr('data-column-id', res.column._id.$oid);
+        columnElement.attr('data-column-name', res.column.name);
+        var columnNameElement = $(columnElement).find('.js-column-name');
+        columnNameElement.text(res.column.name);
+        dawdle.truncateText();
+        resetUpdateColumnForm();
+      })
+      .fail(function(err) {
+        var submitElement = formElement.find('.js-submit');
+        var errors = err.responseJSON || { error: 'Could not update column. Please try again.' }
+        dawdle.renderFormErrors(formElement, errors);
+        submitElement.prop('disabled', false);
+        submitElement.removeClass('is-loading');
+      });
+  });
+
+  function resetUpdateColumnForm(formElement) {
+    var options = {};
+    if (columnId) {
+      var columnElement = $('[data-column-id=' + columnId + ']');
+      options.state = {
+        name: $(columnElement).attr('data-column-name'),
+      }
+    }
+
+    dawdle.resetFormElement(formElement, options);
+  }
+
+  $(document).on('click', '.js-update-column-form .js-modal-trigger', function() {
+    var formElement = $('.js-update-column-form');
+    resetUpdateColumnForm(formElement);
+  });
+
+  $(document).on('click', '.js-update-column-modal-trigger', function() {
+    columnId = $(this).parents('.js-board-column').attr('data-column-id');
+    var formElement = $('.js-update-column-form');
+    resetUpdateColumnForm(formElement);
   });
 
   /*
@@ -109,86 +164,6 @@
   });
 
   $(document).on('click', '.js-delete-column-modal-trigger', function() {
-    columnId = $(this).parents('.js-board-column').data('column-id');
-  });
-
-  /*
-   * Update Board
-   */
-
-  $(document).on('submit', '.js-update-board-form', function(e) {
-    e.preventDefault();
-
-    var formElement = $(this);
-
-    var updateBoardPath = formElement.find('#update_board_path').val();
-
-    $.post(updateBoardPath, formElement.serialize())
-      .done(function(res) {
-        dawdle.renderNotification(res.flash.message, res.flash.category);
-        var boardNameElements = $('.js-board-name');
-        boardNameElements.text(res.board.name);
-        dawdle.truncateText();
-        board = res.board;
-        resetUpdateBoardForm(formElement);
-      })
-      .fail(function(err) {
-        var submitElement = formElement.find('.js-submit');
-        var errors = err.responseJSON || { error: 'Could not update board. Please try again.' }
-        dawdle.resetNotification();
-        dawdle.renderFormErrors(formElement, errors);
-        submitElement.prop('disabled', false);
-        submitElement.removeClass('is-loading');
-      });
-  });
-
-  function resetUpdateBoardForm(formElement) {
-    var options = {};
-    if (board) {
-      options.state = {
-        name: board.name,
-        owner: board.owner_id.$oid,
-        visibility: board.visibility,
-      }
-    }
-
-    dawdle.resetFormElement(formElement, options);
-  }
-
-  $(document).on('click', '.js-board-settings-quickview .js-quickview-close', function() {
-    var formElement = $('.js-update-board-form');
-    resetUpdateBoardForm(formElement);
-  });
-
-  /*
-   * Delete Board
-   */
-
-  $('.js-delete-board-form').submit(function(e) {
-    e.preventDefault();
-
-    var formElement = $(this);
-
-    var deleteBoardPath = formElement.find('#delete_board_path').val();
-
-    $.post(deleteBoardPath, formElement.serialize())
-      .done(function(res) {
-        var modalElement = $('#js-delete-board-modal');
-        dawdle.toggleModal(modalElement);
-        dawdle.resetFormElement(formElement);
-        window.location = res.url;
-      })
-      .fail(function(err) {
-        var submitElement = formElement.find('.js-submit');
-        var errors = err.responseJSON || { error: 'Could not delete board. Please try again.' }
-        dawdle.renderFormErrors(formElement, errors);
-        submitElement.prop('disabled', false);
-        submitElement.removeClass('is-loading');
-      });
-  });
-
-  $('.js-delete-board-form .js-modal-trigger').click(function() {
-    var formElement = $('.js-delete-board-form');
-    dawdle.resetFormElement(formElement);
+    columnId = $(this).parents('.js-board-column').attr('data-column-id');
   });
 })();

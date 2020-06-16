@@ -15,7 +15,12 @@
             <ul class="js-form-errors-list"></ul>
           </div>
         </div>
-        TODO
+        {{ update_column_form.csrf_token }}
+        {{ render_form_field(create_column_form.name,
+                             type='text',
+                             minlength='1',
+                             maxlength='256',
+                             placeholder='e.g. Under Construction') }}
       </section>
       <footer class="modal-card-foot">
         <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold js-submit">
