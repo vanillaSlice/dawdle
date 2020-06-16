@@ -82,7 +82,9 @@ class TestColumn(TestBase):
         response = self._send_index_POST_request(data, board_id)
         response_json = json.loads(response.data.decode())
         board = Board.objects(id=board_id).first()
-        column = Column.objects(id=response_json['id']).first()
+        column = Column.objects(
+            id=response_json['column']['_id']['$oid'],
+        ).first()
         assert response.status_code == 201
         assert column in board.columns
         assert column.board_id == board.id

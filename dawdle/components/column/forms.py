@@ -1,9 +1,11 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField
+from wtforms import HiddenField, StringField
 from wtforms.validators import DataRequired, Length
 
 
 class CreateColumnForm(FlaskForm):
+
+    create_column_path = HiddenField()
 
     name = StringField(
         'Name',

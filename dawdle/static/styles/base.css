@@ -129,3 +129,7 @@ h1,
 .quickview-block:first-child {
   padding-top: 1.5rem;
 }
+
+.is-fullheight {
+  height: 100% !important;
+}

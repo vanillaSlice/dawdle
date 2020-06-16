@@ -5,3 +5,26 @@
 .board-page .body {
   padding: 1.5rem;
 }
+
+.board-page .board-columns {
+  height: calc(100vh - 10rem);
+  overflow-x: auto;
+}
+
+@media (min-width: 769px) {
+  .board-page .board-column {
+    max-width: 18rem;
+  }
+}
+
+.board-page .create-column-button-content {
+  background-color: transparent;
+  border: #fff 3px dashed;
+  color: #fff;
+}
+
+.board-page .create-column-button:focus .create-column-button-content,
+.board-page .create-column-button:hover .create-column-button-content {
+  background-color: #fff !important;
+  color: #3298dc !important;
+}

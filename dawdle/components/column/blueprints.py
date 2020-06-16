@@ -27,5 +27,5 @@ def index_POST(board, **_):
     board.save()
 
     return jsonify({
-        'id': str(column.id),
+        'column': column,
     }), 201

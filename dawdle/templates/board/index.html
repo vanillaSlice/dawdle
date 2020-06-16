@@ -23,6 +23,59 @@
       </div>
     </div>
 
+    <div class="board-columns columns">
+      {% for column in board.columns %}
+        <div class="board-column column is-fullheight is-12">
+          <div class="box is-fullwidth is-fullheight">
+            <h2 class="title is-6 has-alt-text">{{ column.name }}</h2>
+          </div>
+        </div>
+      {% endfor %}
+      <div class="board-column column is-12 js-create-new-column-container">
+        <a class="create-column-button js-modal-trigger" data-target="#js-create-column-modal" role="button" tabindex="0">
+          <div class="create-column-button-content has-background-info box is-fullwidth">
+            <p class="has-alt-text has-text-weight-bold">
+              <i class="fas fa-plus" aria-hidden="true"></i> Create New Column
+            </p>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <form class="js-form js-create-column-form">
+      <div id="js-create-column-modal" class="modal js-modal">
+        <div class="modal-background js-modal-trigger"></div>
+        <div class="modal-card">
+          <header class="modal-card-head">
+            <p class="modal-card-title has-alt-text">
+              Create New Column
+            </p>
+            <button type="button" class="delete js-modal-trigger" aria-label="close"></button>
+          </header>
+          <section class="modal-card-body">
+            <div class="notification is-danger is-hidden js-form-errors">
+              <button type="button" class="delete js-notification-close" aria-label="close"></button>
+              <div class="content">
+                <ul class="js-form-errors-list"></ul>
+              </div>
+            </div>
+            {{ create_column_form.csrf_token }}
+            {{ create_column_form.create_column_path }}
+            {{ render_form_field(create_column_form.name,
+                                 type='text',
+                                 minlength='1',
+                                 maxlength='256',
+                                 placeholder='e.g. Under Construction') }}
+          </section>
+          <footer class="modal-card-foot">
+            <button type="submit" class="button is-fullwidth is-primary has-text-weight-bold js-submit">
+              Create Column
+            </button>
+          </footer>
+        </div>
+      </div>
+    </form>
+
     <div class="quickview js-quickview js-board-settings-quickview" id="board-settings">
       <header class="quickview-header">
         <h2 class="title">Board Settings</h2>
@@ -39,6 +92,7 @@
               </div>
             </div>
             {{ update_board_form.csrf_token }}
+            {{ update_board_form.update_board_path }}
             {{ render_form_field(update_board_form.name,
                                  type='text',
                                  minlength='1',
@@ -98,6 +152,5 @@
         </div>
       </div>
     </form>
-
   </div>
 {% endblock %}

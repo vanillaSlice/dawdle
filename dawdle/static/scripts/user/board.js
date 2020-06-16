@@ -2,6 +2,52 @@
 
   var board;
 
+  /*
+   * Create Column
+   */
+
+  $('.js-create-column-form').submit(function(e) {
+    e.preventDefault();
+
+    var formElement = $(this);
+
+    var createColumnPath = formElement.find('#create_column_path').val();
+
+    $.post(createColumnPath, formElement.serialize())
+      .done(function(res) {
+        var modalElement = $('#js-create-column-modal');
+        dawdle.toggleModal(modalElement);
+        dawdle.resetFormElement(formElement);
+        addNewColumn(res.column);
+      })
+      .fail(function(err) {
+        var submitElement = formElement.find('.js-submit');
+        var errors = err.responseJSON || { error: 'Could not create column. Please try again.' }
+        dawdle.renderFormErrors(formElement, errors);
+        submitElement.prop('disabled', false);
+        submitElement.removeClass('is-loading');
+      });
+  });
+
+  function addNewColumn(column) {
+    $('.js-create-new-column-container').before(
+      '<div class="board-column column is-fullheight is-12">' +
+      '<div class="box is-fullwidth is-fullheight">' +
+      '<h2 class="title has-alt-text is-6">' + column.name + '</h2>' +
+      '</div>' +
+      '</div>'
+    );
+  }
+
+  $('.js-create-column-form .js-modal-trigger').click(function() {
+    var formElement = $('.js-create-column-form');
+    dawdle.resetFormElement(formElement);
+  });
+
+  /*
+   * Update Board
+   */
+
   $('.js-update-board-form').submit(function(e) {
     e.preventDefault();
 
@@ -45,6 +91,10 @@
     var formElement = $('.js-update-board-form');
     resetUpdateBoardForm(formElement);
   });
+
+  /*
+   * Delete Board
+   */
 
   $('.js-delete-board-form').submit(function(e) {
     e.preventDefault();
