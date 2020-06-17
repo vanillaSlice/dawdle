@@ -2,8 +2,10 @@ from faker import Faker
 from flask import url_for
 
 from dawdle import create_app
-from dawdle.components.board.models import (Board, BoardType, BoardVisibility,
-                                            Column)
+from dawdle.components.board.models import (Board, BoardType, BoardVisibility)
+from dawdle.components.card.models import Card
+from dawdle.components.column.models import Column
+
 from dawdle.components.user.models import User
 
 
@@ -96,6 +98,32 @@ class TestBase:
         board.save()
 
         return saved_column
+
+    @classmethod
+    def create_cards(cls, column, **kwargs):
+        min_cards = kwargs.get('min_cards', 1)
+        max_cards = kwargs.get('max_cards', 4)
+        num = cls.fake.pyint(min_cards, max_cards)
+        cards = []
+        for _ in range(num):
+            cards.append(cls.create_card(column))
+        return cards
+
+    @classmethod
+    def create_card(cls, column, **kwargs):
+        card = Card()
+        card.column_id = column.id
+        card.created_by = kwargs.get('created_by', cls.user.id)
+        card.name = kwargs.get(
+            'name',
+            cls.fake.pystr(min_chars=1, max_chars=256),
+        )
+        saved_card = card.save()
+
+        column.cards.append(saved_card)
+        column.save()
+
+        return saved_card
 
     @classmethod
     def as_new_user(cls):

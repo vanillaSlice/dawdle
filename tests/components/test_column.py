@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from flask import url_for
 
 from dawdle.components.board.models import Board
+from dawdle.components.card.models import Card
 from dawdle.components.column.models import Column
 from tests.test_base import TestBase
 
@@ -214,6 +215,11 @@ class TestColumn(TestBase):
         column = self.create_column(self.board)
         self._assert_column_delete_POST_ok(column)
 
+    def test_column_delete_POST_with_cards(self):
+        column = self.create_column(self.board)
+        self.create_cards(column)
+        self._assert_column_delete_POST_ok(column)
+
     def _send_column_delete_POST_request(self, column_id):
         return self.client.post(
             url_for('column.column_delete_POST', column_id=str(column_id)),
@@ -221,9 +227,11 @@ class TestColumn(TestBase):
 
     def _assert_column_delete_POST_ok(self, column):
         assert Column.objects(id=column.id).count() == 1
+        assert Card.objects(column_id=column.id).count() == len(column.cards)
         response = self._send_column_delete_POST_request(column.id)
         response_json = json.loads(response.data.decode())
         assert Column.objects(id=column.id).count() == 0
+        assert Card.objects(column_id=column.id).count() == 0
         assert response.status_code == 200
         assert response_json['id'] == str(column.id)
 
