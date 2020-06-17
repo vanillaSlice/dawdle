@@ -163,7 +163,9 @@
     $('html').toggleClass('is-clipped');
   }
 
-  $(document).on('click', '.js-modal-trigger', function() {
+  $(document).on('click', '.js-modal-trigger', function(e) {
+    e.preventDefault();
+
     var triggerElement = $(this);
     var target = triggerElement.data('target');
     var modalElement = target ? $(target) : triggerElement.parents('.js-modal');
