@@ -35,8 +35,3 @@
   background-color: #fff !important;
   color: #3298dc !important;
 }
-
-.board-page .create-card-button:focus .create-card-button-content,
-.board-page .create-card-button:hover .create-card-button-content {
-  background-color: #b5b5b5 !important;
-}

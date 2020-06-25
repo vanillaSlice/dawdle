@@ -49,10 +49,13 @@
       '             </div>  '  +
       '             <div class="dropdown-menu" id="dropdown-menu" role="menu">  '  +
       '               <div class="dropdown-content">  '  +
+      '                 <a href="#" class="dropdown-item js-modal-trigger js-create-card-modal-trigger" data-target="#js-create-card-modal">  '  +
+      '                   Create New Card  '  +
+      '                 </a>  '  +
+      '                 <hr class="dropdown-divider">  '  +
       '                 <a href="#" class="dropdown-item js-modal-trigger js-update-column-modal-trigger" data-target="#js-update-column-modal">  '  +
       '                   Update Column  '  +
       '                 </a>  '  +
-      '                 <hr class="dropdown-divider">  '  +
       '                 <a href="#" class="dropdown-item js-modal-trigger js-delete-column-modal-trigger" data-target="#js-delete-column-modal">  '  +
       '                   Delete Column  '  +
       '                 </a>  '  +
@@ -61,16 +64,7 @@
       '           </div>  '  +
       '         </div>  '  +
       '       </div>  '  +
-      '       <div class="columns is-multiline">  '  +
-      '         <div class="column is-12 js-create-new-card-container">  '  +
-      '           <a class="create-card-button js-modal-trigger js-create-card-modal-trigger" data-target="#js-create-card-modal" role="button" tabindex="0">  '  +
-      '             <div class="create-card-button-content box has-background-grey-lighter">  '  +
-      '               <p class="has-alt-text has-text-weight-bold">  '  +
-      '                 <i class="fas fa-plus" aria-hidden="true"></i> Create New Card  '  +
-      '               </p>  '  +
-      '             </div>  '  +
-      '           </a>  '  +
-      '         </div>  '  +
+      '       <div class="columns is-multiline js-card-container">  '  +
       '       </div>  '  +
       '     </div>  '  +
       '  </div>  '
