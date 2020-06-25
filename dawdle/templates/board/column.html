@@ -29,11 +29,7 @@
     </div>
     <div class="columns is-multiline">
       {% for card in column.cards %}
-        <div class="column is-12">
-          <div class="box has-alt-text has-text-weight-bold">
-            {{ card.name }}
-          </div>
-        </div>
+        {% include 'board/card.html' %}
       {% endfor %}
       <div class="column is-12 js-create-new-card-container">
         <a class="create-card-button js-modal-trigger js-create-card-modal-trigger" data-target="#js-create-card-modal" role="button" tabindex="0">
