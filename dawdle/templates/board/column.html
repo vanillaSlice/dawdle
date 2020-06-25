@@ -30,10 +30,14 @@
         </div>
       </div>
     </div>
-    <div class="columns is-multiline js-card-container">
-      {% for card in column.cards %}
-        {% include 'board/card.html' %}
-      {% endfor %}
+    <div class="columns is-multiline is-fullheight">
+      <div class="column is-12">
+        <div class="columns is-fullheight is-multiline js-card-container card-container">
+          {% for card in column.cards %}
+            {% include 'board/card.html' %}
+          {% endfor %}
+        </div>
+      </div>
     </div>
   </div>
 </div>

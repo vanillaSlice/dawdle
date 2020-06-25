@@ -1,6 +1,5 @@
 (function() {
 
-  var column;
   var columnId;
 
   /*
@@ -64,11 +63,16 @@
       '           </div>  '  +
       '         </div>  '  +
       '       </div>  '  +
-      '       <div class="columns is-multiline js-card-container">  '  +
+      '       <div class="columns is-multiline is-fullheight">  '  +
+      '         <div class="column is-12">  '  +
+      '           <div class="columns is-fullheight is-multiline js-card-container card-container">  '  +
+      '           </div>  '  +
+      '         </div>  '  +
       '       </div>  '  +
       '     </div>  '  +
       '  </div>  '
     );
+    initSortable();
   }
 
   $(document).on('click', '.js-create-column-form .js-modal-trigger', function() {
@@ -170,4 +174,17 @@
   $(document).on('click', '.js-delete-column-modal-trigger', function() {
     columnId = $(this).parents('.js-board-column').attr('data-column-id');
   });
+
+  /*
+   * Sortable cards
+   */
+
+  function initSortable() {
+    $('.js-card-container').sortable({
+      connectWith: '.js-card-container',
+      items: '.js-board-card'
+    });
+  }
+
+  initSortable();
 })();

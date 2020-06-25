@@ -35,3 +35,17 @@
   background-color: #fff !important;
   color: #3298dc !important;
 }
+
+.board-page .board-card {
+  cursor: initial;
+}
+
+@media (min-width: 1024px) {
+  .board-page .board-card {
+    cursor: pointer;
+  }
+}
+
+.board-page .card-container {
+  align-content: start;
+}
