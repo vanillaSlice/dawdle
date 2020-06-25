@@ -147,6 +147,8 @@ class TestBase:
 
     @classmethod
     def clear_db(cls):
+        Card.objects.delete()
+        Column.objects.delete()
         Board.objects.delete()
         User.objects.delete()
 

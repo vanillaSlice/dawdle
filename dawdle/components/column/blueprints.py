@@ -6,7 +6,8 @@ from dawdle.components.board.utils import board_permissions_required
 from dawdle.components.column.forms import (CreateColumnForm, DeleteColumnForm,
                                             UpdateColumnForm)
 from dawdle.components.column.models import Column
-from dawdle.components.column.utils import board_id_from_column_id
+from dawdle.components.column.utils import (board_id_from_column,
+                                            column_from_column_id)
 
 column_bp = Blueprint('column', __name__, url_prefix='/column')
 
@@ -34,7 +35,8 @@ def index_POST(board, **_):
 
 
 @column_bp.route('/<column_id>', methods=['POST'])
-@board_id_from_column_id
+@column_from_column_id
+@board_id_from_column
 @board_permissions_required(BoardPermission.WRITE)
 def column_update_POST(column, **_):
     form = UpdateColumnForm(request.form)
@@ -51,7 +53,8 @@ def column_update_POST(column, **_):
 
 
 @column_bp.route('/<column_id>/delete', methods=['POST'])
-@board_id_from_column_id
+@column_from_column_id
+@board_id_from_column
 @board_permissions_required(BoardPermission.WRITE)
 def column_delete_POST(column, column_id, **_):
     form = DeleteColumnForm(request.form)
