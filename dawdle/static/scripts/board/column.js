@@ -33,7 +33,7 @@
   function addNewColumn(column) {
     $('.js-create-new-column-container').before(
       '   <div class="board-column column is-fullheight is-12 js-board-column" data-column-id="' + column._id.$oid + '" data-column-name="' + column.name + '">  '  +
-      '     <div class="has-background-info box is-fullwidth is-fullheight px-4 py-4">  '  +
+      '     <div class="board-column-outline has-background-info box is-fullwidth is-fullheight px-4 py-4">  '  +
       '       <div class="columns is-vcentered is-mobile">  '  +
       '         <div class="column is-9">  '  +
       '           <h2 class="title is-6 has-alt-text has-text-white js-shave-sm js-column-name">' + column.name + '</h2>  '  +
@@ -59,6 +59,17 @@
       '               </div>  '  +
       '             </div>  '  +
       '           </div>  '  +
+      '         </div>  '  +
+      '       </div>  '  +
+      '       <div class="columns is-multiline">  '  +
+      '         <div class="column is-12 js-create-new-card-container">  '  +
+      '           <a class="create-card-button js-modal-trigger js-create-card-modal-trigger" data-target="#js-create-card-modal" role="button" tabindex="0">  '  +
+      '             <div class="create-card-button-content box has-background-grey-lighter">  '  +
+      '               <p class="has-alt-text has-text-weight-bold">  '  +
+      '                 <i class="fas fa-plus" aria-hidden="true"></i> Create New Card  '  +
+      '               </p>  '  +
+      '             </div>  '  +
+      '           </a>  '  +
       '         </div>  '  +
       '       </div>  '  +
       '     </div>  '  +

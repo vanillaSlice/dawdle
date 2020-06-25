@@ -37,7 +37,7 @@
       '     <div class="box px-4 py-4">  '  +
       '       <div class="columns is-mobile">  '  +
       '         <div class="column is-9">  '  +
-      '           <h2 class="has-alt-text has-text-weight-bold">' + card.name + '</h2>  '  +
+      '           <h2 class="has-alt-text has-text-weight-bold js-card-name">' + card.name + '</h2>  '  +
       '         </div>  '  +
       '         <div class="column is-3">  '  +
       '           <div class="dropdown is-hoverable is-right is-pulled-right">  '  +
@@ -74,6 +74,60 @@
 
   $(document).on('click', '.js-create-card-modal-trigger', function() {
     columnId = $(this).parents('.js-board-column').attr('data-column-id');
+  });
+
+  /*
+   * Update Card
+   */
+
+  $(document).on('submit', '.js-update-card-form', function(e) {
+    e.preventDefault();
+
+    var formElement = $(this);
+
+    var updateCardPath = '/card/' + cardId;
+
+    $.post(updateCardPath, formElement.serialize())
+      .done(function(res) {
+        var modalElement = $('#js-update-card-modal');
+        dawdle.toggleModal(modalElement);
+        var cardElement = $('[data-card-id=' + res.card._id.$oid + ']');
+        cardElement.attr('data-card-id', res.card._id.$oid);
+        cardElement.attr('data-card-name', res.card.name);
+        var cardNameElement = $(cardElement).find('.js-card-name');
+        cardNameElement.text(res.card.name);
+        resetUpdateCardForm(formElement);
+      })
+      .fail(function(err) {
+        var submitElement = formElement.find('.js-submit');
+        var errors = err.responseJSON || { error: 'Could not update card. Please try again.' }
+        dawdle.renderFormErrors(formElement, errors);
+        submitElement.prop('disabled', false);
+        submitElement.removeClass('is-loading');
+      });
+  });
+
+  function resetUpdateCardForm(formElement) {
+    var options = {};
+    if (cardId) {
+      var cardElement = $('[data-card-id=' + cardId + ']');
+      options.state = {
+        name: $(cardElement).attr('data-card-name'),
+      }
+    }
+
+    dawdle.resetFormElement(formElement, options);
+  }
+
+  $(document).on('click', '.js-update-card-form .js-modal-trigger', function() {
+    var formElement = $('.js-update-card-form');
+    resetUpdateCardForm(formElement);
+  });
+
+  $(document).on('click', '.js-update-card-modal-trigger', function() {
+    cardId = $(this).parents('.js-board-card').attr('data-card-id');
+    var formElement = $('.js-update-card-form');
+    resetUpdateCardForm(formElement);
   });
 
   /*
