@@ -28,8 +28,6 @@ class DeleteColumnForm(FlaskForm):
 
 class UpdateColumnForm(FlaskForm):
 
-    create_column_path = HiddenField()
-
     name = StringField(
         'Name',
         validators=[

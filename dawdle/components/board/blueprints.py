@@ -6,6 +6,8 @@ from dawdle.components.board.forms import (CreateBoardForm, DeleteBoardForm,
 from dawdle.components.board.models import Board, BoardPermission, BoardType
 from dawdle.components.board.utils import (board_permissions_required,
                                            get_owner_from_id)
+from dawdle.components.card.forms import (CreateCardForm, DeleteCardForm,
+                                          UpdateCardForm)
 from dawdle.components.column.forms import (CreateColumnForm, DeleteColumnForm,
                                             UpdateColumnForm)
 from dawdle.utils import flash_params_message, no_cache
@@ -66,6 +68,10 @@ def board_GET(board, permissions, **_):
 
     delete_column_form = DeleteColumnForm(request.form)
 
+    create_card_form = CreateCardForm(request.form)
+    update_card_form = UpdateCardForm(request.form)
+    delete_card_form = DeleteCardForm(request.form)
+
     update_board_path = url_for('board.board_update_POST', board_id=board.id)
     update_board_form = UpdateBoardForm(
         request.form,
@@ -86,6 +92,9 @@ def board_GET(board, permissions, **_):
         create_column_form=create_column_form,
         update_column_form=update_column_form,
         delete_column_form=delete_column_form,
+        create_card_form=create_card_form,
+        update_card_form=update_card_form,
+        delete_card_form=delete_card_form,
         update_board_form=update_board_form,
         delete_board_form=delete_board_form,
     )

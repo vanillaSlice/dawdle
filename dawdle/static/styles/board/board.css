@@ -17,18 +17,26 @@
   width: 18rem;
 }
 
-.board-page .board-column .box {
+.board-page .board-column-outline {
   background-color: transparent;
   border: #fff 3px solid;
   color: #fff;
+  overflow-x: auto;
 }
 
-.board-page .create-column-button-content.box {
-  border-style: dashed;
+.board-page .create-column-button-content {
+  background-color: transparent;
+  border: #fff 3px dashed;
+  color: #fff;
 }
 
 .board-page .create-column-button:focus .create-column-button-content,
 .board-page .create-column-button:hover .create-column-button-content {
   background-color: #fff !important;
   color: #3298dc !important;
+}
+
+.board-page .create-card-button:focus .create-card-button-content,
+.board-page .create-card-button:hover .create-card-button-content {
+  background-color: #b5b5b5 !important;
 }
