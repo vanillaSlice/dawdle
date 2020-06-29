@@ -9,11 +9,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.8]
     steps:
       - uses: actions/checkout@v2
-      - name: Build Test Image
-        run: |
-          docker build -t vanillaslice/dawdle-test -f ./docker/test.Dockerfile .
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
       - name: Test
         run: |
+          docker build -t vanillaslice/dawdle-test -f ./docker/test.Dockerfile .
           docker run vanillaslice/dawdle-test
+          docker cp $(docker ps -l -q):/opt/app/.coverage .coverage.tmp
+      - name: Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          pip install coveralls
+          coverage combine
+          coveralls
