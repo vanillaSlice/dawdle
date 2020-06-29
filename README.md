@@ -11,7 +11,7 @@ wake up).
 
 ## Screenshot
 
-TODO
+![Screenshot](/images/screenshot-1.png)
 
 ## Configuration
 
