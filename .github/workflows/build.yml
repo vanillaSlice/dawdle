@@ -1,0 +1,29 @@
+name: Build
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Test
+        run: |
+          docker build -t vanillaslice/dawdle-test -f ./docker/test.Dockerfile .
+          docker run vanillaslice/dawdle-test
+          docker cp $(docker ps -l -q):/opt/app/.coverage .coverage.tmp
+      - name: Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          pip install coveralls
+          coverage combine
+          coveralls
