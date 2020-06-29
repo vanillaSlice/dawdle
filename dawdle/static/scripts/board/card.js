@@ -4,7 +4,7 @@
   var cardId;
 
   /*
-   * Create card
+   * Create Card
    */
 
   $(document).on('submit', '.js-create-card-form', function(e) {
@@ -33,7 +33,7 @@
   function addNewCard(card) {
     var columnElement = $('[data-column-id=' + card.column_id.$oid + ']');
     columnElement.find('.js-card-container').append(
-      '   <div class="js-board-card board-card column is-12" data-card-id="'+ card._id.$oid + '" data-card-name="' + card.name + '">  '  +
+      '   <div class="js-board-card board-card column is-12" data-card-id="' + card._id.$oid + '" data-card-name="' + card.name + '">  '  +
       '     <div class="box px-4 py-4">  '  +
       '       <div class="columns is-mobile">  '  +
       '         <div class="column is-9">  '  +

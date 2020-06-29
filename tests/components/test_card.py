@@ -5,6 +5,7 @@ from flask import url_for
 
 from dawdle.components.card.models import Card
 from dawdle.components.column.models import Column
+from dawdle.utils import to_ObjectId
 from tests.test_base import TestBase
 
 
@@ -241,5 +242,132 @@ class TestCard(TestBase):
 
     def _assert_card_delete_POST_not_found(self, card_id):
         response = self._send_card_delete_POST_request(card_id)
+        assert response.status_code == 404
+        assert b'Not Found' in response.data
+
+    #
+    # card_move_POST tests.
+    #
+
+    def test_card_move_POST_does_not_exist(self):
+        self._assert_card_move_POST_not_found(ObjectId())
+
+    def test_card_move_POST_not_authenticated(self):
+        self.logout()
+        card = self.create_card(self.column)
+        self._assert_card_move_POST_forbidden(card.id)
+
+    def test_card_move_POST_user_without_permissions(self):
+        board = self.create_board(owner_id=ObjectId())
+        column = self.create_column(board)
+        card = self.create_card(column)
+        self._assert_card_move_POST_forbidden(card.id)
+
+    def test_card_move_POST_new_column_does_not_exist(self):
+        card = self.create_card(self.column)
+        data = {'new_column_id': str(ObjectId())}
+        self._assert_card_move_POST_not_found(card.id, data)
+
+    def test_card_move_POST_add_to_new_column_no_prev_card(self):
+        card = self.create_card(self.column)
+        new_column = self.create_column(self.board)
+        self.create_cards(new_column)
+        data = {'new_column_id': str(new_column.id)}
+        self._assert_card_move_POST_ok(card, data)
+
+    def test_card_move_POST_add_to_new_column_with_prev_card(self):
+        new_column = self.create_column(self.board)
+        prev_card = self.create_card(new_column)
+        self.create_cards(new_column)
+        card = self.create_card(self.column)
+        data = {
+            'new_column_id': str(new_column.id),
+            'prev_card_id': str(prev_card.id),
+        }
+        self._assert_card_move_POST_ok(card, data)
+
+    def test_card_move_POST_add_to_new_column_prev_card_does_not_exist(self):
+        new_column = self.create_column(self.board)
+        self.create_cards(new_column)
+        card = self.create_card(self.column)
+        data = {
+            'new_column_id': str(new_column.id),
+            'prev_card_id': str(ObjectId()),
+        }
+        self._assert_card_move_POST_ok(card, data)
+
+    def test_card_move_POST_add_to_same_column_no_prev_card(self):
+        self.create_cards(self.column)
+        card = self.create_card(self.column)
+        self._assert_card_move_POST_ok(card)
+
+    def test_card_move_POST_add_to_same_column_with_prev_card(self):
+        prev_card = self.create_card(self.column)
+        self.create_cards(self.column)
+        card = self.create_card(self.column)
+        data = {
+            'prev_card_id': str(prev_card.id),
+        }
+        self._assert_card_move_POST_ok(card, data)
+
+    def test_card_move_POST_add_to_same_column_prev_card_does_not_exist(self):
+        self.create_cards(self.column)
+        card = self.create_card(self.column)
+        data = {
+            'prev_card_id': str(ObjectId()),
+        }
+        self._assert_card_move_POST_ok(card, data)
+
+    def _send_card_move_POST_request(self, card_id, data=None):
+        data = {} if not data else data
+
+        return self.client.post(
+            url_for('card.card_move_POST', card_id=str(card_id)),
+            data=json.dumps(data),
+            content_type='application/json',
+        )
+
+    def _assert_card_move_POST_ok(self, card, data=None):
+        data = {} if not data else data
+
+        response = self._send_card_move_POST_request(card.id, data)
+
+        old_column = Column.objects(id=card.column_id).first()
+
+        if 'new_column_id' in data:
+            new_column = \
+                Column.objects(id=to_ObjectId(data['new_column_id'])).first()
+        else:
+            new_column = old_column
+
+        updated_card = Card.objects(id=card.id).first()
+
+        assert response.status_code == 200
+        assert updated_card.column_id == new_column.id
+
+        if old_column != new_column:
+            assert card not in old_column.cards
+
+        expected_index = 0
+        if 'prev_card_id' in data:
+            prev_card_id = to_ObjectId(data['prev_card_id'])
+            found = False
+            for i in range(len(new_column.cards)):
+                if new_column.cards[i].id == prev_card_id:
+                    expected_index = i + 1
+                    found = True
+                    break
+            if not found:
+                expected_index = len(new_column.cards) - 1
+
+        assert new_column.cards[expected_index] == card
+
+    def _assert_card_move_POST_forbidden(self, card_id):
+        response = self._send_card_move_POST_request(card_id)
+        assert response.status_code == 403
+        assert b'Not Authorised' in response.data
+
+    def _assert_card_move_POST_not_found(self, card_id, data=None):
+        response = self._send_card_move_POST_request(card_id, data)
         assert response.status_code == 404
         assert b'Not Found' in response.data

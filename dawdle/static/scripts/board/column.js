@@ -63,9 +63,9 @@
       '           </div>  '  +
       '         </div>  '  +
       '       </div>  '  +
-      '       <div class="columns is-multiline is-fullheight">  '  +
+      '       <div class="columns is-mobile is-multiline is-fullheight">  '  +
       '         <div class="column is-12">  '  +
-      '           <div class="columns is-fullheight is-multiline js-card-container card-container">  '  +
+      '           <div class="columns is-mobile is-fullheight is-multiline js-card-container card-container">  '  +
       '           </div>  '  +
       '         </div>  '  +
       '       </div>  '  +
@@ -176,13 +176,50 @@
   });
 
   /*
-   * Sortable cards
+   * Sortable Cards
    */
 
   function initSortable() {
     $('.js-card-container').sortable({
       connectWith: '.js-card-container',
-      items: '.js-board-card'
+      items: '.js-board-card',
+      receive: moveCard,
+      update: function(event, ui) {
+        if (this === ui.item.parent()[0]) {
+          if (ui.sender === null) {
+            moveCard(event, ui);
+          }
+        }
+      },
+    });
+  }
+
+  // TODO move this to card.js file
+  function moveCard(event, ui) {
+    var card = $(ui.item[0]);
+    var cardId = card.attr('data-card-id');
+    var prevCard = card.prev('.js-board-card');
+    var prevCardId = prevCard.attr('data-card-id');
+    var column = $(event.target).parents('.js-board-column');
+    var columnId = column.attr('data-column-id');
+
+    var moveCardPath = '/card/' + cardId + '/move';
+
+    var payload = {
+      new_column_id: columnId,
+      prev_card_id: prevCardId,
+    };
+
+    $.ajax({
+      type: 'POST',
+      contentType: 'application/json',
+      url: moveCardPath,
+      dataType: 'json',
+      data: JSON.stringify(payload),
+      error: function() {
+        $('.js-card-container').sortable('cancel');
+        dawdle.renderNotification('Could not move card. Please try again.', 'danger');
+      },
     });
   }
 
