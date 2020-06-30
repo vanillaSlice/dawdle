@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - master
+    paths-ignore:
+      - 'back-end/**'
 jobs:
   deploy:
     runs-on: ubuntu-latest
