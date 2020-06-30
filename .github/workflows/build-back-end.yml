@@ -19,3 +19,13 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
+      - name: Tests
+        run: ./back-end/scripts/ci/tests.sh
+      - name: Collect Coverage
+        run: ./back-end/scripts/ci/coverage.sh
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./back-end/coverage.xml
+          flags: back-end
+          fail_ci_if_error: true

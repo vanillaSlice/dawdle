@@ -1,0 +1,8 @@
+[run]
+source=dawdle/back-end/dawdle
+parallel=True
+
+[paths]
+source=
+  dawdle/
+  /opt/app/dawdle/

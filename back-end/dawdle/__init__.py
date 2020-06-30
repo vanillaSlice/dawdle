@@ -1,14 +1,12 @@
-from flask import Blueprint, Flask
+from flask import Flask
 
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
-    app.register_blueprint(Blueprint("home", __name__, url_prefix="/"))
+    app.config.update({"SERVER_NAME": "127.0.0.1:5000"})
+
+    from dawdle.blueprints import home_bp
+    app.register_blueprint(home_bp)
 
     return app
-
-
-@home_bp.route("/")
-def index_GET():
-    return "Hello Dawdle!"
