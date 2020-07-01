@@ -1,0 +1,17 @@
+version: '3'
+services:
+  dawdle-api:
+    build:
+      context: .
+      dockerfile: ./docker/local.Dockerfile
+    ports:
+      - 5000:8000
+    environment:
+      - SERVER_NAME=127.0.0.1:5000
+      - SESSION_COOKIE_DOMAIN=127.0.0.1:5000
+    volumes:
+      - ./dawdle:/opt/app/dawdle
+      - ./config.py:/opt/app/config.py
+      - ./run.py:/opt/app/run.py
+      - ./instance:/opt/app/instance
+      - ./docs/api.yml/opt/app/docs/api.yml

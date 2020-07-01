@@ -30,20 +30,21 @@ The app can be run [with Docker](#with-docker) or [without Docker](#without-dock
 
 #### With Docker
 
-TODO
+From your terminal/command prompt run:
+
+```
+docker-compose up
+```
+
+Then point your browser to [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
 
 #### Without Docker
-
-##### Installing Requirements
-
-1. (Optional) Install [virtualenv](https://pypi.org/project/virtualenv/) and
-[virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/) and create a new environment.
-2. Run `pip install -r requirements.txt`.
-
-##### Running
 
 From your terminal/command prompt run:
 
 ```
+pip install -r requirements.txt
 ./run.py
 ```
+
+Then point your browser to [http://127.0.0.1:5000/](http://127.0.0.1:5000/).
