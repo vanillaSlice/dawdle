@@ -72,3 +72,18 @@ jobs:
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: ./api/scripts/ci/deploy.sh
+  release:
+    needs: [deployOld, deployApi]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get version
+        id: vars
+        run: echo ::set-output name=version::$(cat version.txt)
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.vars.outputs.version }}
+          release_name: ${{ steps.vars.outputs.version }}
