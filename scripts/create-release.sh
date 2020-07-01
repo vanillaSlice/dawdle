@@ -15,6 +15,7 @@ git reset --hard HEAD
 git checkout master
 git pull
 
+echo "v$VERSION" > version.txt
 ./api/scripts/local/update-version.sh "$VERSION"
 
 BRANCH="release-v$VERSION"
