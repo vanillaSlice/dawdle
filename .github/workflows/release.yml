@@ -2,9 +2,10 @@ name: Release
 on:
   push:
     branches:
-      - 'release-v**'
+      - master
 jobs:
   release:
+    if: "startsWith(github.event.commits[0].message, 'release: v')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
