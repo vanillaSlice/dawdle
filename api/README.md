@@ -1,8 +1,7 @@
 # Dawdle - API
 
-[![Build Status](https://github.com/vanillaSlice/dawdle/workflows/Build%20API/badge.svg?branch=master)](https://github.com/vanillaSlice/dawdle/actions?query=workflow%3A%22Build+API%22+branch%3Amaster)
-[![Deploy Status](https://github.com/vanillaSlice/dawdle/workflows/Deploy%20API/badge.svg?branch=master)](https://github.com/vanillaSlice/dawdle/actions?query=workflow%3A%22Deploy+API%22+branch%3Amaster)
-[![Coverage](https://codecov.io/gh/vanillaSlice/dawdle/branch/master/graph/badge.svg?flag=api)](https://codecov.io/gh/vanillaSlice/dawdle/branch/master)
+[![Build Status](https://img.shields.io/github/workflow/status/vanillaSlice/dawdle/Deploy%20API/master)](https://github.com/vanillaSlice/dawdle/actions?query=workflow%3A%22Deploy+API%22+branch%3Amaster)
+[![Coverage Status](https://img.shields.io/codecov/c/gh/vanillaSlice/dawdle/master?flag=api)](https://codecov.io/gh/vanillaSlice/dawdle/branch/master)
 
 The Dawdle API.
 
