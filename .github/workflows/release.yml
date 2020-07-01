@@ -1,13 +1,11 @@
-name: Deploy
+name: Release
 on:
   push:
     branches:
       - master
-    paths-ignore:
-      - 'api/**'
 jobs:
-  build:
-    if: "!startsWith(github.event.commits[0].message, 'release: v')"
+  buildOld:
+    if: "startsWith(github.event.commits[0].message, 'release: v')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,8 +25,8 @@ jobs:
           pip install coveralls
           coverage combine
           coveralls
-  deploy:
-    needs: [build]
+  deployOld:
+    needs: [buildOld]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -46,3 +44,31 @@ jobs:
               -H "Authorization: Bearer $HEROKU_API_KEY" \
               -H "Content-Type: application/json" \
               -d "$payload"
+  buildApi:
+    if: "startsWith(github.event.commits[0].message, 'release: v')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Tests
+        run: ./api/scripts/ci/tests.sh
+      - name: Collect Coverage
+        run: ./api/scripts/ci/coverage.sh
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./api/coverage.xml
+          flags: api
+          fail_ci_if_error: true
+  deployApi:
+    needs: [buildApi]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: ./api/scripts/ci/deploy.sh
