@@ -15,10 +15,12 @@ git reset --hard HEAD
 git checkout master
 git pull
 
-grep -rl --exclude=$(basename "$0") __DAWDLE_VERSION__ . | xargs sed -i '' -e "s/__DAWDLE_VERSION__/$VERSION/g"
+./api/scripts/local/update-version.sh "$VERSION"
 
 BRANCH="release-v$VERSION"
-git checkout -b $BRANCH
+git checkout -b "$BRANCH"
 git add .
-git commit -m "Release v$VERSION"
-git push --set-upstream origin $BRANCH
+git commit -m "release: v$VERSION"
+PUSH_OUTPUT=$(git push --set-upstream origin "$BRANCH" 2>&1)
+PR_URL=$(echo "$PUSH_OUTPUT" | grep https://github.com | sed 's/  //' | sed 's/remote: //' | xargs)
+open "$PR_URL"
