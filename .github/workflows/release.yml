@@ -18,7 +18,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Get version
         id: vars
-        run: "echo ::set-output name=version::$(echo ${{ github.event.commits[0].message }} | sed -e 's/release: //g')"
+        run: echo ::set-output name=version::$(cat version.txt)
       - name: Create release
         uses: actions/create-release@v1
         env:
