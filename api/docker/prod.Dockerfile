@@ -6,4 +6,5 @@ RUN rm ./requirements.txt
 COPY ./dawdle ./dawdle
 COPY ./config.py ./config.py
 COPY ./run.py ./run.py
+COPY ./docs/api.yml ./docs/api.yml
 CMD gunicorn --workers=4 --preload run:app

@@ -7,9 +7,8 @@ def create_app(testing=False):
     app = Flask(__name__, instance_relative_config=True)
 
     __load_config(app, testing)
-
-    from dawdle.blueprints import home_bp
-    app.register_blueprint(home_bp)
+    __register_blueprints(app)
+    __disable_strict_trailing_slashes(app)
 
     return app
 
@@ -40,3 +39,15 @@ def __load_config(app, testing):
 
     if testing:
         app.config.from_object("config.Test")
+
+
+def __register_blueprints(app):
+    from dawdle.components.home.blueprints import home_bp
+    app.register_blueprint(home_bp)
+
+    from dawdle.components.swagger.blueprints import swagger_bp
+    app.register_blueprint(swagger_bp)
+
+
+def __disable_strict_trailing_slashes(app):
+    app.url_map.strict_slashes = False

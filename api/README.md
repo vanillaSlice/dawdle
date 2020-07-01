@@ -3,3 +3,6 @@
 [![Build Status](https://github.com/vanillaSlice/dawdle/workflows/Build%20API/badge.svg?branch=master)](https://github.com/vanillaSlice/dawdle/actions?query=workflow%3A%22Build+API%22+branch%3Amaster)
 [![Deploy Status](https://github.com/vanillaSlice/dawdle/workflows/Deploy%20API/badge.svg?branch=master)](https://github.com/vanillaSlice/dawdle/actions?query=workflow%3A%22Deploy+API%22+branch%3Amaster)
 [![Coverage](https://codecov.io/gh/vanillaSlice/dawdle/branch/master/graph/badge.svg?flag=api)](https://codecov.io/gh/vanillaSlice/dawdle/branch/master)
+
+The Dawdle API. A deployed version can be viewed [here](https://dawdle-api.mikelowe.xyz/) (it's running on Heroku so
+may take a moment to wake up).
