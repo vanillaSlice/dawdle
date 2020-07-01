@@ -1,0 +1,24 @@
+name: Deploy Back End
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'back-end/**'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Wait for build to succeed
+        uses: fountainhead/action-wait-for-check@v1.0.0
+        id: wait-for-build
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: build
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Deploy
+        if: steps.wait-for-build.outputs.conclusion == 'success'
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: ./back-end/scripts/ci/deploy.sh
