@@ -1,0 +1,13 @@
+{
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.pylintPath": "/Users/mikelowe/.virtualenvs/dawdle/bin/pylint",
+  "python.pythonPath": "/usr/local/opt/python/bin/python3.7",
+  "python.testing.pytestPath": "/Users/mikelowe/.virtualenvs/dawdle/bin/pytest",
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.nosetestsEnabled": false,
+  "python.testing.pytestEnabled": true
+}
