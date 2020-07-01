@@ -19,11 +19,6 @@ jobs:
       - name: Get version
         id: vars
         run: "echo ::set-output name=version::$(echo ${{ github.event.commits[0].message }} | sed -e 's/release: //g')"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
       - name: Create release
         uses: actions/create-release@v1
         env:
