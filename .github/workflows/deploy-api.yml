@@ -6,19 +6,30 @@ on:
     paths:
       - 'api/**'
 jobs:
-  deployApi:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Wait for build to succeed
-        uses: fountainhead/action-wait-for-check@v1.0.0
-        id: wait-for-build
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: buildApi
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          python-version: 3.8
+      - name: Tests
+        run: ./api/scripts/ci/tests.sh
+      - name: Collect Coverage
+        run: ./api/scripts/ci/coverage.sh
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v1
+        with:
+          file: ./api/coverage.xml
+          flags: api
+          fail_ci_if_error: true
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - name: Deploy
-        if: steps.wait-for-build.outputs.conclusion == 'success'
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: ./api/scripts/ci/deploy.sh

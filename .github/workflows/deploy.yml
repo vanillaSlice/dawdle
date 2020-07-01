@@ -6,19 +6,32 @@ on:
     paths-ignore:
       - 'api/**'
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Wait for build to succeed
-        uses: fountainhead/action-wait-for-check@v1.0.0
-        id: wait-for-build
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: build
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          python-version: 3.8
+      - name: Test
+        run: |
+          docker build -t vanillaslice/dawdle-test -f ./docker/test.Dockerfile .
+          docker run vanillaslice/dawdle-test
+          docker cp $(docker ps -l -q):/opt/app/.coverage .coverage.tmp
+      - name: Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        run: |
+          pip install coveralls
+          coverage combine
+          coveralls
+  deploy:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
       - name: Deploy
-        if: steps.wait-for-build.outputs.conclusion == 'success'
         env:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: |
