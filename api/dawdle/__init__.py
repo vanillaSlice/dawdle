@@ -2,6 +2,8 @@ import os
 
 from flask import Flask
 
+__VERSION__ = "v0.1.0"
+
 
 def create_app(testing=False):
     app = Flask(__name__, instance_relative_config=True)
