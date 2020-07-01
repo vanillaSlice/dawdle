@@ -1,5 +1,5 @@
 [run]
-source=dawdle/back-end/dawdle
+source=dawdle/api/dawdle
 parallel=True
 
 [paths]

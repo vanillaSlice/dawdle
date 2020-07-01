@@ -1,13 +1,10 @@
 comment: false
 coverage:
   status:
-    project:
-      back-end:
-        target: auto
-        flags:
-          - back-end
+    patch: off
+    project: off
 flags:
-  back-end:
+  api:
     paths:
-      - back-end
+      - api
     carryforward: true
