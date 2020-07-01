@@ -11,7 +11,7 @@ on:
     paths:
       - 'api/**'
 jobs:
-  build:
+  buildApi:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

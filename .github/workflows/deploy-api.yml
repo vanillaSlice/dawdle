@@ -6,7 +6,7 @@ on:
     paths:
       - 'api/**'
 jobs:
-  deploy:
+  deployApi:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,7 +15,7 @@ jobs:
         id: wait-for-build
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          checkName: build
+          checkName: buildApi
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Deploy
         if: steps.wait-for-build.outputs.conclusion == 'success'
