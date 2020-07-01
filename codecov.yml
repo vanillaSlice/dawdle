@@ -1,8 +1,7 @@
+comment: false
 coverage:
   status:
     project:
-      default:
-        target: auto
       back-end:
         target: auto
         flags:
