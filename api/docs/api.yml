@@ -40,8 +40,8 @@ paths:
           $ref: '#/components/responses/201'
         400:
           $ref: '#/components/responses/400'
-        405:
-          $ref: '#/components/responses/405'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -61,8 +61,8 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
-        405:
-          $ref: '#/components/responses/405'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -79,8 +79,8 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
-        405:
-          $ref: '#/components/responses/405'
+        404:
+          $ref: '#/components/responses/404'
 
   /auth/token:
     post:
@@ -110,8 +110,8 @@ paths:
                 $ref: '#/components/schemas/Token'
         400:
           $ref: '#/components/responses/400'
-        405:
-          $ref: '#/components/responses/405'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -129,8 +129,8 @@ paths:
                 $ref: '#/components/schemas/Token'
         400:
           $ref: '#/components/responses/400'
-        405:
-          $ref: '#/components/responses/405'
+        404:
+          $ref: '#/components/responses/404'
 
   /auth/reset-password:
     post:
@@ -148,8 +148,8 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
-        405:
-          $ref: '#/components/responses/405'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -166,8 +166,8 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
-        405:
-          $ref: '#/components/responses/405'
+        404:
+          $ref: '#/components/responses/404'
 
 components:
   parameters:
@@ -189,8 +189,8 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    405:
-      description: Method Not Allowed
+    404:
+      description: Not Found
       content:
         application/json:
           schema:
@@ -221,17 +221,11 @@ components:
         description:
           type: string
         messages:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: string
-              message:
-                type: string
-            required:
-              - id
-              - message
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
       required:
         - status
         - name
