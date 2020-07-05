@@ -17,13 +17,24 @@ paths:
     post:
       summary: Signs a new user up
       tags:
-        - proposed-auth
+        - auth
       security: []
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EmailPassword'
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - name
+                - email
+                - password
       responses:
         201:
           $ref: '#/components/responses/201'
@@ -81,7 +92,15 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EmailPassword'
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
       responses:
         200:
           description: OK
@@ -191,17 +210,6 @@ components:
           type: string
       required:
         - email
-
-    EmailPassword:
-      type: object
-      properties:
-        email:
-          type: string
-        password:
-          type: string
-      required:
-        - email
-        - password
 
     Error:
       type: object
