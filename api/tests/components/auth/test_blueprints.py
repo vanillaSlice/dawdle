@@ -24,7 +24,16 @@ class TestAuth(TestBlueprint):
         self._assert_400(response, {
             "name": [
                 "Missing data for required field.",
-            ]
+            ],
+        })
+
+    def test_sign_up_POST_blank_name(self):
+        body = self.__get_mock_sign_up_body(name="     ")
+        response = self.__send_sign_up_POST_request(body)
+        self._assert_400(response, {
+            "name": [
+                "Missing data for required field.",
+            ],
         })
 
     def test_sign_up_POST_name_equal_to_min(self):
@@ -44,8 +53,12 @@ class TestAuth(TestBlueprint):
         self._assert_400(response, {
             "name": [
                 "Length must be between 1 and 50.",
-            ]
+            ],
         })
+
+    def test_sign_up_POST_trims_name(self):
+        body = self.__get_mock_sign_up_body(name="  John   ")
+        self.__assert_sign_up_POST_ok(body)
 
     def test_sign_up_POST_no_email(self):
         body = self.__get_mock_sign_up_body()
@@ -54,7 +67,7 @@ class TestAuth(TestBlueprint):
         self._assert_400(response, {
             "email": [
                 "Missing data for required field.",
-            ]
+            ],
         })
 
     def test_sign_up_POST_invalid_email(self):
@@ -64,7 +77,7 @@ class TestAuth(TestBlueprint):
         self._assert_400(response, {
             "email": [
                 "Not a valid email address.",
-            ]
+            ],
         })
 
     def test_sign_up_POST_no_password(self):
@@ -74,7 +87,7 @@ class TestAuth(TestBlueprint):
         self._assert_400(response, {
             "password": [
                 "Missing data for required field.",
-            ]
+            ],
         })
 
     def test_sign_up_POST_password_less_than_min(self):
@@ -84,7 +97,7 @@ class TestAuth(TestBlueprint):
         self._assert_400(response, {
             "password": [
                 "Shorter than minimum length 8.",
-            ]
+            ],
         })
 
     def test_sign_up_POST_password_equal_to_min(self):
@@ -99,7 +112,7 @@ class TestAuth(TestBlueprint):
         self._assert_400(response, {
             "email": [
                 "There is already an account with this email.",
-            ]
+            ],
         })
 
     def test_sign_up_POST_method_not_found(self):
@@ -128,7 +141,6 @@ class TestAuth(TestBlueprint):
         response = self.__send_sign_up_POST_request(body)
         self._assert_201(response)
         user = get_user_by_email(body["email"])
-        assert not user.active
-        assert user.initials
-        assert user.name == body["name"]
+        assert user.name == body["name"].strip()
         assert verify_password(user, body["password"])
+        assert user.initials
