@@ -1,11 +1,249 @@
-openapi: 3.0.1
+openapi: 3.0.3
+
 info:
   title: Dawdle API
   version: v0.1.0
+
+servers:
+  - url: https://dawdle-api.mikelowe.xyz/api
+  - url: http://127.0.0.1:5000/api
+
+tags:
+  - name: auth
+  - name: proposed-auth
+
 paths:
-  /test:
+  /auth/sign-up:
+    post:
+      summary: Signs a new user up
+      tags:
+        - proposed-auth
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailPassword'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+        400:
+          $ref: '#/components/responses/400'
+        405:
+          $ref: '#/components/responses/405'
+        415:
+          $ref: '#/components/responses/415'
+
+  /auth/verify:
+    post:
+      summary: Requests a verification email to be sent
+      tags:
+        - proposed-auth
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Email'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+        405:
+          $ref: '#/components/responses/405'
+        415:
+          $ref: '#/components/responses/415'
+
+  /auth/verify/{token}:
     get:
-      summary: Test
+      summary: Verifies a user's email address from the token sent
+      tags:
+        - proposed-auth
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Token'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+        405:
+          $ref: '#/components/responses/405'
+
+  /auth/token:
+    post:
+      summary: Returns an auth token
+      tags:
+        - proposed-auth
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailPassword'
       responses:
         200:
-          description: All Good
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        400:
+          $ref: '#/components/responses/400'
+        405:
+          $ref: '#/components/responses/405'
+        415:
+          $ref: '#/components/responses/415'
+
+  /auth/token/refresh:
+    get:
+      summary: Refreshes auth token
+      tags:
+        - proposed-auth
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+        400:
+          $ref: '#/components/responses/400'
+        405:
+          $ref: '#/components/responses/405'
+
+  /auth/reset-password:
+    post:
+      summary: Requests a password reset
+      tags:
+        - proposed-auth
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Email'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+        405:
+          $ref: '#/components/responses/405'
+        415:
+          $ref: '#/components/responses/415'
+
+  /auth/reset-password/{token}:
+    get:
+      summary: Verifies a password reset
+      tags:
+        - proposed-auth
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Token'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+        405:
+          $ref: '#/components/responses/405'
+
+components:
+  parameters:
+    Token:
+      name: token
+      in: path
+      required: true
+      schema:
+        type: string
+
+  responses:
+    201:
+      description: Created
+    204:
+        description: No Content
+    400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    405:
+      description: Method Not Allowed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    415:
+      description: Unsupported Media Type
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Email:
+      type: object
+      properties:
+        email:
+          type: string
+      required:
+        - email
+
+    EmailPassword:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              message:
+                type: string
+            required:
+              - id
+              - message
+      required:
+        - status
+        - name
+        - description
+
+    Token:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+      required:
+        - access_token
+        - refresh_token
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - bearerAuth: []
