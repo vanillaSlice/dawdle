@@ -52,7 +52,7 @@ def serialize_verification_token(user):
 
 def get_user_from_token(token):
     auth_id = deserialize_verification_token(token)
-    return User.objects(auth_id=auth_id).first()
+    return get_user_from_auth_id(auth_id)
 
 
 def deserialize_verification_token(token):
@@ -61,6 +61,10 @@ def deserialize_verification_token(token):
         return to_ObjectId(auth_id)
     except BadSignature:
         return ObjectId()
+
+
+def get_user_from_auth_id(auth_id):
+    return User.objects(auth_id=to_ObjectId(auth_id)).first()
 
 
 def activate_user(user):

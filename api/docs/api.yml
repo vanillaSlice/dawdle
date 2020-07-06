@@ -111,7 +111,7 @@ paths:
     get:
       summary: Refreshes auth token
       tags:
-        - proposed-auth
+        - auth
       responses:
         200:
           description: OK
@@ -121,8 +121,8 @@ paths:
                 $ref: '#/components/schemas/Token'
         400:
           $ref: '#/components/responses/400'
-        404:
-          $ref: '#/components/responses/404'
+        401:
+          $ref: '#/components/responses/401'
 
   /auth/reset-password:
     post:
@@ -181,6 +181,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     404:
       description: Not Found
       content:
@@ -232,7 +238,6 @@ components:
           type: string
       required:
         - access_token
-        - refresh_token
 
   securitySchemes:
     bearerAuth:

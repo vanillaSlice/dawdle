@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask_jwt_extended import (create_access_token, create_refresh_token,
+                                current_user, jwt_refresh_token_required)
 
 from dawdle.components.auth.schemas import (email_password_schema,
                                             email_schema, sign_up_schema)
@@ -120,6 +121,14 @@ def token_POST():
     identity = str(user.auth_id)
 
     return jsonify(
-        access_token=create_access_token(identity=identity),
+        access_token=create_access_token(identity=identity, fresh=True),
         refresh_token=create_refresh_token(identity=identity),
+    ), 200
+
+
+@auth_bp.route("/token/refresh", methods=["GET"])
+@jwt_refresh_token_required
+def token_refresh_GET():
+    return jsonify(
+        access_token=create_access_token(identity=str(current_user.auth_id)),
     ), 200

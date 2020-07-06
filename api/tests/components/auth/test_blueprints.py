@@ -1,7 +1,10 @@
+import datetime
 import json
 from unittest.mock import patch
 
+from bson.objectid import ObjectId
 from flask import url_for
+from flask_jwt_extended import create_refresh_token
 from itsdangerous import URLSafeSerializer
 
 from dawdle.components.auth.utils import (serialize_verification_token,
@@ -225,4 +228,53 @@ class TestAuth(TestBlueprint):
             url_for("auth.token_POST"),
             headers={"Content-Type": "application/json"},
             data=json.dumps(body),
+        )
+
+    #
+    # token_refresh_GET tests.
+    #
+
+    def test_token_refresh_GET_200(self):
+        token = create_refresh_token(str(self.user.auth_id))
+        response = self.__send_token_refresh_GET_request(token)
+        self._assert_200(response)
+        assert "access_token" in response.json
+        assert "refresh_token" not in response.json
+
+    def test_token_refresh_GET_400_expired_token(self):
+        token = create_refresh_token(
+            str(self.user.auth_id),
+            expires_delta=datetime.timedelta(hours=-12),
+        )
+        response = self.__send_token_refresh_GET_request(token)
+        self._assert_400(response, {
+            "token": "Token expired.",
+        })
+
+    def test_token_refresh_GET_400_invalid_token(self):
+        response = self.__send_token_refresh_GET_request("invalid")
+        self._assert_400(response, {
+            "token": "Invalid token.",
+        })
+
+    def test_token_refresh_GET_400_auth_id_changed(self):
+        user = self.create_user(active=True)
+        old_auth_id = user.auth_id
+        user.auth_id = ObjectId()
+        user.save()
+        token = create_refresh_token(str(old_auth_id))
+        response = self.__send_token_refresh_GET_request(token)
+        self._assert_400(response, {
+            "token": "Invalid token.",
+        })
+
+    def test_token_refresh_GET_401(self):
+        response = self.__send_token_refresh_GET_request()
+        self._assert_401(response)
+
+    def __send_token_refresh_GET_request(self, token=None):
+        headers = {"Authorization": f"Bearer {token}"} if token else {}
+        return self.client.get(
+            url_for("auth.token_refresh_GET"),
+            headers=headers,
         )
