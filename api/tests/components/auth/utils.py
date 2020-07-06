@@ -7,3 +7,9 @@ def get_mock_sign_up_body(**kwargs):
         "name": kwargs.get("name", fake.name()),
         "password": kwargs.get("password", fake.password()),
     }
+
+
+def get_mock_verify_body(**kwargs):
+    return {
+        "email": kwargs.get("email", fake.email()),
+    }

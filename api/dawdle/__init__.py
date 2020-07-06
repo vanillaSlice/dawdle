@@ -42,6 +42,8 @@ def __load_config(app, testing):
         "MONGODB_PORT": load_env_var_int("MONGODB_PORT"),
         "MONGODB_USERNAME": load_env_var("MONGODB_USERNAME"),
         "SECRET_KEY": load_env_var("SECRET_KEY"),
+        "SENDER_EMAIL": load_env_var("SENDER_EMAIL"),
+        "SENDGRID_API_KEY": load_env_var("SENDGRID_API_KEY"),
         "SERVER_NAME": load_env_var("SERVER_NAME"),
         "SESSION_COOKIE_DOMAIN": load_env_var("SESSION_COOKIE_DOMAIN"),
     })
@@ -58,6 +60,9 @@ def __init_extensions(app):
 
     from dawdle.extensions.mongoengine import mongoengine
     mongoengine.init_app(app)
+
+    from dawdle.extensions.sendgrid import sendgrid
+    sendgrid.init_app(app)
 
 
 def __register_blueprints(app):

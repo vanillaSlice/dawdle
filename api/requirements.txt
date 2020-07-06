@@ -4,3 +4,4 @@ flask-mongoengine==0.9.5
 flask-swagger-ui==3.25.0
 gunicorn==20.0.4
 passlib==1.7.2
+sendgrid==6.4.1

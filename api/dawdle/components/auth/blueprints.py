@@ -1,8 +1,8 @@
 from flask import Blueprint, request
 
-from dawdle.components.auth.schemas import sign_up_schema
-from dawdle.components.auth.utils import save_new_user
-from dawdle.components.user.utils import user_exists
+from dawdle.components.auth.schemas import sign_up_schema, verify_schema
+from dawdle.components.auth.utils import save_new_user, send_verification_email
+from dawdle.components.user.utils import get_user_by_email, user_exists
 from dawdle.utils.decorators import expects_json
 from dawdle.utils.errors import build_400_error_response
 
@@ -33,3 +33,34 @@ def sign_up_POST():
     )
 
     return "", 201
+
+
+@auth_bp.route("/verify", methods=["POST"])
+@expects_json
+def verify_POST():
+    errors = verify_schema.validate(request.json)
+
+    if errors:
+        return build_400_error_response(errors)
+
+    email_schema = verify_schema.dump(request.json)
+
+    user = get_user_by_email(email_schema["email"])
+
+    if not user:
+        return build_400_error_response({
+            "email": [
+                "There is no account with this email.",
+            ],
+        })
+
+    if user.active:
+        return build_400_error_response({
+            "email": [
+                "This email has already been verified.",
+            ],
+        })
+
+    send_verification_email(user)
+
+    return "", 204

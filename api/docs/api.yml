@@ -49,7 +49,7 @@ paths:
     post:
       summary: Requests a verification email to be sent
       tags:
-        - proposed-auth
+        - auth
       security: []
       requestBody:
         content:

@@ -50,6 +50,9 @@ class TestBlueprint:
     def _assert_201(self, response, body=None):
         self._assert_response(response, 201, body)
 
+    def _assert_204(self, response, body=None):
+        self._assert_response(response, 204, body)
+
     def _assert_error(self,
                       response,
                       status,

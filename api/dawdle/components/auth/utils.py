@@ -1,6 +1,9 @@
+from flask import current_app
+from itsdangerous import URLSafeSerializer
 from passlib.hash import sha256_crypt
 
 from dawdle.components.user.models import User
+from dawdle.extensions.sendgrid import sendgrid, TEMPLATE_IDS
 from dawdle.utils import remove_extra_whitespace
 
 
@@ -26,3 +29,18 @@ def verify_password(user_password, password_provided):
 def create_initials(name):
     name_trimmed = remove_extra_whitespace(name)
     return "".join([c[0] for c in name_trimmed.split(" ")])[:4].upper()
+
+
+def send_verification_email(user):
+    sendgrid.send(
+        TEMPLATE_IDS["verification"],
+        user.email,
+        data={
+            "name": user.name,
+            "token": serialize_verification_token(user),
+        },
+    )
+
+
+def serialize_verification_token(user):
+    return URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))

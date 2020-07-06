@@ -1,7 +1,8 @@
 # pylint: disable=no-self-use
 
-from dawdle.components.auth.schemas import sign_up_schema
-from tests.components.auth.utils import get_mock_sign_up_body
+from dawdle.components.auth.schemas import sign_up_schema, verify_schema
+from tests.components.auth.utils import (get_mock_sign_up_body,
+                                         get_mock_verify_body)
 from tests.utils import fake
 
 
@@ -104,3 +105,27 @@ class TestSchemas:
         body = get_mock_sign_up_body(password=password)
         errors = sign_up_schema.validate(body)
         assert not errors
+
+    #
+    # EmailSchema tests.
+    #
+
+    def test_EmailSchema_no_email(self):
+        body = get_mock_verify_body()
+        del body["email"]
+        errors = verify_schema.validate(body)
+        assert errors == {
+            "email": [
+                "Missing data for required field.",
+            ],
+        }
+
+    def test_EmailSchema_invalid_email(self):
+        email = fake.sentence()
+        body = get_mock_verify_body(email=email)
+        errors = verify_schema.validate(body)
+        assert errors == {
+            "email": [
+                "Not a valid email address.",
+            ],
+        }

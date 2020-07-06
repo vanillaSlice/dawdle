@@ -22,6 +22,8 @@ The following properties can be configured:
 | `MONGODB_PORT`          | The MongoDB port.                                                | `27017`               |
 | `MONGODB_USERNAME`      | The MongoDB username.                                            | `None`                |
 | `SECRET_KEY`            | A secret key used for security.                                  | `default secret key`  |
+| `SENDER_EMAIL`          | The email address to send emails from.                           | `None`                |
+| `SENDGRID_API_KEY`      | The SendGrid API key.                                            | `None`                |
 | `SERVER_NAME`           | The host and port of the server.                                 | `127.0.0.1:5000`      |
 | `SESSION_COOKIE_DOMAIN` | The domain match rule that the session cookie will be valid for. | `127.0.0.1:5000`      |
 

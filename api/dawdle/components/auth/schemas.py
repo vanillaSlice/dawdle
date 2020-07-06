@@ -18,4 +18,10 @@ class SignUpSchema(Schema):
         return in_data
 
 
+class EmailSchema(Schema):
+
+    email = fields.Email(required=True)
+
+
 sign_up_schema = SignUpSchema()
+verify_schema = EmailSchema()
