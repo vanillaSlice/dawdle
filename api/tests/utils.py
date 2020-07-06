@@ -4,32 +4,32 @@ from dawdle import create_app
 from dawdle.components.auth.utils import encrypt_password
 from dawdle.components.user.models import User
 
+fake = Faker()
+
 
 class TestBlueprint:
 
     @classmethod
     def setup_class(cls):
-        cls.fake = Faker()
-
         cls.app = create_app(testing=True)
         cls.app.app_context().push()
         cls.client = cls.app.test_client()
 
-        cls.password = cls.fake.password()
+        cls.password = fake.password()
         cls.user = cls.create_user(password=cls.password)
 
     @classmethod
     def create_user(cls, **kwargs):
         user = User()
         user.active = kwargs.get("active", True)
-        user.email = kwargs.get("email", cls.fake.email())
+        user.email = kwargs.get("email", fake.email())
         user.initials = kwargs.get(
             "initials",
-            cls.fake.pystr(min_chars=1, max_chars=4).upper(),
+            fake.pystr(min_chars=1, max_chars=4),
         ).upper()
-        user.name = kwargs.get("name", cls.fake.name())
+        user.name = kwargs.get("name", fake.name())
         user.password = encrypt_password(
-            kwargs.get("password", cls.fake.password()),
+            kwargs.get("password", fake.password()),
         )
         return user.save()
 
@@ -90,4 +90,14 @@ class TestBlueprint:
             "Unsupported Media Type",
             "The server does not support the media type transmitted in the "
             "request.",
+        )
+
+    def _assert_500(self, response):
+        self._assert_error(
+            response,
+            500,
+            "Internal Server Error",
+            "The server encountered an internal error and was unable to "
+            "complete your request. Either the server is overloaded or "
+            "there is an error in the application.",
         )

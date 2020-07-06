@@ -1,11 +1,11 @@
 from flask import url_for
 
-from tests.helpers import TestBlueprint
+from tests.utils import TestBlueprint
 
 
 class TestHome(TestBlueprint):
 
-    def test_index_GET(self):
+    def test_index_GET_200(self):
         response = self.client.get(
             url_for("home.index_GET"),
             follow_redirects=True,

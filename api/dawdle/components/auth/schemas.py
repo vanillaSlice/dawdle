@@ -1,3 +1,5 @@
+# pylint: disable=no-self-use
+
 from marshmallow import Schema, fields, pre_load
 from marshmallow.validate import Length
 
@@ -11,7 +13,7 @@ class SignUpSchema(Schema):
     password = fields.Str(required=True, validate=Length(min=8))
 
     @pre_load
-    def normalise_name(self, in_data, **_):  # pylint: disable=no-self-use
+    def normalise_name(self, in_data, **_):
         trim_string(in_data, "name")
         return in_data
 

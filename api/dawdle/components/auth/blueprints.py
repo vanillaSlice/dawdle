@@ -1,7 +1,8 @@
-from flask import Blueprint, abort, request
+from flask import Blueprint, request
 
 from dawdle.components.auth.schemas import sign_up_schema
-from dawdle.components.user.utils import save_new_user, user_exists
+from dawdle.components.auth.utils import save_new_user
+from dawdle.components.user.utils import user_exists
 from dawdle.utils.decorators import expects_json
 from dawdle.utils.errors import build_400_error_response
 
