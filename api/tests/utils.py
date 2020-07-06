@@ -47,6 +47,9 @@ class TestBlueprint:
         if body:
             assert response.json == body
 
+    def _assert_200(self, response, body=None):
+        self._assert_response(response, 200, body)
+
     def _assert_201(self, response, body=None):
         self._assert_response(response, 201, body)
 

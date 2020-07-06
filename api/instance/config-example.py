@@ -1,5 +1,6 @@
 DEBUG = True
 ENV = "local"
+JWT_SECRET_KEY = "default secret key"
 MONGODB_DB = "dawdle"
 MONGODB_HOST = "127.0.0.1"
 MONGODB_PASSWORD = None

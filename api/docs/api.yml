@@ -80,7 +80,7 @@ paths:
     post:
       summary: Returns an auth token
       tags:
-        - proposed-auth
+        - auth
       security: []
       requestBody:
         content:
@@ -104,8 +104,6 @@ paths:
                 $ref: '#/components/schemas/Token'
         400:
           $ref: '#/components/responses/400'
-        404:
-          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 

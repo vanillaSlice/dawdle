@@ -55,6 +55,9 @@ def __load_config(app, testing):
 
 
 def __init_extensions(app):
+    from dawdle.extensions.jwt import jwt
+    jwt.init_app(app)
+
     from dawdle.extensions.marshmallow import marshmallow
     marshmallow.init_app(app)
 

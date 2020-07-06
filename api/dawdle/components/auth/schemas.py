@@ -23,5 +23,12 @@ class EmailSchema(Schema):
     email = fields.Email(required=True)
 
 
+class EmailPasswordSchema(Schema):
+
+    email = fields.Email(required=True)
+    password = fields.Str(required=True)
+
+
 sign_up_schema = SignUpSchema()
-verify_schema = EmailSchema()
+email_schema = EmailSchema()
+email_password_schema = EmailPasswordSchema()

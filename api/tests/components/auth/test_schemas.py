@@ -1,8 +1,10 @@
 # pylint: disable=no-self-use
 
-from dawdle.components.auth.schemas import sign_up_schema, verify_schema
-from tests.components.auth.utils import (get_mock_sign_up_body,
-                                         get_mock_verify_body)
+from dawdle.components.auth.schemas import (email_password_schema,
+                                            email_schema, sign_up_schema)
+from tests.components.auth.utils import (get_mock_email_body,
+                                         get_mock_email_password_body,
+                                         get_mock_sign_up_body)
 from tests.utils import fake
 
 
@@ -111,9 +113,9 @@ class TestSchemas:
     #
 
     def test_EmailSchema_no_email(self):
-        body = get_mock_verify_body()
+        body = get_mock_email_body()
         del body["email"]
-        errors = verify_schema.validate(body)
+        errors = email_schema.validate(body)
         assert errors == {
             "email": [
                 "Missing data for required field.",
@@ -122,10 +124,44 @@ class TestSchemas:
 
     def test_EmailSchema_invalid_email(self):
         email = fake.sentence()
-        body = get_mock_verify_body(email=email)
-        errors = verify_schema.validate(body)
+        body = get_mock_email_body(email=email)
+        errors = email_schema.validate(body)
         assert errors == {
             "email": [
                 "Not a valid email address.",
+            ],
+        }
+
+    #
+    # EmailPasswordSchema tests.
+    #
+
+    def test_EmailPasswordSchema_no_email(self):
+        body = get_mock_email_password_body()
+        del body["email"]
+        errors = email_password_schema.validate(body)
+        assert errors == {
+            "email": [
+                "Missing data for required field.",
+            ],
+        }
+
+    def test_EmailPasswordSchema_invalid_email(self):
+        email = fake.sentence()
+        body = get_mock_email_password_body(email=email)
+        errors = email_password_schema.validate(body)
+        assert errors == {
+            "email": [
+                "Not a valid email address.",
+            ],
+        }
+
+    def test_EmailPasswordSchema_no_password(self):
+        body = get_mock_email_password_body()
+        del body["password"]
+        errors = email_password_schema.validate(body)
+        assert errors == {
+            "password": [
+                "Missing data for required field.",
             ],
         }

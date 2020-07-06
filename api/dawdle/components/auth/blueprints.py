@@ -1,9 +1,12 @@
-from flask import Blueprint, request
+from flask import Blueprint, jsonify, request
+from flask_jwt_extended import create_access_token, create_refresh_token
 
-from dawdle.components.auth.schemas import sign_up_schema, verify_schema
+from dawdle.components.auth.schemas import (email_password_schema,
+                                            email_schema, sign_up_schema)
 from dawdle.components.auth.utils import (activate_user, get_user_from_token,
                                           save_new_user,
-                                          send_verification_email)
+                                          send_verification_email,
+                                          verify_password)
 from dawdle.components.user.utils import get_user_by_email, user_exists
 from dawdle.utils.decorators import expects_json
 from dawdle.utils.errors import build_400_error_response
@@ -19,9 +22,9 @@ def sign_up_POST():
     if errors:
         return build_400_error_response(errors)
 
-    user_schema = sign_up_schema.dump(request.json)
+    parsed_schema = sign_up_schema.dump(request.json)
 
-    if user_exists(user_schema["email"]):
+    if user_exists(parsed_schema["email"]):
         return build_400_error_response({
             "email": [
                 "There is already an account with this email.",
@@ -29,9 +32,9 @@ def sign_up_POST():
         })
 
     save_new_user(
-        user_schema["name"],
-        user_schema["email"],
-        user_schema["password"],
+        parsed_schema["name"],
+        parsed_schema["email"],
+        parsed_schema["password"],
     )
 
     return "", 201
@@ -40,14 +43,14 @@ def sign_up_POST():
 @auth_bp.route("/verify", methods=["POST"])
 @expects_json
 def verify_POST():
-    errors = verify_schema.validate(request.json)
+    errors = email_schema.validate(request.json)
 
     if errors:
         return build_400_error_response(errors)
 
-    email_schema = verify_schema.dump(request.json)
+    parsed_schema = email_schema.dump(request.json)
 
-    user = get_user_by_email(email_schema["email"])
+    user = get_user_by_email(parsed_schema["email"])
 
     if not user:
         return build_400_error_response({
@@ -82,3 +85,41 @@ def verify_GET(token):
     activate_user(user)
 
     return "", 204
+
+
+@auth_bp.route("/token", methods=["POST"])
+@expects_json
+def token_POST():
+    errors = email_password_schema.validate(request.json)
+
+    if errors:
+        return build_400_error_response(errors)
+
+    parsed_schema = sign_up_schema.dump(request.json)
+
+    user = get_user_by_email(parsed_schema["email"])
+
+    if not user or \
+       not verify_password(user.password, parsed_schema["password"]):
+        return build_400_error_response({
+            "email": [
+                "Incorrect email.",
+            ],
+            "password": [
+                "Incorrect password.",
+            ],
+        })
+
+    if not user.active:
+        return build_400_error_response({
+            "email": [
+                "This email has not been verified.",
+            ],
+        })
+
+    identity = str(user.auth_id)
+
+    return jsonify(
+        access_token=create_access_token(identity=identity),
+        refresh_token=create_refresh_token(identity=identity),
+    ), 200
