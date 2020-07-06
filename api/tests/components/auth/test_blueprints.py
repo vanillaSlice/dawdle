@@ -278,3 +278,49 @@ class TestAuth(TestBlueprint):
             url_for("auth.token_refresh_GET"),
             headers=headers,
         )
+
+    #
+    # reset_password_POST tests.
+    #
+
+    @patch("dawdle.components.auth.utils.sendgrid")
+    def test_reset_password_POST_204(self, sendgrid):
+        body = get_mock_email_body(email=self.user.email)
+        response = self.__send_reset_password_POST_request(body)
+        self._assert_204(response)
+        args, kwargs = sendgrid.send.call_args
+        assert args[0] == TEMPLATE_IDS["password-reset"]
+        assert args[1] == self.user.email
+        data = kwargs["data"]
+        assert data["name"] == self.user.name
+        assert "token" in data
+
+    def test_reset_password_POST_400_bad_data(self):
+        body = get_mock_email_body()
+        del body["email"]
+        response = self.__send_reset_password_POST_request(body)
+        self._assert_400(response, {
+            "email": [
+                "Missing data for required field.",
+            ],
+        })
+
+    def test_reset_password_POST_400_not_existing(self):
+        body = get_mock_email_body()
+        response = self.__send_reset_password_POST_request(body)
+        self._assert_400(response, {
+            "email": [
+                "There is no account with this email.",
+            ],
+        })
+
+    def test_reset_password_POST_415(self):
+        response = self.client.post(url_for("auth.reset_password_POST"))
+        self._assert_415(response)
+
+    def __send_reset_password_POST_request(self, body):
+        return self.client.post(
+            url_for("auth.reset_password_POST"),
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(body),
+        )

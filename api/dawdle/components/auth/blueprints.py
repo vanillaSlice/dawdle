@@ -7,6 +7,7 @@ from dawdle.components.auth.schemas import (email_password_schema,
 from dawdle.components.auth.utils import (activate_user, get_user_from_token,
                                           save_new_user,
                                           send_verification_email,
+                                          send_password_reset_email,
                                           verify_password)
 from dawdle.components.user.utils import get_user_by_email, user_exists
 from dawdle.utils.decorators import expects_json
@@ -132,3 +133,27 @@ def token_refresh_GET():
     return jsonify(
         access_token=create_access_token(identity=str(current_user.auth_id)),
     ), 200
+
+
+@auth_bp.route("/reset-password", methods=["POST"])
+@expects_json
+def reset_password_POST():
+    errors = email_schema.validate(request.json)
+
+    if errors:
+        return build_400_error_response(errors)
+
+    parsed_schema = email_schema.dump(request.json)
+
+    user = get_user_by_email(parsed_schema["email"])
+
+    if not user:
+        return build_400_error_response({
+            "email": [
+                "There is no account with this email.",
+            ],
+        })
+
+    send_password_reset_email(user)
+
+    return "", 204

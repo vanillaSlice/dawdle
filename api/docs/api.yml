@@ -128,7 +128,7 @@ paths:
     post:
       summary: Requests a password reset
       tags:
-        - proposed-auth
+        - auth
       security: []
       requestBody:
         content:
@@ -140,8 +140,6 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
-        404:
-          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -158,8 +156,6 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
-        404:
-          $ref: '#/components/responses/404'
 
 components:
   parameters:
@@ -183,12 +179,6 @@ components:
             $ref: '#/components/schemas/Error'
     401:
       description: Unauthorized
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    404:
-      description: Not Found
       content:
         application/json:
           schema:

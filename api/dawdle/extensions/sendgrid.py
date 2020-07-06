@@ -29,4 +29,5 @@ sendgrid = SendGrid()
 
 TEMPLATE_IDS = {
     "verification": "d-412a7cabd3cf48379be544be8dcd7823",
+    "password-reset": "d-de72675553af4e1ba8ff10237ed680ab",
 }

@@ -2,7 +2,8 @@ from datetime import datetime
 
 from bson.objectid import ObjectId
 from flask import current_app
-from itsdangerous import BadSignature, URLSafeSerializer
+from itsdangerous import (BadSignature, TimedJSONWebSignatureSerializer,
+                          URLSafeSerializer)
 from passlib.hash import sha256_crypt
 
 from dawdle.components.user.models import User
@@ -72,3 +73,21 @@ def activate_user(user):
     user.auth_id = ObjectId()
     user.last_updated = datetime.utcnow()
     user.save()
+
+
+def send_password_reset_email(user):
+    sendgrid.send(
+        TEMPLATE_IDS["password-reset"],
+        user.email,
+        data={
+            "name": user.name,
+            "token": serialize_password_reset_token(user),
+        },
+    )
+
+
+def serialize_password_reset_token(user):
+    return TimedJSONWebSignatureSerializer(
+        current_app.secret_key,
+        expires_in=600,
+    ).dumps(str(user.auth_id)).decode()
