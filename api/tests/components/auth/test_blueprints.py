@@ -2,6 +2,7 @@ import json
 from unittest.mock import patch
 
 from flask import url_for
+from itsdangerous import URLSafeSerializer
 
 from dawdle.components.auth.utils import (serialize_verification_token,
                                           verify_password)
@@ -46,10 +47,6 @@ class TestAuth(TestBlueprint):
                 "There is already an account with this email.",
             ],
         })
-
-    def test_sign_up_POST_404(self):
-        response = self.client.get(url_for("auth.sign_up_POST"))
-        self._assert_404(response)
 
     def test_sign_up_POST_415(self):
         response = self.client.post(url_for("auth.sign_up_POST"))
@@ -109,10 +106,6 @@ class TestAuth(TestBlueprint):
             ],
         })
 
-    def test_verify_POST_404(self):
-        response = self.client.get(url_for("auth.verify_POST"))
-        self._assert_404(response)
-
     def test_verify_POST_415(self):
         response = self.client.post(url_for("auth.verify_POST"))
         self._assert_415(response)
@@ -123,3 +116,40 @@ class TestAuth(TestBlueprint):
             headers={"Content-Type": "application/json"},
             data=json.dumps(body),
         )
+
+    #
+    # verify_GET tests.
+    #
+
+    def test_verify_GET_204(self):
+        user = self.create_user(active=False)
+        token = self.__get_verify_token(str(user.auth_id))
+        response = self.__send_verify_GET_request(token)
+        self._assert_204(response)
+        updated_user = get_user_by_email(user.email)
+        assert updated_user.active
+        assert updated_user.auth_id != user.auth_id
+        assert updated_user.last_updated != user.last_updated
+
+    def test_verify_GET_400_bad_token(self):
+        response = self.__send_verify_GET_request("token")
+        self._assert_400(response, {
+            "token": [
+                "Invalid token.",
+            ],
+        })
+
+    def test_verify_GET_400_bad_auth_id(self):
+        token = self.__get_verify_token("some token")
+        response = self.__send_verify_GET_request(token)
+        self._assert_400(response, {
+            "token": [
+                "Invalid token.",
+            ],
+        })
+
+    def __get_verify_token(self, auth_id):
+        return URLSafeSerializer(self.app.secret_key).dumps(auth_id)
+
+    def __send_verify_GET_request(self, token):
+        return self.client.get(url_for("auth.verify_GET", token=token))

@@ -77,15 +77,6 @@ class TestBlueprint:
             messages,
         )
 
-    def _assert_404(self, response):
-        self._assert_error(
-            response,
-            404,
-            "Not Found",
-            "The requested URL was not found on the server. If you entered "
-            "the URL manually please check your spelling and try again.",
-        )
-
     def _assert_415(self, response):
         self._assert_error(
             response,

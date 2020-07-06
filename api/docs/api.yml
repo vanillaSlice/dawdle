@@ -40,8 +40,6 @@ paths:
           $ref: '#/components/responses/201'
         400:
           $ref: '#/components/responses/400'
-        404:
-          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -61,8 +59,6 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
-        404:
-          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -70,7 +66,7 @@ paths:
     get:
       summary: Verifies a user's email address from the token sent
       tags:
-        - proposed-auth
+        - auth
       security: []
       parameters:
         - $ref: '#/components/parameters/Token'
@@ -79,8 +75,6 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
-        404:
-          $ref: '#/components/responses/404'
 
   /auth/token:
     post:

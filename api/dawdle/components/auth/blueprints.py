@@ -1,7 +1,9 @@
 from flask import Blueprint, request
 
 from dawdle.components.auth.schemas import sign_up_schema, verify_schema
-from dawdle.components.auth.utils import save_new_user, send_verification_email
+from dawdle.components.auth.utils import (activate_user, get_user_from_token,
+                                          save_new_user,
+                                          send_verification_email)
 from dawdle.components.user.utils import get_user_by_email, user_exists
 from dawdle.utils.decorators import expects_json
 from dawdle.utils.errors import build_400_error_response
@@ -62,5 +64,21 @@ def verify_POST():
         })
 
     send_verification_email(user)
+
+    return "", 204
+
+
+@auth_bp.route("/verify/<token>", methods=["GET"])
+def verify_GET(token):
+    user = get_user_from_token(token)
+
+    if not user:
+        return build_400_error_response({
+            "token": [
+                "Invalid token.",
+            ],
+        })
+
+    activate_user(user)
 
     return "", 204

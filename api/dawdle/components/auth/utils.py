@@ -1,10 +1,14 @@
+from datetime import datetime
+
+from bson.objectid import ObjectId
 from flask import current_app
-from itsdangerous import URLSafeSerializer
+from itsdangerous import BadSignature, URLSafeSerializer
 from passlib.hash import sha256_crypt
 
 from dawdle.components.user.models import User
-from dawdle.extensions.sendgrid import sendgrid, TEMPLATE_IDS
+from dawdle.extensions.sendgrid import TEMPLATE_IDS, sendgrid
 from dawdle.utils import remove_extra_whitespace
+from dawdle.utils.mongoengine import to_ObjectId
 
 
 def save_new_user(name, email, raw_password):
@@ -44,3 +48,23 @@ def send_verification_email(user):
 
 def serialize_verification_token(user):
     return URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))
+
+
+def get_user_from_token(token):
+    auth_id = deserialize_verification_token(token)
+    return User.objects(auth_id=auth_id).first()
+
+
+def deserialize_verification_token(token):
+    try:
+        auth_id = URLSafeSerializer(current_app.secret_key).loads(token)
+        return to_ObjectId(auth_id)
+    except BadSignature:
+        return ObjectId()
+
+
+def activate_user(user):
+    user.active = True
+    user.auth_id = ObjectId()
+    user.last_updated = datetime.utcnow()
+    user.save()
