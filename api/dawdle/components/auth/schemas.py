@@ -8,7 +8,7 @@ class SignUpSchema(Schema):
 
     name = fields.Str(required=True, validate=Length(min=1, max=50))
     email = fields.Email(required=True)
-    password = fields.Str(required=True, validate=Length(min=8))
+    password = fields.Str(required=True, validate=Length(min=8, max=128))
 
     @pre_load
     def normalise(self, in_data, **_):
@@ -29,7 +29,7 @@ class EmailPasswordSchema(Schema):
 
 class PasswordSchema(Schema):
 
-    password = fields.Str(required=True, validate=Length(min=8))
+    password = fields.Str(required=True, validate=Length(min=8, max=128))
 
 
 sign_up_schema = SignUpSchema()

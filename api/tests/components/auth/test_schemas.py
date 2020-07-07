@@ -98,7 +98,7 @@ class TestSchemas:
         errors = sign_up_schema.validate(body)
         assert errors == {
             "password": [
-                "Shorter than minimum length 8.",
+                "Length must be between 8 and 128.",
             ],
         }
 
@@ -107,6 +107,22 @@ class TestSchemas:
         body = get_mock_sign_up_body(password=password)
         errors = sign_up_schema.validate(body)
         assert not errors
+
+    def test_SignUpSchema_password_equal_to_max(self):
+        password = fake.pystr(min_chars=128, max_chars=128)
+        body = get_mock_sign_up_body(password=password)
+        errors = sign_up_schema.validate(body)
+        assert not errors
+
+    def test_SignUpSchema_password_greater_than_max(self):
+        password = fake.pystr(min_chars=129, max_chars=129)
+        body = get_mock_sign_up_body(password=password)
+        errors = sign_up_schema.validate(body)
+        assert errors == {
+            "password": [
+                "Length must be between 8 and 128.",
+            ],
+        }
 
     #
     # EmailSchema tests.
@@ -186,7 +202,7 @@ class TestSchemas:
         errors = password_schema.validate(body)
         assert errors == {
             "password": [
-                "Shorter than minimum length 8.",
+                "Length must be between 8 and 128.",
             ],
         }
 
@@ -195,3 +211,19 @@ class TestSchemas:
         body = get_mock_password_body(password=password)
         errors = password_schema.validate(body)
         assert not errors
+
+    def test_PasswordSchema_password_equal_to_max(self):
+        password = fake.pystr(min_chars=128, max_chars=128)
+        body = get_mock_password_body(password=password)
+        errors = password_schema.validate(body)
+        assert not errors
+
+    def test_PasswordSchema_password_greater_than_max(self):
+        password = fake.pystr(min_chars=129, max_chars=129)
+        body = get_mock_password_body(password=password)
+        errors = password_schema.validate(body)
+        assert errors == {
+            "password": [
+                "Length must be between 8 and 128.",
+            ],
+        }
