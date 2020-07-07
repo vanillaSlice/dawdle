@@ -78,7 +78,7 @@ paths:
 
   /auth/token:
     post:
-      summary: Returns an auth token
+      summary: Returns an access token
       tags:
         - auth
       security: []
@@ -109,7 +109,7 @@ paths:
 
   /auth/token/refresh:
     get:
-      summary: Refreshes auth token
+      summary: Returns an access token using a refresh token
       tags:
         - auth
       responses:

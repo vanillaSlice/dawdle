@@ -30,17 +30,11 @@ def __load_config(app, testing):
     def load_env_var_bool(key):
         return str(load_env_var(key)).lower() == "true"
 
-    def load_env_var_int(key):
-        return int(load_env_var(key))
-
     app.config.update({
         "DEBUG": load_env_var_bool("DEBUG"),
         "ENV": load_env_var("ENV"),
-        "MONGODB_DB": load_env_var("MONGODB_DB"),
+        "JWT_SECRET_KEY": load_env_var("JWT_SECRET_KEY"),
         "MONGODB_HOST": load_env_var("MONGODB_HOST"),
-        "MONGODB_PASSWORD": load_env_var("MONGODB_PASSWORD"),
-        "MONGODB_PORT": load_env_var_int("MONGODB_PORT"),
-        "MONGODB_USERNAME": load_env_var("MONGODB_USERNAME"),
         "SECRET_KEY": load_env_var("SECRET_KEY"),
         "SENDER_EMAIL": load_env_var("SENDER_EMAIL"),
         "SENDGRID_API_KEY": load_env_var("SENDGRID_API_KEY"),

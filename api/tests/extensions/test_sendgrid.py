@@ -1,5 +1,3 @@
-# pylint: disable=no-self-use
-
 from unittest.mock import patch
 
 from dawdle.extensions.sendgrid import sendgrid

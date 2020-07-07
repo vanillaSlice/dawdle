@@ -1,5 +1,3 @@
-# pylint: disable=no-self-use
-
 from dawdle.components.auth.schemas import (email_password_schema,
                                             email_schema, password_schema,
                                             sign_up_schema)

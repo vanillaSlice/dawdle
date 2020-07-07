@@ -1,5 +1,3 @@
-# pylint: disable=no-self-use
-
 from dawdle.components.auth.utils import (create_initials, encrypt_password,
                                           verify_password)
 from tests.utils import fake

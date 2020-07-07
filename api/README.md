@@ -17,11 +17,7 @@ The following properties can be configured:
 | `DEBUG`                 | If debug mode is enabled.                                        | `False`               |
 | `ENV`                   | Environment the app is running in.                               | `production`          |
 | `JWT_SECRET_KEY`        | A secret key used for JWT tokens.                                | `default secret key`  |
-| `MONGODB_DB`            | The MongoDB database name.                                       | `dawdle`              |
 | `MONGODB_HOST`          | The MongoDB host name.                                           | `127.0.0.1`           |
-| `MONGODB_PASSWORD`      | The MongoDB password.                                            | `None`                |
-| `MONGODB_PORT`          | The MongoDB port.                                                | `27017`               |
-| `MONGODB_USERNAME`      | The MongoDB username.                                            | `None`                |
 | `SECRET_KEY`            | A secret key used for security.                                  | `default secret key`  |
 | `SENDER_EMAIL`          | The email address to send emails from.                           | `None`                |
 | `SENDGRID_API_KEY`      | The SendGrid API key.                                            | `None`                |
@@ -30,9 +26,6 @@ The following properties can be configured:
 
 To change these properties you can export them as environment variables or create a file `instance/config.py` (note
 that environment variables take precedence).
-
-URI style connections are also supported for connecting to MongoDB, just supply the URI as `MONGODB_HOST` (note that
-URI properties will take precedence).
 
 ## Running
 

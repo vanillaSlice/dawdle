@@ -1,5 +1,3 @@
-# pylint: disable=no-self-use
-
 from marshmallow import Schema, fields, pre_load
 from marshmallow.validate import Length
 
