@@ -2,7 +2,7 @@ from datetime import datetime
 
 from bson.objectid import ObjectId
 from mongoengine import (BooleanField, DateTimeField, Document, EmailField,
-                         ObjectIdField, StringField)
+                         ObjectIdField, ReferenceField, StringField)
 
 
 class User(Document):
@@ -12,6 +12,7 @@ class User(Document):
     created = DateTimeField(required=True, default=datetime.utcnow)
     email = EmailField(required=True, unique=True)
     initials = StringField(required=True, min_length=1, max_length=4)
-    last_updated = DateTimeField(required=True, default=datetime.utcnow)
+    last_updated = DateTimeField()
     name = StringField(required=True, min_length=1, max_length=50)
     password = StringField(required=True)
+    updated_by = ReferenceField("self")

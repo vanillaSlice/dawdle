@@ -22,7 +22,7 @@ class TestSendGrid:
 
         template_id = fake.pystr()
         recipient = fake.email()
-        data = fake.pydict(4, True, "str")
+        data = fake.pydict(4, True, ["str"])
 
         sendgrid.send(template_id, recipient, data)
 

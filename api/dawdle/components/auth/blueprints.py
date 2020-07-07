@@ -5,7 +5,7 @@ from flask_jwt_extended import (create_access_token, create_refresh_token,
 from dawdle.components.auth.schemas import (email_password_schema,
                                             email_schema, password_schema,
                                             sign_up_schema)
-from dawdle.components.auth.utils import (activate_user,
+from dawdle.components.auth.utils import (activate_user, get_user_by_email,
                                           get_user_from_password_reset_token,
                                           get_user_from_verification_token,
                                           save_new_user,
@@ -13,7 +13,6 @@ from dawdle.components.auth.utils import (activate_user,
                                           send_verification_email,
                                           update_user_password,
                                           verify_password)
-from dawdle.components.user.utils import get_user_by_email, user_exists
 from dawdle.utils.decorators import expects_json
 from dawdle.utils.errors import build_400_error_response
 
@@ -30,7 +29,9 @@ def sign_up_POST():
 
     parsed_schema = sign_up_schema.dump(request.json)
 
-    if user_exists(parsed_schema["email"]):
+    user = get_user_by_email(parsed_schema["email"])
+
+    if user:
         return build_400_error_response({
             "email": [
                 "There is already an account with this email.",

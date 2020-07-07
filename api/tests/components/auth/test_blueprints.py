@@ -7,9 +7,9 @@ from flask import url_for
 from flask_jwt_extended import create_refresh_token
 from itsdangerous import TimedJSONWebSignatureSerializer, URLSafeSerializer
 
-from dawdle.components.auth.utils import (serialize_verification_token,
+from dawdle.components.auth.utils import (get_user_by_email,
+                                          serialize_verification_token,
                                           verify_password)
-from dawdle.components.user.utils import get_user_by_email
 from dawdle.extensions.sendgrid import TEMPLATE_IDS
 from tests.components.auth.utils import (get_mock_email_body,
                                          get_mock_email_password_body,

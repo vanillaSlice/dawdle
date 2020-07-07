@@ -14,6 +14,7 @@ class TestModels:
         assert isinstance(user.created, datetime)
         assert not user.email
         assert not user.initials
-        assert isinstance(user.last_updated, datetime)
+        assert not user.last_updated
         assert not user.name
         assert not user.password
+        assert not user.updated_by
