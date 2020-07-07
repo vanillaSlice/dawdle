@@ -8,7 +8,7 @@ from dawdle.components.auth.utils import (create_initials, encrypt_password,
                                           serialize_password_reset_token,
                                           serialize_verification_token,
                                           verify_password)
-from dawdle.extensions.sendgrid import TEMPLATE_IDS
+from dawdle.extensions.sendgrid import TemplateIds
 from tests.helpers import TestBase, fake
 
 
@@ -54,7 +54,7 @@ class TestUtils(TestBase):
         serialize.return_value = token
         send_verification_email(self.user)
         sendgrid.send.assert_called_with(
-            TEMPLATE_IDS["verification"],
+            TemplateIds.VERIFICATION,
             self.user.email,
             data={
                 "name": self.user.name,
@@ -89,7 +89,7 @@ class TestUtils(TestBase):
         serialize.return_value = token
         send_password_reset_email(self.user)
         sendgrid.send.assert_called_with(
-            TEMPLATE_IDS["password-reset"],
+            TemplateIds.PASSWORD_RESET,
             self.user.email,
             data={
                 "name": self.user.name,

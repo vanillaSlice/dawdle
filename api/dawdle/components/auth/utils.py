@@ -7,7 +7,7 @@ from itsdangerous import (BadSignature, TimedJSONWebSignatureSerializer,
 from passlib.hash import sha256_crypt
 
 from dawdle.components.user.models import User
-from dawdle.extensions.sendgrid import TEMPLATE_IDS, sendgrid
+from dawdle.extensions.sendgrid import TemplateIds, sendgrid
 from dawdle.utils import remove_extra_whitespace
 from dawdle.utils.mongoengine import to_ObjectId
 
@@ -44,7 +44,7 @@ def verify_password(user_password, password_provided):
 
 def send_verification_email(user):
     sendgrid.send(
-        TEMPLATE_IDS["verification"],
+        TemplateIds.VERIFICATION,
         user.email,
         data={
             "name": user.name,
@@ -85,7 +85,7 @@ def activate_user(user):
 
 def send_password_reset_email(user):
     sendgrid.send(
-        TEMPLATE_IDS["password-reset"],
+        TemplateIds.PASSWORD_RESET,
         user.email,
         data={
             "name": user.name,
