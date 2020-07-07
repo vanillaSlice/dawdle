@@ -151,6 +151,7 @@ class TestAuth(TestBase):
         self._assert_200(response)
         assert "access_token" in response.json
         assert "refresh_token" in response.json
+        assert response.json["user_id"] == str(self.user.id)
 
     def test_token_POST_400_bad_data(self):
         body = get_mock_email_password_body()
@@ -220,6 +221,7 @@ class TestAuth(TestBase):
         self._assert_200(response)
         assert "access_token" in response.json
         assert "refresh_token" not in response.json
+        assert response.json["user_id"] == str(self.user.id)
 
     def test_token_refresh_GET_400(self):
         response = self.__send_token_refresh_GET_request("invalid")

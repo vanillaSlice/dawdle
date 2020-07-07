@@ -127,6 +127,7 @@ def token_POST():
     return jsonify(
         access_token=create_access_token(identity=identity, fresh=True),
         refresh_token=create_refresh_token(identity=identity),
+        user_id=str(user.id),
     ), 200
 
 
@@ -135,6 +136,7 @@ def token_POST():
 def token_refresh_GET():
     return jsonify(
         access_token=create_access_token(identity=str(current_user.auth_id)),
+        user_id=str(current_user.id),
     ), 200
 
 

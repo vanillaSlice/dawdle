@@ -125,7 +125,7 @@ paths:
 
   /auth/reset-password:
     post:
-      summary: Requests a password reset
+      summary: Requests a password reset email to be sent
       tags:
         - auth
       security: []
@@ -237,8 +237,11 @@ components:
           type: string
         refresh_token:
           type: string
+        user_id:
+          type: string
       required:
         - access_token
+        - user_id
 
   securitySchemes:
     bearerAuth:
