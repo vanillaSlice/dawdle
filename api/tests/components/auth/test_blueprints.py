@@ -297,13 +297,12 @@ class TestAuth(TestBase):
 
     @patch("dawdle.components.auth.blueprints.update_user_password")
     def test_reset_password_POST_204(self, update_user_password):
-        user = self.create_user()
-        token = _serialize_password_reset_token(user)
+        token = _serialize_password_reset_token(self.user)
         password = fake.password()
         body = get_mock_password_body(password=password)
         response = self.__send_reset_password_POST_request(token, body)
         self._assert_204(response)
-        update_user_password.assert_called_with(user, password)
+        update_user_password.assert_called_with(self.user, password)
 
     def test_reset_password_POST_400_bad_token(self):
         response = self.__send_reset_password_POST_request(
