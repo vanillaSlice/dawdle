@@ -1,6 +1,7 @@
 from dawdle.components.auth.schemas import (email_password_schema,
                                             email_schema, password_schema,
                                             sign_up_schema)
+from dawdle.utils.schemas import Limits
 from tests.components.auth.helpers import (get_mock_email_body,
                                            get_mock_email_password_body,
                                            get_mock_password_body,
@@ -33,25 +34,25 @@ class TestSchemas:
             ],
         }
 
-    def test_SignUpSchema_name_equal_to_min(self):
-        name = fake.pystr(min_chars=1, max_chars=1)
-        body = get_mock_sign_up_body(name=name)
-        errors = sign_up_schema.validate(body)
-        assert not errors
-
     def test_SignUpSchema_name_equal_to_max(self):
-        name = fake.pystr(min_chars=50, max_chars=50)
+        name = fake.pystr(
+            min_chars=Limits.MAX_USER_NAME_LENGTH,
+            max_chars=Limits.MAX_USER_NAME_LENGTH,
+        )
         body = get_mock_sign_up_body(name=name)
         errors = sign_up_schema.validate(body)
         assert not errors
 
     def test_SignUpSchema_name_greater_than_max(self):
-        name = fake.pystr(min_chars=51, max_chars=51)
+        name = fake.pystr(
+            min_chars=Limits.MAX_USER_NAME_LENGTH + 1,
+            max_chars=Limits.MAX_USER_NAME_LENGTH + 1,
+        )
         body = get_mock_sign_up_body(name=name)
         errors = sign_up_schema.validate(body)
         assert errors == {
             "name": [
-                "Length must be between 1 and 50.",
+                f"Longer than maximum length {Limits.MAX_USER_NAME_LENGTH}.",
             ],
         }
 
@@ -93,34 +94,48 @@ class TestSchemas:
         }
 
     def test_SignUpSchema_password_less_than_min(self):
-        password = fake.pystr(min_chars=7, max_chars=7)
+        password = fake.pystr(
+            min_chars=Limits.MIN_USER_PASSWORD_LENGTH - 1,
+            max_chars=Limits.MIN_USER_PASSWORD_LENGTH - 1,
+        )
         body = get_mock_sign_up_body(password=password)
         errors = sign_up_schema.validate(body)
         assert errors == {
             "password": [
-                "Length must be between 8 and 128.",
+                f"Length must be between {Limits.MIN_USER_PASSWORD_LENGTH} "
+                f"and {Limits.MAX_USER_PASSWORD_LENGTH}.",
             ],
         }
 
     def test_SignUpSchema_password_equal_to_min(self):
-        password = fake.pystr(min_chars=8, max_chars=8)
+        password = fake.pystr(
+            min_chars=Limits.MIN_USER_PASSWORD_LENGTH,
+            max_chars=Limits.MIN_USER_PASSWORD_LENGTH,
+        )
         body = get_mock_sign_up_body(password=password)
         errors = sign_up_schema.validate(body)
         assert not errors
 
     def test_SignUpSchema_password_equal_to_max(self):
-        password = fake.pystr(min_chars=128, max_chars=128)
+        password = fake.pystr(
+            min_chars=Limits.MAX_USER_PASSWORD_LENGTH,
+            max_chars=Limits.MAX_USER_PASSWORD_LENGTH,
+        )
         body = get_mock_sign_up_body(password=password)
         errors = sign_up_schema.validate(body)
         assert not errors
 
     def test_SignUpSchema_password_greater_than_max(self):
-        password = fake.pystr(min_chars=129, max_chars=129)
+        password = fake.pystr(
+            min_chars=Limits.MAX_USER_PASSWORD_LENGTH + 1,
+            max_chars=Limits.MAX_USER_PASSWORD_LENGTH + 1,
+        )
         body = get_mock_sign_up_body(password=password)
         errors = sign_up_schema.validate(body)
         assert errors == {
             "password": [
-                "Length must be between 8 and 128.",
+                f"Length must be between {Limits.MIN_USER_PASSWORD_LENGTH} "
+                f"and {Limits.MAX_USER_PASSWORD_LENGTH}.",
             ],
         }
 
@@ -197,33 +212,47 @@ class TestSchemas:
         }
 
     def test_PasswordSchema_password_less_than_min(self):
-        password = fake.pystr(min_chars=7, max_chars=7)
+        password = fake.pystr(
+            min_chars=Limits.MIN_USER_PASSWORD_LENGTH - 1,
+            max_chars=Limits.MIN_USER_PASSWORD_LENGTH - 1,
+        )
         body = get_mock_password_body(password=password)
         errors = password_schema.validate(body)
         assert errors == {
             "password": [
-                "Length must be between 8 and 128.",
+                f"Length must be between {Limits.MIN_USER_PASSWORD_LENGTH} "
+                f"and {Limits.MAX_USER_PASSWORD_LENGTH}.",
             ],
         }
 
     def test_PasswordSchema_password_equal_to_min(self):
-        password = fake.pystr(min_chars=8, max_chars=8)
+        password = fake.pystr(
+            min_chars=Limits.MIN_USER_PASSWORD_LENGTH,
+            max_chars=Limits.MIN_USER_PASSWORD_LENGTH,
+        )
         body = get_mock_password_body(password=password)
         errors = password_schema.validate(body)
         assert not errors
 
     def test_PasswordSchema_password_equal_to_max(self):
-        password = fake.pystr(min_chars=128, max_chars=128)
+        password = fake.pystr(
+            min_chars=Limits.MAX_USER_PASSWORD_LENGTH,
+            max_chars=Limits.MAX_USER_PASSWORD_LENGTH,
+        )
         body = get_mock_password_body(password=password)
         errors = password_schema.validate(body)
         assert not errors
 
     def test_PasswordSchema_password_greater_than_max(self):
-        password = fake.pystr(min_chars=129, max_chars=129)
+        password = fake.pystr(
+            min_chars=Limits.MAX_USER_PASSWORD_LENGTH + 1,
+            max_chars=Limits.MAX_USER_PASSWORD_LENGTH + 1,
+        )
         body = get_mock_password_body(password=password)
         errors = password_schema.validate(body)
         assert errors == {
             "password": [
-                "Length must be between 8 and 128.",
+                f"Length must be between {Limits.MIN_USER_PASSWORD_LENGTH} "
+                f"and {Limits.MAX_USER_PASSWORD_LENGTH}.",
             ],
         }

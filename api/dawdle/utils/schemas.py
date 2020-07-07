@@ -1,6 +1,14 @@
 from dawdle.utils import remove_extra_whitespace
 
 
+class Limits:
+
+    MAX_USER_INITIALS_LENGTH = 4
+    MAX_USER_NAME_LENGTH = 50
+    MIN_USER_PASSWORD_LENGTH = 8
+    MAX_USER_PASSWORD_LENGTH = 128
+
+
 def trim_string(in_data, key):
     value = in_data.get(key)
 

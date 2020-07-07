@@ -10,6 +10,7 @@ from dawdle.components.user.models import User
 from dawdle.extensions.sendgrid import TemplateIds, sendgrid
 from dawdle.utils import remove_extra_whitespace
 from dawdle.utils.mongoengine import to_ObjectId
+from dawdle.utils.schemas import Limits
 
 __PASSWORD_RESET_TOKEN_EXPIRATION = 900
 
@@ -29,7 +30,8 @@ def save_new_user(name, email, raw_password):
 
 def create_initials(name):
     name_trimmed = remove_extra_whitespace(name)
-    return "".join([c[0] for c in name_trimmed.split(" ")])[:4].upper()
+    split = "".join([c[0] for c in name_trimmed.split(" ")])
+    return split[:Limits.MAX_USER_INITIALS_LENGTH].upper()
 
 
 def encrypt_password(raw_password):

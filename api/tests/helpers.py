@@ -3,6 +3,7 @@ from faker import Faker
 from dawdle import create_app
 from dawdle.components.auth.utils import encrypt_password
 from dawdle.components.user.models import User
+from dawdle.utils.schemas import Limits
 
 fake = Faker()
 
@@ -25,7 +26,7 @@ class TestBase:
         user.email = kwargs.get("email", fake.email())
         user.initials = kwargs.get(
             "initials",
-            fake.pystr(min_chars=1, max_chars=4),
+            fake.pystr(Limits.MAX_USER_INITIALS_LENGTH),
         ).upper()
         user.name = kwargs.get("name", fake.name())
         user.password = encrypt_password(

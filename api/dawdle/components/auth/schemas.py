@@ -1,14 +1,25 @@
 from marshmallow import Schema, fields, pre_load
 from marshmallow.validate import Length
 
-from dawdle.utils.schemas import trim_string
+from dawdle.utils.schemas import Limits, trim_string
 
 
 class SignUpSchema(Schema):
 
-    name = fields.Str(required=True, validate=Length(min=1, max=50))
+    name = fields.Str(
+        required=True,
+        validate=Length(
+            max=Limits.MAX_USER_NAME_LENGTH,
+        ),
+    )
     email = fields.Email(required=True)
-    password = fields.Str(required=True, validate=Length(min=8, max=128))
+    password = fields.Str(
+        required=True,
+        validate=Length(
+            min=Limits.MIN_USER_PASSWORD_LENGTH,
+            max=Limits.MAX_USER_PASSWORD_LENGTH,
+        ),
+    )
 
     @pre_load
     def normalise(self, in_data, **_):
@@ -29,7 +40,13 @@ class EmailPasswordSchema(Schema):
 
 class PasswordSchema(Schema):
 
-    password = fields.Str(required=True, validate=Length(min=8, max=128))
+    password = fields.Str(
+        required=True,
+        validate=Length(
+            min=Limits.MIN_USER_PASSWORD_LENGTH,
+            max=Limits.MAX_USER_PASSWORD_LENGTH,
+        ),
+    )
 
 
 sign_up_schema = SignUpSchema()
