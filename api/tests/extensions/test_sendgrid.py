@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from dawdle.extensions.sendgrid import sendgrid
-from tests.utils import fake
+from tests.helpers import fake
 
 
 class MockApp:

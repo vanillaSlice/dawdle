@@ -1,11 +1,11 @@
 from dawdle.components.auth.schemas import (email_password_schema,
                                             email_schema, password_schema,
                                             sign_up_schema)
-from tests.components.auth.utils import (get_mock_email_body,
-                                         get_mock_email_password_body,
-                                         get_mock_password_body,
-                                         get_mock_sign_up_body)
-from tests.utils import fake
+from tests.components.auth.helpers import (get_mock_email_body,
+                                           get_mock_email_password_body,
+                                           get_mock_password_body,
+                                           get_mock_sign_up_body)
+from tests.helpers import fake
 
 
 class TestSchemas:

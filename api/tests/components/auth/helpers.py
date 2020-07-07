@@ -1,4 +1,4 @@
-from tests.utils import fake
+from tests.helpers import fake
 
 
 def get_mock_sign_up_body(**kwargs):

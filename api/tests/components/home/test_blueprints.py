@@ -1,6 +1,6 @@
 from flask import url_for
 
-from tests.utils import TestBase
+from tests.helpers import TestBase
 
 
 class TestHome(TestBase):

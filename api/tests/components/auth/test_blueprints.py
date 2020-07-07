@@ -8,11 +8,11 @@ from dawdle.components.auth.utils import (get_user_by_email,
                                           serialize_password_reset_token,
                                           serialize_verification_token,
                                           verify_password)
-from tests.components.auth.utils import (get_mock_email_body,
-                                         get_mock_email_password_body,
-                                         get_mock_password_body,
-                                         get_mock_sign_up_body)
-from tests.utils import TestBase, fake
+from tests.components.auth.helpers import (get_mock_email_body,
+                                           get_mock_email_password_body,
+                                           get_mock_password_body,
+                                           get_mock_sign_up_body)
+from tests.helpers import TestBase, fake
 
 
 class TestAuth(TestBase):

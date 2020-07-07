@@ -9,7 +9,7 @@ from dawdle.components.auth.utils import (create_initials, encrypt_password,
                                           serialize_verification_token,
                                           verify_password)
 from dawdle.extensions.sendgrid import TEMPLATE_IDS
-from tests.utils import TestBase, fake
+from tests.helpers import TestBase, fake
 
 
 class TestUtils(TestBase):

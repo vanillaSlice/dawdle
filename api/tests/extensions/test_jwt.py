@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 from flask import url_for
 from flask_jwt_extended import create_refresh_token
 
-from tests.utils import TestBase, fake
+from tests.helpers import TestBase, fake
 
 
 class TestJtw(TestBase):
