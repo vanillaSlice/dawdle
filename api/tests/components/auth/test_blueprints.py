@@ -5,7 +5,7 @@ from unittest.mock import patch
 from bson.objectid import ObjectId
 from flask import url_for
 from flask_jwt_extended import create_refresh_token
-from itsdangerous import URLSafeSerializer
+from itsdangerous import TimedJSONWebSignatureSerializer, URLSafeSerializer
 
 from dawdle.components.auth.utils import (serialize_verification_token,
                                           verify_password)
@@ -13,8 +13,9 @@ from dawdle.components.user.utils import get_user_by_email
 from dawdle.extensions.sendgrid import TEMPLATE_IDS
 from tests.components.auth.utils import (get_mock_email_body,
                                          get_mock_email_password_body,
+                                         get_mock_password_body,
                                          get_mock_sign_up_body)
-from tests.utils import TestBlueprint
+from tests.utils import TestBlueprint, fake
 
 
 class TestAuth(TestBlueprint):
@@ -280,13 +281,13 @@ class TestAuth(TestBlueprint):
         )
 
     #
-    # reset_password_POST tests.
+    # reset_password_request_POST tests.
     #
 
     @patch("dawdle.components.auth.utils.sendgrid")
-    def test_reset_password_POST_204(self, sendgrid):
+    def test_reset_password_request_POST_204(self, sendgrid):
         body = get_mock_email_body(email=self.user.email)
-        response = self.__send_reset_password_POST_request(body)
+        response = self.__send_reset_password_request_POST_request(body)
         self._assert_204(response)
         args, kwargs = sendgrid.send.call_args
         assert args[0] == TEMPLATE_IDS["password-reset"]
@@ -295,32 +296,105 @@ class TestAuth(TestBlueprint):
         assert data["name"] == self.user.name
         assert "token" in data
 
-    def test_reset_password_POST_400_bad_data(self):
+    def test_reset_password_request_POST_400_bad_data(self):
         body = get_mock_email_body()
         del body["email"]
-        response = self.__send_reset_password_POST_request(body)
+        response = self.__send_reset_password_request_POST_request(body)
         self._assert_400(response, {
             "email": [
                 "Missing data for required field.",
             ],
         })
 
-    def test_reset_password_POST_400_not_existing(self):
+    def test_reset_password_request_POST_400_not_existing(self):
         body = get_mock_email_body()
-        response = self.__send_reset_password_POST_request(body)
+        response = self.__send_reset_password_request_POST_request(body)
         self._assert_400(response, {
             "email": [
                 "There is no account with this email.",
             ],
         })
 
-    def test_reset_password_POST_415(self):
-        response = self.client.post(url_for("auth.reset_password_POST"))
+    def test_reset_password_request_POST_415(self):
+        response = self.client.post(
+            url_for("auth.reset_password_request_POST"),
+        )
         self._assert_415(response)
 
-    def __send_reset_password_POST_request(self, body):
+    def __send_reset_password_request_POST_request(self, body):
         return self.client.post(
-            url_for("auth.reset_password_POST"),
+            url_for("auth.reset_password_request_POST"),
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(body),
+        )
+
+    #
+    # reset_password_POST tests.
+    #
+
+    def test_reset_password_POST_204(self):
+        user = self.create_user()
+        password = fake.password()
+        response = self.__send_reset_password_POST_request(
+            self.__get_reset_password_token(str(user.auth_id)),
+            get_mock_password_body(password=password),
+        )
+        self._assert_204(response)
+        updated_user = get_user_by_email(user.email)
+        assert updated_user.auth_id != user.auth_id
+        assert updated_user.last_updated != user.last_updated
+        assert verify_password(updated_user.password, password)
+
+    def test_reset_password_POST_400_bad_token(self):
+        response = self.__send_reset_password_POST_request(
+            "token",
+            get_mock_password_body(),
+        )
+        self._assert_400(response, {
+            "token": [
+                "Invalid token.",
+            ],
+        })
+
+    def test_reset_password_POST_400_bad_auth_id(self):
+        response = self.__send_reset_password_POST_request(
+            self.__get_reset_password_token("some token"),
+            get_mock_password_body(),
+        )
+        self._assert_400(response, {
+            "token": [
+                "Invalid token.",
+            ],
+        })
+
+    def test_reset_password_POST_400_bad_data(self):
+        body = get_mock_password_body()
+        del body["password"]
+        response = self.__send_reset_password_POST_request(
+            self.__get_reset_password_token(str(self.user.auth_id)),
+            body,
+        )
+        self._assert_400(response, {
+            "password": [
+                "Missing data for required field.",
+            ],
+        })
+
+    def test_reset_password_POST_415(self):
+        response = self.client.post(
+            url_for("auth.reset_password_POST", token="token"),
+        )
+        self._assert_415(response)
+
+    def __get_reset_password_token(self, auth_id, expires_in=3600):
+        return TimedJSONWebSignatureSerializer(
+            self.app.secret_key,
+            expires_in,
+        ).dumps(auth_id).decode()
+
+    def __send_reset_password_POST_request(self, token, body):
+        return self.client.post(
+            url_for("auth.reset_password_POST", token=token),
             headers={"Content-Type": "application/json"},
             data=json.dumps(body),
         )

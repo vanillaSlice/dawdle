@@ -11,6 +11,8 @@ from dawdle.extensions.sendgrid import TEMPLATE_IDS, sendgrid
 from dawdle.utils import remove_extra_whitespace
 from dawdle.utils.mongoengine import to_ObjectId
 
+__PASSWORD_RESET_TOKEN_EXPIRATION = 900
+
 
 def save_new_user(name, email, raw_password):
     user = User()
@@ -51,7 +53,7 @@ def serialize_verification_token(user):
     return URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))
 
 
-def get_user_from_token(token):
+def get_user_from_verification_token(token):
     auth_id = deserialize_verification_token(token)
     return get_user_from_auth_id(auth_id)
 
@@ -82,6 +84,7 @@ def send_password_reset_email(user):
         data={
             "name": user.name,
             "token": serialize_password_reset_token(user),
+            "expiration": __PASSWORD_RESET_TOKEN_EXPIRATION,
         },
     )
 
@@ -89,5 +92,28 @@ def send_password_reset_email(user):
 def serialize_password_reset_token(user):
     return TimedJSONWebSignatureSerializer(
         current_app.secret_key,
-        expires_in=600,
+        expires_in=__PASSWORD_RESET_TOKEN_EXPIRATION,
     ).dumps(str(user.auth_id)).decode()
+
+
+def deserialize_password_reset_token(token):
+    try:
+        auth_id = TimedJSONWebSignatureSerializer(
+            current_app.secret_key,
+            expires_in=__PASSWORD_RESET_TOKEN_EXPIRATION,
+        ).loads(token)
+        return to_ObjectId(auth_id)
+    except BadSignature:
+        return ObjectId()
+
+
+def get_user_from_password_reset_token(token):
+    auth_id = deserialize_password_reset_token(token)
+    return get_user_from_auth_id(auth_id)
+
+
+def update_user_password(user, password):
+    user.password = encrypt_password(password)
+    user.auth_id = ObjectId()
+    user.last_updated = datetime.utcnow()
+    user.save()

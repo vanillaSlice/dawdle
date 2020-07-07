@@ -144,18 +144,30 @@ paths:
           $ref: '#/components/responses/415'
 
   /auth/reset-password/{token}:
-    get:
-      summary: Verifies a password reset
+    post:
+      summary: Resets a user's password
       tags:
-        - proposed-auth
+        - auth
       security: []
       parameters:
         - $ref: '#/components/parameters/Token'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+              required:
+                - password
       responses:
         204:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
+        415:
+          $ref: '#/components/responses/415'
 
 components:
   parameters:

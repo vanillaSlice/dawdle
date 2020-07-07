@@ -1,9 +1,11 @@
 # pylint: disable=no-self-use
 
 from dawdle.components.auth.schemas import (email_password_schema,
-                                            email_schema, sign_up_schema)
+                                            email_schema, password_schema,
+                                            sign_up_schema)
 from tests.components.auth.utils import (get_mock_email_body,
                                          get_mock_email_password_body,
+                                         get_mock_password_body,
                                          get_mock_sign_up_body)
 from tests.utils import fake
 
@@ -165,3 +167,33 @@ class TestSchemas:
                 "Missing data for required field.",
             ],
         }
+
+    #
+    # PasswordSchema tests.
+    #
+
+    def test_PasswordSchema_no_password(self):
+        body = get_mock_password_body()
+        del body["password"]
+        errors = password_schema.validate(body)
+        assert errors == {
+            "password": [
+                "Missing data for required field.",
+            ],
+        }
+
+    def test_PasswordSchema_password_less_than_min(self):
+        password = fake.pystr(min_chars=7, max_chars=7)
+        body = get_mock_password_body(password=password)
+        errors = password_schema.validate(body)
+        assert errors == {
+            "password": [
+                "Shorter than minimum length 8.",
+            ],
+        }
+
+    def test_PasswordSchema_password_equal_to_min(self):
+        password = fake.pystr(min_chars=8, max_chars=8)
+        body = get_mock_password_body(password=password)
+        errors = password_schema.validate(body)
+        assert not errors
