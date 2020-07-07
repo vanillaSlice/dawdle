@@ -12,7 +12,7 @@ from dawdle.utils import remove_extra_whitespace
 from dawdle.utils.mongoengine import to_ObjectId
 from dawdle.utils.schemas import Limits
 
-__PASSWORD_RESET_TOKEN_EXPIRATION = 900
+_PASSWORD_RESET_TOKEN_EXPIRATION = 900
 
 
 def get_user_by_email(email):
@@ -22,13 +22,13 @@ def get_user_by_email(email):
 def save_new_user(name, email, raw_password):
     user = User()
     user.name = name
-    user.initials = create_initials(name)
+    user.initials = __create_initials(name)
     user.email = email
     user.password = encrypt_password(raw_password)
     user.save()
 
 
-def create_initials(name):
+def __create_initials(name):
     name_trimmed = remove_extra_whitespace(name)
     split = "".join([c[0] for c in name_trimmed.split(" ")])
     return split[:Limits.MAX_USER_INITIALS_LENGTH].upper()
@@ -50,22 +50,22 @@ def send_verification_email(user):
         user.email,
         data={
             "name": user.name,
-            "token": serialize_verification_token(user),
+            "token": _serialize_verification_token(user),
         },
     )
 
 
-def serialize_verification_token(data):
+def _serialize_verification_token(data):
     auth_id = str(data.auth_id) if isinstance(data, User) else data
     return URLSafeSerializer(current_app.secret_key).dumps(auth_id)
 
 
 def get_user_from_verification_token(token):
-    auth_id = deserialize_verification_token(token)
+    auth_id = __deserialize_verification_token(token)
     return get_user_from_auth_id(auth_id)
 
 
-def deserialize_verification_token(token):
+def __deserialize_verification_token(token):
     try:
         auth_id = URLSafeSerializer(current_app.secret_key).loads(token)
         return to_ObjectId(auth_id)
@@ -91,30 +91,38 @@ def send_password_reset_email(user):
         user.email,
         data={
             "name": user.name,
-            "token": serialize_password_reset_token(user),
-            "expiration": __PASSWORD_RESET_TOKEN_EXPIRATION,
+            "token": _serialize_password_reset_token(user),
+            "expiration": _PASSWORD_RESET_TOKEN_EXPIRATION,
         },
     )
 
 
-def serialize_password_reset_token(data):
+def _serialize_password_reset_token(data, **kwargs):
     auth_id = str(data.auth_id) if isinstance(data, User) else data
+    expires_in = kwargs.get(
+        "expires_in",
+        _PASSWORD_RESET_TOKEN_EXPIRATION,
+    )
     return TimedJSONWebSignatureSerializer(
         current_app.secret_key,
-        expires_in=__PASSWORD_RESET_TOKEN_EXPIRATION,
+        expires_in=expires_in,
     ).dumps(auth_id).decode()
 
 
 def get_user_from_password_reset_token(token):
-    auth_id = deserialize_password_reset_token(token)
+    auth_id = __deserialize_password_reset_token(token)
     return get_user_from_auth_id(auth_id)
 
 
-def deserialize_password_reset_token(token):
+def __deserialize_password_reset_token(token, **kwargs):
+    expires_in = kwargs.get(
+        "expires_in",
+        _PASSWORD_RESET_TOKEN_EXPIRATION,
+    )
     try:
         auth_id = TimedJSONWebSignatureSerializer(
             current_app.secret_key,
-            expires_in=__PASSWORD_RESET_TOKEN_EXPIRATION,
+            expires_in=expires_in,
         ).loads(token)
         return to_ObjectId(auth_id)
     except BadSignature:

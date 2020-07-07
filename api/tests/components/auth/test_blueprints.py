@@ -5,10 +5,8 @@ from bson.objectid import ObjectId
 from flask import url_for
 from flask_jwt_extended import create_refresh_token
 
-from dawdle.components.auth.utils import (get_user_by_email,
-                                          serialize_password_reset_token,
-                                          serialize_verification_token,
-                                          verify_password)
+from dawdle.components.auth.utils import (_serialize_password_reset_token,
+                                          _serialize_verification_token)
 from tests.components.auth.helpers import (get_mock_email_body,
                                            get_mock_email_password_body,
                                            get_mock_password_body,
@@ -22,15 +20,16 @@ class TestAuth(TestBase):
     # sign_up_POST tests.
     #
 
-    def test_sign_up_POST_201(self):
+    @patch("dawdle.components.auth.blueprints.save_new_user")
+    def test_sign_up_POST_201(self, save_new_user):
         body = get_mock_sign_up_body()
         response = self.__send_sign_up_POST_request(body)
         self._assert_201(response)
-        user = get_user_by_email(body["email"])
-        assert user.email == body["email"]
-        assert user.initials
-        assert user.name == body["name"].strip()
-        assert verify_password(user.password, body["password"])
+        save_new_user.assert_called_with(
+            body["name"],
+            body["email"],
+            body["password"],
+        )
 
     def test_sign_up_POST_400_bad_data(self):
         body = get_mock_sign_up_body()
@@ -117,16 +116,13 @@ class TestAuth(TestBase):
     # verify_GET tests.
     #
 
-    def test_verify_GET_204(self):
+    @patch("dawdle.components.auth.blueprints.activate_user")
+    def test_verify_GET_204(self, activate_user):
         user = self.create_user(active=False)
-        token = serialize_verification_token(user)
+        token = _serialize_verification_token(user)
         response = self.__send_verify_GET_request(token)
         self._assert_204(response)
-        updated_user = get_user_by_email(user.email)
-        assert updated_user.active
-        assert updated_user.auth_id != user.auth_id
-        assert updated_user.last_updated != user.last_updated
-        assert updated_user.updated_by == updated_user
+        activate_user.assert_called_with(user)
 
     def test_verify_GET_400(self):
         response = self.__send_verify_GET_request("token")
@@ -224,7 +220,7 @@ class TestAuth(TestBase):
         assert "refresh_token" not in response.json
         assert response.json["user_id"] == str(self.user.id)
 
-    def test_token_refresh_GET_400(self):
+    def test_token_refresh_GET_400_bad_token(self):
         response = self.__send_token_refresh_GET_request("invalid")
         self._assert_400(response, {
             "token": [
@@ -299,18 +295,15 @@ class TestAuth(TestBase):
     # reset_password_POST tests.
     #
 
-    def test_reset_password_POST_204(self):
+    @patch("dawdle.components.auth.blueprints.update_user_password")
+    def test_reset_password_POST_204(self, update_user_password):
         user = self.create_user()
-        token = serialize_password_reset_token(user)
+        token = _serialize_password_reset_token(user)
         password = fake.password()
         body = get_mock_password_body(password=password)
         response = self.__send_reset_password_POST_request(token, body)
         self._assert_204(response)
-        updated_user = get_user_by_email(user.email)
-        assert updated_user.auth_id != user.auth_id
-        assert updated_user.last_updated != user.last_updated
-        assert verify_password(updated_user.password, password)
-        assert updated_user.updated_by == updated_user
+        update_user_password.assert_called_with(user, password)
 
     def test_reset_password_POST_400_bad_token(self):
         response = self.__send_reset_password_POST_request(
@@ -324,7 +317,7 @@ class TestAuth(TestBase):
         })
 
     def test_reset_password_POST_400_bad_data(self):
-        token = serialize_password_reset_token(self.user)
+        token = _serialize_password_reset_token(self.user)
         body = get_mock_password_body()
         del body["password"]
         response = self.__send_reset_password_POST_request(token, body)
