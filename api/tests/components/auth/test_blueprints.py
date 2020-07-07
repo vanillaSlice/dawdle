@@ -1,6 +1,7 @@
 import json
 from unittest.mock import patch
 
+from bson.objectid import ObjectId
 from flask import url_for
 from flask_jwt_extended import create_refresh_token
 
@@ -225,6 +226,15 @@ class TestAuth(TestBase):
 
     def test_token_refresh_GET_400(self):
         response = self.__send_token_refresh_GET_request("invalid")
+        self._assert_400(response, {
+            "token": [
+                "Invalid token.",
+            ],
+        })
+
+    def test_token_refresh_GET_400_not_existing(self):
+        token = create_refresh_token(str(ObjectId()))
+        response = self.__send_token_refresh_GET_request(token)
         self._assert_400(response, {
             "token": [
                 "Invalid token.",

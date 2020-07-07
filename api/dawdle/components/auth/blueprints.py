@@ -1,11 +1,12 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import (create_access_token, create_refresh_token,
-                                current_user, jwt_refresh_token_required)
+                                get_jwt_identity, jwt_refresh_token_required)
 
 from dawdle.components.auth.schemas import (email_password_schema,
                                             email_schema, password_schema,
                                             sign_up_schema)
 from dawdle.components.auth.utils import (activate_user, get_user_by_email,
+                                          get_user_from_auth_id,
                                           get_user_from_password_reset_token,
                                           get_user_from_verification_token,
                                           save_new_user,
@@ -134,9 +135,18 @@ def token_POST():
 @auth_bp.route("/token/refresh", methods=["GET"])
 @jwt_refresh_token_required
 def token_refresh_GET():
+    user = get_user_from_auth_id(get_jwt_identity())
+
+    if not user:
+        return build_400_error_response({
+            "token": [
+                "Invalid token.",
+            ],
+        })
+
     return jsonify(
-        access_token=create_access_token(identity=str(current_user.auth_id)),
-        user_id=str(current_user.id),
+        access_token=create_access_token(identity=str(user.auth_id)),
+        user_id=str(user.id),
     ), 200
 
 
