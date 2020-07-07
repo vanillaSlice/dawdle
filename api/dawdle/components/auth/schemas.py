@@ -11,7 +11,7 @@ class SignUpSchema(Schema):
     password = fields.Str(required=True, validate=Length(min=8))
 
     @pre_load
-    def normalise_name(self, in_data, **_):
+    def normalise(self, in_data, **_):
         trim_string(in_data, "name")
         return in_data
 

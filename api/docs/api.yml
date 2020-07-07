@@ -10,7 +10,6 @@ servers:
 
 tags:
   - name: auth
-  - name: proposed-auth
 
 paths:
   /auth/sign-up:

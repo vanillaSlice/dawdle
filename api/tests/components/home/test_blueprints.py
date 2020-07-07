@@ -1,9 +1,9 @@
 from flask import url_for
 
-from tests.utils import TestBlueprint
+from tests.utils import TestBase
 
 
-class TestHome(TestBlueprint):
+class TestHome(TestBase):
 
     def test_index_GET_200(self):
         response = self.client.get(

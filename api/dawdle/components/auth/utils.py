@@ -14,6 +14,10 @@ from dawdle.utils.mongoengine import to_ObjectId
 __PASSWORD_RESET_TOKEN_EXPIRATION = 900
 
 
+def get_user_by_email(email):
+    return User.objects(email=email).first()
+
+
 def save_new_user(name, email, raw_password):
     user = User()
     user.name = name
@@ -21,6 +25,11 @@ def save_new_user(name, email, raw_password):
     user.email = email
     user.password = encrypt_password(raw_password)
     user.save()
+
+
+def create_initials(name):
+    name_trimmed = remove_extra_whitespace(name)
+    return "".join([c[0] for c in name_trimmed.split(" ")])[:4].upper()
 
 
 def encrypt_password(raw_password):
@@ -31,11 +40,6 @@ def verify_password(user_password, password_provided):
     if not password_provided:
         return False
     return sha256_crypt.verify(password_provided, user_password)
-
-
-def create_initials(name):
-    name_trimmed = remove_extra_whitespace(name)
-    return "".join([c[0] for c in name_trimmed.split(" ")])[:4].upper()
 
 
 def send_verification_email(user):
@@ -49,8 +53,9 @@ def send_verification_email(user):
     )
 
 
-def serialize_verification_token(user):
-    return URLSafeSerializer(current_app.secret_key).dumps(str(user.auth_id))
+def serialize_verification_token(data):
+    auth_id = str(data.auth_id) if isinstance(data, User) else data
+    return URLSafeSerializer(current_app.secret_key).dumps(auth_id)
 
 
 def get_user_from_verification_token(token):
@@ -74,6 +79,7 @@ def activate_user(user):
     user.active = True
     user.auth_id = ObjectId()
     user.last_updated = datetime.utcnow()
+    user.updated_by = user
     user.save()
 
 
@@ -89,11 +95,17 @@ def send_password_reset_email(user):
     )
 
 
-def serialize_password_reset_token(user):
+def serialize_password_reset_token(data):
+    auth_id = str(data.auth_id) if isinstance(data, User) else data
     return TimedJSONWebSignatureSerializer(
         current_app.secret_key,
         expires_in=__PASSWORD_RESET_TOKEN_EXPIRATION,
-    ).dumps(str(user.auth_id)).decode()
+    ).dumps(auth_id).decode()
+
+
+def get_user_from_password_reset_token(token):
+    auth_id = deserialize_password_reset_token(token)
+    return get_user_from_auth_id(auth_id)
 
 
 def deserialize_password_reset_token(token):
@@ -107,17 +119,9 @@ def deserialize_password_reset_token(token):
         return ObjectId()
 
 
-def get_user_from_password_reset_token(token):
-    auth_id = deserialize_password_reset_token(token)
-    return get_user_from_auth_id(auth_id)
-
-
 def update_user_password(user, password):
-    user.password = encrypt_password(password)
     user.auth_id = ObjectId()
     user.last_updated = datetime.utcnow()
+    user.password = encrypt_password(password)
+    user.updated_by = user
     user.save()
-
-
-def get_user_by_email(email):
-    return User.objects(email=email).first()

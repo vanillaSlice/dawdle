@@ -10,7 +10,9 @@ jwt = JWTManager()
 @jwt.expired_token_loader
 def expired_token_loader(_):
     return build_400_error_response(messages={
-        "token": "Token expired.",
+        "token": [
+            "Token expired.",
+        ],
     })
 
 
@@ -18,7 +20,9 @@ def expired_token_loader(_):
 @jwt.user_loader_error_loader
 def invalid_token_loader(_):
     return build_400_error_response(messages={
-        "token": "Invalid token.",
+        "token": [
+            "Invalid token.",
+        ],
     })
 
 

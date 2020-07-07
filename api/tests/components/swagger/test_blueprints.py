@@ -1,9 +1,9 @@
 from flask import url_for
 
-from tests.utils import TestBlueprint
+from tests.utils import TestBase
 
 
-class TestSwagger(TestBlueprint):
+class TestSwagger(TestBase):
 
     def test_show_200(self):
         response = self.client.get(url_for("swagger_ui.show"))

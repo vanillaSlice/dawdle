@@ -7,7 +7,7 @@ from dawdle.components.user.models import User
 fake = Faker()
 
 
-class TestBlueprint:
+class TestBase:
 
     @classmethod
     def setup_class(cls):

@@ -29,9 +29,7 @@ def sign_up_POST():
 
     parsed_schema = sign_up_schema.dump(request.json)
 
-    user = get_user_by_email(parsed_schema["email"])
-
-    if user:
+    if get_user_by_email(parsed_schema["email"]):
         return build_400_error_response({
             "email": [
                 "There is already an account with this email.",

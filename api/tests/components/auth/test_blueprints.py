@@ -1,24 +1,21 @@
-import datetime
 import json
 from unittest.mock import patch
 
-from bson.objectid import ObjectId
 from flask import url_for
 from flask_jwt_extended import create_refresh_token
-from itsdangerous import TimedJSONWebSignatureSerializer, URLSafeSerializer
 
 from dawdle.components.auth.utils import (get_user_by_email,
+                                          serialize_password_reset_token,
                                           serialize_verification_token,
                                           verify_password)
-from dawdle.extensions.sendgrid import TEMPLATE_IDS
 from tests.components.auth.utils import (get_mock_email_body,
                                          get_mock_email_password_body,
                                          get_mock_password_body,
                                          get_mock_sign_up_body)
-from tests.utils import TestBlueprint, fake
+from tests.utils import TestBase, fake
 
 
-class TestAuth(TestBlueprint):
+class TestAuth(TestBase):
 
     #
     # sign_up_POST tests.
@@ -29,6 +26,7 @@ class TestAuth(TestBlueprint):
         response = self.__send_sign_up_POST_request(body)
         self._assert_201(response)
         user = get_user_by_email(body["email"])
+        assert user.email == body["email"]
         assert user.initials
         assert user.name == body["name"].strip()
         assert verify_password(user.password, body["password"])
@@ -44,8 +42,7 @@ class TestAuth(TestBlueprint):
         })
 
     def test_sign_up_POST_400_existing(self):
-        email = self.user.email
-        body = get_mock_sign_up_body(email=email)
+        body = get_mock_sign_up_body(email=self.user.email)
         response = self.__send_sign_up_POST_request(body)
         self._assert_400(response, {
             "email": [
@@ -68,20 +65,13 @@ class TestAuth(TestBlueprint):
     # verify_POST tests.
     #
 
-    @patch("dawdle.components.auth.utils.sendgrid")
-    def test_verify_POST_204(self, sendgrid):
+    @patch("dawdle.components.auth.blueprints.send_verification_email")
+    def test_verify_POST_204(self, send_verification_email):
         user = self.create_user(active=False)
         body = get_mock_email_body(email=user.email)
         response = self.__send_verify_POST_request(body)
         self._assert_204(response)
-        sendgrid.send.assert_called_with(
-            TEMPLATE_IDS["verification"],
-            user.email,
-            data={
-                "name": user.name,
-                "token": serialize_verification_token(user),
-            }
-        )
+        send_verification_email.assert_called_with(user)
 
     def test_verify_POST_400_bad_data(self):
         body = get_mock_email_body()
@@ -128,33 +118,22 @@ class TestAuth(TestBlueprint):
 
     def test_verify_GET_204(self):
         user = self.create_user(active=False)
-        token = self.__get_verify_token(str(user.auth_id))
+        token = serialize_verification_token(user)
         response = self.__send_verify_GET_request(token)
         self._assert_204(response)
         updated_user = get_user_by_email(user.email)
         assert updated_user.active
         assert updated_user.auth_id != user.auth_id
         assert updated_user.last_updated != user.last_updated
+        assert updated_user.updated_by == updated_user
 
-    def test_verify_GET_400_bad_token(self):
+    def test_verify_GET_400(self):
         response = self.__send_verify_GET_request("token")
         self._assert_400(response, {
             "token": [
                 "Invalid token.",
             ],
         })
-
-    def test_verify_GET_400_bad_auth_id(self):
-        token = self.__get_verify_token("some token")
-        response = self.__send_verify_GET_request(token)
-        self._assert_400(response, {
-            "token": [
-                "Invalid token.",
-            ],
-        })
-
-    def __get_verify_token(self, auth_id):
-        return URLSafeSerializer(self.app.secret_key).dumps(auth_id)
 
     def __send_verify_GET_request(self, token):
         return self.client.get(url_for("auth.verify_GET", token=token))
@@ -242,31 +221,12 @@ class TestAuth(TestBlueprint):
         assert "access_token" in response.json
         assert "refresh_token" not in response.json
 
-    def test_token_refresh_GET_400_expired_token(self):
-        token = create_refresh_token(
-            str(self.user.auth_id),
-            expires_delta=datetime.timedelta(hours=-12),
-        )
-        response = self.__send_token_refresh_GET_request(token)
-        self._assert_400(response, {
-            "token": "Token expired.",
-        })
-
-    def test_token_refresh_GET_400_invalid_token(self):
+    def test_token_refresh_GET_400(self):
         response = self.__send_token_refresh_GET_request("invalid")
         self._assert_400(response, {
-            "token": "Invalid token.",
-        })
-
-    def test_token_refresh_GET_400_auth_id_changed(self):
-        user = self.create_user(active=True)
-        old_auth_id = user.auth_id
-        user.auth_id = ObjectId()
-        user.save()
-        token = create_refresh_token(str(old_auth_id))
-        response = self.__send_token_refresh_GET_request(token)
-        self._assert_400(response, {
-            "token": "Invalid token.",
+            "token": [
+                "Invalid token.",
+            ],
         })
 
     def test_token_refresh_GET_401(self):
@@ -284,17 +244,12 @@ class TestAuth(TestBlueprint):
     # reset_password_request_POST tests.
     #
 
-    @patch("dawdle.components.auth.utils.sendgrid")
-    def test_reset_password_request_POST_204(self, sendgrid):
+    @patch("dawdle.components.auth.blueprints.send_password_reset_email")
+    def test_reset_password_request_POST_204(self, send_password_reset_email):
         body = get_mock_email_body(email=self.user.email)
         response = self.__send_reset_password_request_POST_request(body)
         self._assert_204(response)
-        args, kwargs = sendgrid.send.call_args
-        assert args[0] == TEMPLATE_IDS["password-reset"]
-        assert args[1] == self.user.email
-        data = kwargs["data"]
-        assert data["name"] == self.user.name
-        assert "token" in data
+        send_password_reset_email.assert_called_with(self.user)
 
     def test_reset_password_request_POST_400_bad_data(self):
         body = get_mock_email_body()
@@ -334,16 +289,16 @@ class TestAuth(TestBlueprint):
 
     def test_reset_password_POST_204(self):
         user = self.create_user()
+        token = serialize_password_reset_token(user)
         password = fake.password()
-        response = self.__send_reset_password_POST_request(
-            self.__get_reset_password_token(str(user.auth_id)),
-            get_mock_password_body(password=password),
-        )
+        body = get_mock_password_body(password=password)
+        response = self.__send_reset_password_POST_request(token, body)
         self._assert_204(response)
         updated_user = get_user_by_email(user.email)
         assert updated_user.auth_id != user.auth_id
         assert updated_user.last_updated != user.last_updated
         assert verify_password(updated_user.password, password)
+        assert updated_user.updated_by == updated_user
 
     def test_reset_password_POST_400_bad_token(self):
         response = self.__send_reset_password_POST_request(
@@ -356,24 +311,11 @@ class TestAuth(TestBlueprint):
             ],
         })
 
-    def test_reset_password_POST_400_bad_auth_id(self):
-        response = self.__send_reset_password_POST_request(
-            self.__get_reset_password_token("some token"),
-            get_mock_password_body(),
-        )
-        self._assert_400(response, {
-            "token": [
-                "Invalid token.",
-            ],
-        })
-
     def test_reset_password_POST_400_bad_data(self):
+        token = serialize_password_reset_token(self.user)
         body = get_mock_password_body()
         del body["password"]
-        response = self.__send_reset_password_POST_request(
-            self.__get_reset_password_token(str(self.user.auth_id)),
-            body,
-        )
+        response = self.__send_reset_password_POST_request(token, body)
         self._assert_400(response, {
             "password": [
                 "Missing data for required field.",
@@ -385,12 +327,6 @@ class TestAuth(TestBlueprint):
             url_for("auth.reset_password_POST", token="token"),
         )
         self._assert_415(response)
-
-    def __get_reset_password_token(self, auth_id, expires_in=3600):
-        return TimedJSONWebSignatureSerializer(
-            self.app.secret_key,
-            expires_in,
-        ).dumps(auth_id).decode()
 
     def __send_reset_password_POST_request(self, token, body):
         return self.client.post(

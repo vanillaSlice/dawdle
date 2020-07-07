@@ -4,10 +4,10 @@ from bson.objectid import ObjectId
 from flask import url_for
 from flask_jwt_extended import create_refresh_token
 
-from tests.utils import TestBlueprint, fake
+from tests.utils import TestBase, fake
 
 
-class TestJtw(TestBlueprint):
+class TestJtw(TestBase):
 
     def test_400_expired(self):
         token = create_refresh_token(
@@ -15,15 +15,27 @@ class TestJtw(TestBlueprint):
             expires_delta=datetime.timedelta(hours=-12),
         )
         response = self.__send_request(token)
-        self._assert_400(response, {"token": "Token expired."})
+        self._assert_400(response, {
+            "token": [
+                "Token expired.",
+            ],
+        })
 
     def test_400_invalid(self):
         response = self.__send_request(fake.sentence())
-        self._assert_400(response, {"token": "Invalid token."})
+        self._assert_400(response, {
+            "token": [
+                "Invalid token.",
+            ],
+        })
 
     def test_400_not_existing(self):
         response = self.__send_request(str(ObjectId()))
-        self._assert_400(response, {"token": "Invalid token."})
+        self._assert_400(response, {
+            "token": [
+                "Invalid token.",
+            ],
+        })
 
     def test_401(self):
         response = self.__send_request()
