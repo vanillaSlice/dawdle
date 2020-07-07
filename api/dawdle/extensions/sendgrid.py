@@ -10,7 +10,9 @@ class SendGrid:
 
     def init_app(self, app):
         self.__app = app
-        self.__client = SendGridAPIClient(app.config["SENDGRID_API_KEY"])
+        self.__client = SendGridAPIClient(
+            self.__app.config["SENDGRID_API_KEY"],
+        )
 
     def send(self, template_id, recipient, data):
         message = Mail(
