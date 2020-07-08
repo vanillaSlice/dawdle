@@ -77,8 +77,8 @@ def verify_POST():
     return "", 204
 
 
-@auth_bp.route("/verify/<token>", methods=["GET"])
-def verify_GET(token):
+@auth_bp.route("/verify/<token>", methods=["POST"])
+def verify_token_POST(token):
     user = get_user_from_verification_token(token)
 
     if not user:
@@ -152,7 +152,7 @@ def token_refresh_GET():
 
 @auth_bp.route("/reset-password", methods=["POST"])
 @expects_json
-def reset_password_request_POST():
+def reset_password_POST():
     errors = email_schema.validate(request.json)
 
     if errors:
@@ -176,7 +176,7 @@ def reset_password_request_POST():
 
 @auth_bp.route("/reset-password/<token>", methods=["POST"])
 @expects_json
-def reset_password_POST(token):
+def reset_password_token_POST(token):
     user = get_user_from_password_reset_token(token)
 
     if not user:

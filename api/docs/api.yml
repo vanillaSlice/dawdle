@@ -62,7 +62,7 @@ paths:
           $ref: '#/components/responses/415'
 
   /auth/verify/{token}:
-    get:
+    post:
       summary: Verifies a user's email address from the token sent
       tags:
         - auth
