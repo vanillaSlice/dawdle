@@ -139,6 +139,13 @@ class TestSchemas:
             ],
         }
 
+    def test_SignUpSchema_unrecognised_field(self):
+        body = get_mock_sign_up_body()
+        key = fake.pystr()
+        body[key] = fake.pystr()
+        assert not sign_up_schema.validate(body)
+        assert key not in sign_up_schema.dump(body)
+
     #
     # EmailSchema tests.
     #
@@ -162,6 +169,13 @@ class TestSchemas:
                 "Not a valid email address.",
             ],
         }
+
+    def test_EmailSchema_unrecognised_field(self):
+        body = get_mock_email_body()
+        key = fake.pystr()
+        body[key] = fake.pystr()
+        assert not email_schema.validate(body)
+        assert key not in email_schema.dump(body)
 
     #
     # EmailPasswordSchema tests.
@@ -196,6 +210,13 @@ class TestSchemas:
                 "Missing data for required field.",
             ],
         }
+
+    def test_EmailPasswordSchema_unrecognised_field(self):
+        body = get_mock_email_password_body()
+        key = fake.pystr()
+        body[key] = fake.pystr()
+        assert not email_password_schema.validate(body)
+        assert key not in email_password_schema.dump(body)
 
     #
     # PasswordSchema tests.
@@ -256,3 +277,10 @@ class TestSchemas:
                 f"and {Limits.MAX_USER_PASSWORD_LENGTH}.",
             ],
         }
+
+    def test_PasswordSchema_unrecognised_field(self):
+        body = get_mock_password_body()
+        key = fake.pystr()
+        body[key] = fake.pystr()
+        assert not password_schema.validate(body)
+        assert key not in password_schema.dump(body)

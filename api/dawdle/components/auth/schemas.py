@@ -1,10 +1,13 @@
-from marshmallow import Schema, fields, pre_load
+from marshmallow import EXCLUDE, Schema, fields, pre_load
 from marshmallow.validate import Length
 
 from dawdle.utils.schemas import Limits, trim_string
 
 
 class SignUpSchema(Schema):
+
+    class Meta:
+        unknown = EXCLUDE
 
     name = fields.Str(
         required=True,
@@ -29,16 +32,25 @@ class SignUpSchema(Schema):
 
 class EmailSchema(Schema):
 
+    class Meta:
+        unknown = EXCLUDE
+
     email = fields.Email(required=True)
 
 
 class EmailPasswordSchema(Schema):
+
+    class Meta:
+        unknown = EXCLUDE
 
     email = fields.Email(required=True)
     password = fields.Str(required=True)
 
 
 class PasswordSchema(Schema):
+
+    class Meta:
+        unknown = EXCLUDE
 
     password = fields.Str(
         required=True,
