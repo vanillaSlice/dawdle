@@ -1,8 +1,10 @@
 from faker import Faker
-from flask_jwt_extended import create_access_token, create_refresh_token
 
 from dawdle import create_app
-from dawdle.components.auth.utils import encrypt_password
+from dawdle.components.auth.utils import (create_fresh_user_access_token,
+                                          create_user_access_token,
+                                          create_user_refresh_token,
+                                          encrypt_password)
 from dawdle.components.user.models import User
 from dawdle.utils.schemas import Limits
 
@@ -19,13 +21,9 @@ class TestBase:
 
         cls._password = fake.password()
         cls._user = cls._create_user(password=cls._password)
-        cls._identity = str(cls._user.auth_id)
-        cls._fresh_access_token = create_access_token(
-            identity=cls._identity,
-            fresh=True,
-        )
-        cls._access_token = create_access_token(identity=cls._identity)
-        cls._refresh_token = create_refresh_token(identity=cls._identity)
+        cls._fresh_access_token = create_fresh_user_access_token(cls._user)
+        cls._access_token = create_user_access_token(cls._user)
+        cls._refresh_token = create_user_refresh_token(cls._user)
 
     @classmethod
     def _create_user(cls, **kwargs):

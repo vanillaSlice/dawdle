@@ -2,6 +2,7 @@ from datetime import datetime
 
 from bson.objectid import ObjectId
 from flask import current_app
+from flask_jwt_extended import create_access_token, create_refresh_token
 from itsdangerous import (BadSignature, TimedJSONWebSignatureSerializer,
                           URLSafeSerializer)
 from passlib.hash import sha256_crypt
@@ -83,6 +84,24 @@ def activate_user(user):
     user.last_updated = datetime.utcnow()
     user.updated_by = user
     user.save()
+
+
+def create_fresh_user_access_token(user):
+    return create_user_access_token(user, fresh=True)
+
+
+def create_user_access_token(user, fresh=False):
+    return create_access_token(
+        str(user.auth_id),
+        fresh=fresh,
+        user_claims={
+            "user_id": str(user.id),
+        },
+    )
+
+
+def create_user_refresh_token(user):
+    return create_refresh_token(str(user.auth_id))
 
 
 def send_password_reset_email(user):

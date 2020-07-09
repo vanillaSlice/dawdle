@@ -1,12 +1,12 @@
 import json
 from unittest.mock import patch
 
-from bson.objectid import ObjectId
 from flask import url_for
-from flask_jwt_extended import create_refresh_token
 
 from dawdle.components.auth.utils import (_serialize_password_reset_token,
-                                          _serialize_verification_token)
+                                          _serialize_verification_token,
+                                          create_fresh_user_access_token,
+                                          create_user_refresh_token)
 from tests.components.auth.helpers import (get_mock_email_body,
                                            get_mock_email_password_body,
                                            get_mock_password_body,
@@ -234,7 +234,9 @@ class TestAuth(TestBase):
         })
 
     def test_token_refresh_GET_400_not_existing(self):
-        token = create_refresh_token(str(ObjectId()))
+        user = self._create_user()
+        token = create_user_refresh_token(user)
+        user.delete()
         response = self.__send_token_refresh_GET_request(token)
         self._assert_400(response, {
             "token": [
@@ -309,17 +311,6 @@ class TestAuth(TestBase):
         self._assert_204(response)
         update_user_password.assert_called_with(self._user, password)
 
-    def test_reset_password_token_POST_400_bad_token(self):
-        response = self.__send_reset_password_token_POST_request(
-            "token",
-            get_mock_password_body(),
-        )
-        self._assert_400(response, {
-            "token": [
-                "Invalid token.",
-            ],
-        })
-
     def test_reset_password_token_POST_400_bad_data(self):
         token = _serialize_password_reset_token(self._user)
         body = get_mock_password_body()
@@ -328,6 +319,17 @@ class TestAuth(TestBase):
         self._assert_400(response, {
             "password": [
                 "Missing data for required field.",
+            ],
+        })
+
+    def test_reset_password_token_POST_400_bad_token(self):
+        response = self.__send_reset_password_token_POST_request(
+            "token",
+            get_mock_password_body(),
+        )
+        self._assert_400(response, {
+            "token": [
+                "Invalid token.",
             ],
         })
 
@@ -387,10 +389,13 @@ class TestAuth(TestBase):
         })
 
     def test_users_user_password_POST_400_not_existing(self):
+        user = self._create_user()
+        token = create_fresh_user_access_token(user)
+        user.delete()
         response = self.__send_users_user_password_POST_request(
-            ObjectId(),
+            user.id,
             get_mock_password_body(),
-            self._fresh_access_token,
+            token,
         )
         self._assert_400(response, {
             "user_id": [
