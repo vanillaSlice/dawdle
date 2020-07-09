@@ -62,7 +62,7 @@ def _serialize_verification_token(data):
 
 def get_user_from_verification_token(token):
     auth_id = __deserialize_verification_token(token)
-    return get_user_from_auth_id(auth_id)
+    return get_user_by_auth_id(auth_id)
 
 
 def __deserialize_verification_token(token):
@@ -73,7 +73,7 @@ def __deserialize_verification_token(token):
         return ObjectId()
 
 
-def get_user_from_auth_id(auth_id):
+def get_user_by_auth_id(auth_id):
     return User.objects(auth_id=to_ObjectId(auth_id)).first()
 
 
@@ -111,7 +111,7 @@ def _serialize_password_reset_token(data, **kwargs):
 
 def get_user_from_password_reset_token(token):
     auth_id = __deserialize_password_reset_token(token)
-    return get_user_from_auth_id(auth_id)
+    return get_user_by_auth_id(auth_id)
 
 
 def __deserialize_password_reset_token(token, **kwargs):
@@ -135,3 +135,7 @@ def update_user_password(user, password):
     user.password = encrypt_password(password)
     user.updated_by = user
     user.save()
+
+
+def get_user_by_id(user_id):
+    return User.objects(id=user_id).first()

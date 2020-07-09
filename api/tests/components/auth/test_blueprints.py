@@ -23,7 +23,7 @@ class TestAuth(TestBase):
     @patch("dawdle.components.auth.blueprints.send_verification_email")
     @patch("dawdle.components.auth.blueprints.save_new_user")
     def test_sign_up_POST_201(self, save_new_user, send_verification_email):
-        user = self.create_user(active=False)
+        user = self._create_user(active=False)
         save_new_user.return_value = user
         body = get_mock_sign_up_body()
         response = self.__send_sign_up_POST_request(body)
@@ -46,7 +46,7 @@ class TestAuth(TestBase):
         })
 
     def test_sign_up_POST_400_existing(self):
-        body = get_mock_sign_up_body(email=self.user.email)
+        body = get_mock_sign_up_body(email=self._user.email)
         response = self.__send_sign_up_POST_request(body)
         self._assert_400(response, {
             "email": [
@@ -55,11 +55,11 @@ class TestAuth(TestBase):
         })
 
     def test_sign_up_POST_415(self):
-        response = self.client.post(url_for("auth.sign_up_POST"))
+        response = self._client.post(url_for("auth.sign_up_POST"))
         self._assert_415(response)
 
     def __send_sign_up_POST_request(self, body):
-        return self.client.post(
+        return self._client.post(
             url_for("auth.sign_up_POST"),
             headers={"Content-Type": "application/json"},
             data=json.dumps(body),
@@ -71,7 +71,7 @@ class TestAuth(TestBase):
 
     @patch("dawdle.components.auth.blueprints.send_verification_email")
     def test_verify_POST_204(self, send_verification_email):
-        user = self.create_user(active=False)
+        user = self._create_user(active=False)
         body = get_mock_email_body(email=user.email)
         response = self.__send_verify_POST_request(body)
         self._assert_204(response)
@@ -97,7 +97,7 @@ class TestAuth(TestBase):
         })
 
     def test_verify_POST_400_verified(self):
-        body = get_mock_email_body(email=self.user.email)
+        body = get_mock_email_body(email=self._user.email)
         response = self.__send_verify_POST_request(body)
         self._assert_400(response, {
             "email": [
@@ -106,11 +106,11 @@ class TestAuth(TestBase):
         })
 
     def test_verify_POST_415(self):
-        response = self.client.post(url_for("auth.verify_POST"))
+        response = self._client.post(url_for("auth.verify_POST"))
         self._assert_415(response)
 
     def __send_verify_POST_request(self, body):
-        return self.client.post(
+        return self._client.post(
             url_for("auth.verify_POST"),
             headers={"Content-Type": "application/json"},
             data=json.dumps(body),
@@ -122,7 +122,7 @@ class TestAuth(TestBase):
 
     @patch("dawdle.components.auth.blueprints.activate_user")
     def test_verify_token_POST_204(self, activate_user):
-        user = self.create_user(active=False)
+        user = self._create_user(active=False)
         token = _serialize_verification_token(user)
         response = self.__send_verify_token_POST_request(token)
         self._assert_204(response)
@@ -137,7 +137,9 @@ class TestAuth(TestBase):
         })
 
     def __send_verify_token_POST_request(self, token):
-        return self.client.post(url_for("auth.verify_token_POST", token=token))
+        return self._client.post(
+            url_for("auth.verify_token_POST", token=token),
+        )
 
     #
     # token_POST tests.
@@ -145,14 +147,14 @@ class TestAuth(TestBase):
 
     def test_token_POST_200(self):
         body = get_mock_email_password_body(
-            email=self.user.email,
-            password=self.password,
+            email=self._user.email,
+            password=self._password,
         )
         response = self.__send_token_POST_request(body)
         self._assert_200(response)
         assert "access_token" in response.json
         assert "refresh_token" in response.json
-        assert response.json["user_id"] == str(self.user.id)
+        assert response.json["user_id"] == str(self._user.id)
 
     def test_token_POST_400_bad_data(self):
         body = get_mock_email_password_body()
@@ -177,7 +179,7 @@ class TestAuth(TestBase):
         })
 
     def test_token_POST_400_wrong_password(self):
-        body = get_mock_email_password_body(email=self.user.email)
+        body = get_mock_email_password_body(email=self._user.email)
         response = self.__send_token_POST_request(body)
         self._assert_400(response, {
             "email": [
@@ -189,10 +191,10 @@ class TestAuth(TestBase):
         })
 
     def test_token_POST_400_not_verified(self):
-        user = self.create_user(active=False, password=self.password)
+        user = self._create_user(active=False, password=self._password)
         body = get_mock_email_password_body(
             email=user.email,
-            password=self.password,
+            password=self._password,
         )
         response = self.__send_token_POST_request(body)
         self._assert_400(response, {
@@ -202,11 +204,11 @@ class TestAuth(TestBase):
         })
 
     def test_token_POST_415(self):
-        response = self.client.post(url_for("auth.token_POST"))
+        response = self._client.post(url_for("auth.token_POST"))
         self._assert_415(response)
 
     def __send_token_POST_request(self, body):
-        return self.client.post(
+        return self._client.post(
             url_for("auth.token_POST"),
             headers={"Content-Type": "application/json"},
             data=json.dumps(body),
@@ -217,12 +219,11 @@ class TestAuth(TestBase):
     #
 
     def test_token_refresh_GET_200(self):
-        token = create_refresh_token(str(self.user.auth_id))
-        response = self.__send_token_refresh_GET_request(token)
+        response = self.__send_token_refresh_GET_request(self._refresh_token)
         self._assert_200(response)
         assert "access_token" in response.json
         assert "refresh_token" not in response.json
-        assert response.json["user_id"] == str(self.user.id)
+        assert response.json["user_id"] == str(self._user.id)
 
     def test_token_refresh_GET_400_bad_token(self):
         response = self.__send_token_refresh_GET_request("invalid")
@@ -247,7 +248,7 @@ class TestAuth(TestBase):
 
     def __send_token_refresh_GET_request(self, token=None):
         headers = {"Authorization": f"Bearer {token}"} if token else {}
-        return self.client.get(
+        return self._client.get(
             url_for("auth.token_refresh_GET"),
             headers=headers,
         )
@@ -258,10 +259,10 @@ class TestAuth(TestBase):
 
     @patch("dawdle.components.auth.blueprints.send_password_reset_email")
     def test_reset_password_POST_204(self, send_password_reset_email):
-        body = get_mock_email_body(email=self.user.email)
+        body = get_mock_email_body(email=self._user.email)
         response = self.__send_reset_password_POST_request(body)
         self._assert_204(response)
-        send_password_reset_email.assert_called_with(self.user)
+        send_password_reset_email.assert_called_with(self._user)
 
     def test_reset_password_POST_400_bad_data(self):
         body = get_mock_email_body()
@@ -283,13 +284,13 @@ class TestAuth(TestBase):
         })
 
     def test_reset_password_POST_415(self):
-        response = self.client.post(
+        response = self._client.post(
             url_for("auth.reset_password_POST"),
         )
         self._assert_415(response)
 
     def __send_reset_password_POST_request(self, body):
-        return self.client.post(
+        return self._client.post(
             url_for("auth.reset_password_POST"),
             headers={"Content-Type": "application/json"},
             data=json.dumps(body),
@@ -301,12 +302,12 @@ class TestAuth(TestBase):
 
     @patch("dawdle.components.auth.blueprints.update_user_password")
     def test_reset_password_token_POST_204(self, update_user_password):
-        token = _serialize_password_reset_token(self.user)
+        token = _serialize_password_reset_token(self._user)
         password = fake.password()
         body = get_mock_password_body(password=password)
         response = self.__send_reset_password_token_POST_request(token, body)
         self._assert_204(response)
-        update_user_password.assert_called_with(self.user, password)
+        update_user_password.assert_called_with(self._user, password)
 
     def test_reset_password_token_POST_400_bad_token(self):
         response = self.__send_reset_password_token_POST_request(
@@ -320,7 +321,7 @@ class TestAuth(TestBase):
         })
 
     def test_reset_password_token_POST_400_bad_data(self):
-        token = _serialize_password_reset_token(self.user)
+        token = _serialize_password_reset_token(self._user)
         body = get_mock_password_body()
         del body["password"]
         response = self.__send_reset_password_token_POST_request(token, body)
@@ -331,14 +332,103 @@ class TestAuth(TestBase):
         })
 
     def test_reset_password_token_POST_415(self):
-        response = self.client.post(
+        response = self._client.post(
             url_for("auth.reset_password_token_POST", token="token"),
         )
         self._assert_415(response)
 
     def __send_reset_password_token_POST_request(self, token, body):
-        return self.client.post(
+        return self._client.post(
             url_for("auth.reset_password_token_POST", token=token),
             headers={"Content-Type": "application/json"},
+            data=json.dumps(body),
+        )
+
+    #
+    # users_user_password_POST tests.
+    #
+
+    @patch("dawdle.components.auth.blueprints.update_user_password")
+    def test_users_user_password_POST_204(self, update_user_password):
+        password = fake.password()
+        body = get_mock_password_body(password=password)
+        response = self.__send_users_user_password_POST_request(
+            self._user.id,
+            body,
+            self._fresh_access_token,
+        )
+        self._assert_204(response)
+        update_user_password.assert_called_with(self._user, password)
+
+    def test_users_user_password_POST_400_not_fresh_token(self):
+        response = self.__send_users_user_password_POST_request(
+            self._user.id,
+            get_mock_password_body(),
+            self._access_token,
+        )
+        self._assert_400(response, {
+            "token": [
+                "Needs fresh token.",
+            ],
+        })
+
+    def test_users_user_password_POST_400_bad_data(self):
+        body = get_mock_password_body()
+        del body["password"]
+        response = self.__send_users_user_password_POST_request(
+            self._user.id,
+            body,
+            self._fresh_access_token,
+        )
+        self._assert_400(response, {
+            "password": [
+                "Missing data for required field.",
+            ],
+        })
+
+    def test_users_user_password_POST_400_not_existing(self):
+        response = self.__send_users_user_password_POST_request(
+            ObjectId(),
+            get_mock_password_body(),
+            self._fresh_access_token,
+        )
+        self._assert_400(response, {
+            "user_id": [
+                "There is no account with this user ID.",
+            ],
+        })
+
+    def test_users_user_password_POST_401(self):
+        response = self.__send_users_user_password_POST_request(
+            self._user.id,
+            get_mock_password_body(),
+        )
+        self._assert_401(response)
+
+    def test_users_user_password_POST_403(self):
+        response = self.__send_users_user_password_POST_request(
+            self._create_user().id,
+            get_mock_password_body(),
+            self._fresh_access_token,
+        )
+        self._assert_403(response)
+
+    def test_users_user_password_POST_415(self):
+        response = self._client.post(
+            url_for("auth.users_user_password_POST", user_id=self._user.id),
+        )
+        self._assert_415(response)
+
+    def __send_users_user_password_POST_request(self,
+                                                user_id,
+                                                body,
+                                                token=None):
+        headers = {"Content-Type": "application/json"}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
+        return self._client.post(
+            url_for("auth.users_user_password_POST", user_id=user_id),
+            headers=headers,
             data=json.dumps(body),
         )

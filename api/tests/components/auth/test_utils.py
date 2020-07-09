@@ -6,8 +6,8 @@ from dawdle.components.auth.utils import (_PASSWORD_RESET_TOKEN_EXPIRATION,
                                           _serialize_password_reset_token,
                                           _serialize_verification_token,
                                           activate_user, encrypt_password,
-                                          get_user_by_email,
-                                          get_user_from_auth_id,
+                                          get_user_by_auth_id,
+                                          get_user_by_email, get_user_by_id,
                                           get_user_from_password_reset_token,
                                           get_user_from_verification_token,
                                           save_new_user,
@@ -29,7 +29,7 @@ class TestUtils(TestBase):
         assert not get_user_by_email(fake.email())
 
     def test_get_user_by_email(self):
-        assert get_user_by_email(self.user.email) == self.user
+        assert get_user_by_email(self._user.email) == self._user
 
     #
     # save_new_user tests.
@@ -75,12 +75,12 @@ class TestUtils(TestBase):
     def test_send_verification_email(self, sendgrid, serialize):
         token = fake.pystr()
         serialize.return_value = token
-        send_verification_email(self.user)
+        send_verification_email(self._user)
         sendgrid.send.assert_called_with(
             TemplateIds.VERIFICATION,
-            self.user.email,
+            self._user.email,
             data={
-                "name": self.user.name,
+                "name": self._user.name,
                 "token": token,
             },
         )
@@ -98,25 +98,25 @@ class TestUtils(TestBase):
         assert not get_user_from_verification_token(token)
 
     def test_get_user_from_verification_token(self):
-        token = _serialize_verification_token(self.user)
-        assert self.user == get_user_from_verification_token(token)
+        token = _serialize_verification_token(self._user)
+        assert self._user == get_user_from_verification_token(token)
 
     #
-    # get_user_from_auth_id tests.
+    # get_user_by_auth_id tests.
     #
 
-    def test_get_user_from_auth_id_not_existing(self):
-        assert not get_user_from_auth_id(ObjectId())
+    def test_get_user_by_auth_id_not_existing(self):
+        assert not get_user_by_auth_id(ObjectId())
 
-    def test_get_user_from_auth_id(self):
-        assert get_user_from_auth_id(self.user.auth_id) == self.user
+    def test_get_user_by_auth_id(self):
+        assert get_user_by_auth_id(self._user.auth_id) == self._user
 
     #
     # activate_user tests.
     #
 
     def test_activate_user(self):
-        user = self.create_user(active=False)
+        user = self._create_user(active=False)
         old_user = get_user_by_email(user.email)
         activate_user(user)
         assert user.active
@@ -133,12 +133,12 @@ class TestUtils(TestBase):
     def test_send_password_reset_email(self, sendgrid, serialize):
         token = fake.pystr()
         serialize.return_value = token
-        send_password_reset_email(self.user)
+        send_password_reset_email(self._user)
         sendgrid.send.assert_called_with(
             TemplateIds.PASSWORD_RESET,
-            self.user.email,
+            self._user.email,
             data={
-                "name": self.user.name,
+                "name": self._user.name,
                 "token": token,
                 "expiration": _PASSWORD_RESET_TOKEN_EXPIRATION,
             },
@@ -157,19 +157,19 @@ class TestUtils(TestBase):
         assert not get_user_from_password_reset_token(token)
 
     def test_get_user_from_password_reset_token_expired(self):
-        token = _serialize_password_reset_token(self.user, expires_in=-6000)
+        token = _serialize_password_reset_token(self._user, expires_in=-6000)
         assert not get_user_from_password_reset_token(token)
 
     def test_get_user_from_password_reset_token(self):
-        token = _serialize_password_reset_token(self.user)
-        assert self.user == get_user_from_password_reset_token(token)
+        token = _serialize_password_reset_token(self._user)
+        assert self._user == get_user_from_password_reset_token(token)
 
     #
     # update_user_password tests.
     #
 
     def test_update_user_password(self):
-        user = self.create_user()
+        user = self._create_user()
         old_user = get_user_by_email(user.email)
         password = fake.password()
         update_user_password(user, password)
@@ -177,3 +177,13 @@ class TestUtils(TestBase):
         assert user.last_updated != old_user.last_updated
         assert verify_password(user.password, password)
         assert user.updated_by == old_user
+
+    #
+    # get_user_by_id tests.
+    #
+
+    def test_get_user_by_id_not_existing(self):
+        assert not get_user_by_id(ObjectId())
+
+    def test_get_user_by_id(self):
+        assert get_user_by_id(self._user.id) == self._user

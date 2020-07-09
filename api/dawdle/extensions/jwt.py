@@ -24,6 +24,15 @@ def invalid_token_loader(_):
     })
 
 
+@jwt.needs_fresh_token_loader
+def needs_fresh_token_loader():
+    return build_400_error_response(messages={
+        "token": [
+            "Needs fresh token.",
+        ],
+    })
+
+
 @jwt.unauthorized_loader
 def unauthorized_loader(_):
     return build_401_error_response()

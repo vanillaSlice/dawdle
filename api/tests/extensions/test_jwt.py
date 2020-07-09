@@ -10,7 +10,7 @@ class TestJtw(TestBase):
 
     def test_400_expired(self):
         token = create_refresh_token(
-            str(self.user.auth_id),
+            str(self._user.auth_id),
             expires_delta=datetime.timedelta(hours=-12),
         )
         response = self.__send_request(token)
@@ -34,7 +34,7 @@ class TestJtw(TestBase):
 
     def __send_request(self, token=None):
         headers = {"Authorization": f"Bearer {token}"} if token else {}
-        return self.client.get(
+        return self._client.get(
             url_for("auth.token_refresh_GET"),
             headers=headers,
         )

@@ -6,7 +6,7 @@ from tests.helpers import TestBase
 class TestHome(TestBase):
 
     def test_index_GET_200(self):
-        response = self.client.get(
+        response = self._client.get(
             url_for("home.index_GET"),
             follow_redirects=True,
         )

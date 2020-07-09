@@ -1,4 +1,5 @@
 from faker import Faker
+from flask_jwt_extended import create_access_token, create_refresh_token
 
 from dawdle import create_app
 from dawdle.components.auth.utils import encrypt_password
@@ -12,15 +13,22 @@ class TestBase:
 
     @classmethod
     def setup_class(cls):
-        cls.app = create_app(testing=True)
-        cls.app.app_context().push()
-        cls.client = cls.app.test_client()
+        cls._app = create_app(testing=True)
+        cls._app.app_context().push()
+        cls._client = cls._app.test_client()
 
-        cls.password = fake.password()
-        cls.user = cls.create_user(password=cls.password)
+        cls._password = fake.password()
+        cls._user = cls._create_user(password=cls._password)
+        cls._identity = str(cls._user.auth_id)
+        cls._fresh_access_token = create_access_token(
+            identity=cls._identity,
+            fresh=True,
+        )
+        cls._access_token = create_access_token(identity=cls._identity)
+        cls._refresh_token = create_refresh_token(identity=cls._identity)
 
     @classmethod
-    def create_user(cls, **kwargs):
+    def _create_user(cls, **kwargs):
         user = User()
         user.active = kwargs.get("active", True)
         user.email = kwargs.get("email", fake.email())
@@ -36,10 +44,10 @@ class TestBase:
 
     @classmethod
     def teardown_class(cls):
-        cls.clear_db()
+        cls.__clear_db()
 
     @classmethod
-    def clear_db(cls):
+    def __clear_db(cls):
         User.objects.delete()
 
     @staticmethod
@@ -90,6 +98,16 @@ class TestBase:
             "the URL requested. You either supplied the wrong credentials "
             "(e.g. a bad password), or your browser doesn't understand how "
             "to supply the credentials required.",
+            messages,
+        )
+
+    def _assert_403(self, response, messages=None):
+        self._assert_error(
+            response,
+            403,
+            "Forbidden",
+            "You don't have the permission to access the requested resource. "
+            "It is either read-protected or not readable by the server.",
             messages,
         )
 
