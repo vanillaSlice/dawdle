@@ -37,11 +37,13 @@ def sign_up_POST():
             ],
         })
 
-    save_new_user(
+    user = save_new_user(
         parsed_schema["name"],
         parsed_schema["email"],
         parsed_schema["password"],
     )
+
+    send_verification_email(user)
 
     return "", 201
 

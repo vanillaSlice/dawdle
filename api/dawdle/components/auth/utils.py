@@ -25,7 +25,7 @@ def save_new_user(name, email, raw_password):
     user.initials = __create_initials(name)
     user.email = email
     user.password = encrypt_password(raw_password)
-    user.save()
+    return user.save()
 
 
 def __create_initials(name):

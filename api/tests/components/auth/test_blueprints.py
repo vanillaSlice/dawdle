@@ -20,8 +20,11 @@ class TestAuth(TestBase):
     # sign_up_POST tests.
     #
 
+    @patch("dawdle.components.auth.blueprints.send_verification_email")
     @patch("dawdle.components.auth.blueprints.save_new_user")
-    def test_sign_up_POST_201(self, save_new_user):
+    def test_sign_up_POST_201(self, save_new_user, send_verification_email):
+        user = self.create_user(active=False)
+        save_new_user.return_value = user
         body = get_mock_sign_up_body()
         response = self.__send_sign_up_POST_request(body)
         self._assert_201(response)
@@ -30,6 +33,7 @@ class TestAuth(TestBase):
             body["email"],
             body["password"],
         )
+        send_verification_email.assert_called_with(user)
 
     def test_sign_up_POST_400_bad_data(self):
         body = get_mock_sign_up_body()

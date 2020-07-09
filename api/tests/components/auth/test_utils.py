@@ -39,8 +39,7 @@ class TestUtils(TestBase):
         name = "john  peter smith richard david"
         email = fake.email()
         password = fake.password()
-        save_new_user(name, email, password)
-        user = get_user_by_email(email)
+        user = save_new_user(name, email, password)
         assert user.initials == "JPSR"
         assert user.name == name.strip()
         assert verify_password(user.password, password)
