@@ -10,6 +10,7 @@ servers:
 
 tags:
   - name: auth
+  - name: proposed-auth
 
 paths:
   /auth/sign-up:
@@ -154,12 +155,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                password:
-                  type: string
-              required:
-                - password
+              $ref: '#/components/schemas/Password'
       responses:
         204:
           $ref: '#/components/responses/204'
@@ -168,10 +164,70 @@ paths:
         415:
           $ref: '#/components/responses/415'
 
+  /auth/users/{user_id}/password:
+    post:
+      summary: Updates a user's password
+      tags:
+        - proposed-auth
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Password'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+        415:
+          $ref: '#/components/responses/415'
+
+  /auth/users/{user_id}/email:
+    post:
+      summary: Updates a user's email
+      tags:
+        - proposed-auth
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Email'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+        415:
+          $ref: '#/components/responses/415'
+
+  /auth/users/{user_id}:
+    delete:
+      summary: Deletes a user's account
+      tags:
+        - proposed-auth
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+
 components:
   parameters:
     Token:
       name: token
+      in: path
+      required: true
+      schema:
+        type: string
+
+    UserId:
+      name: user_id
       in: path
       required: true
       schema:
@@ -229,6 +285,14 @@ components:
         - status
         - name
         - description
+
+    Password:
+      type: object
+      properties:
+        password:
+          type: string
+      required:
+        - password
 
     Token:
       type: object
