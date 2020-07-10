@@ -1,3 +1,4 @@
+CONTACT_EMAIL = None
 DEBUG = True
 ENV = "local"
 JWT_SECRET_KEY = "default secret key"

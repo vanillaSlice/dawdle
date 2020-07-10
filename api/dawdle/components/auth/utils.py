@@ -49,7 +49,7 @@ def send_verification_email(user):
     sendgrid.send(
         TemplateIds.VERIFICATION,
         user.email,
-        data={
+        {
             "name": user.name,
             "token": _serialize_verification_token(user),
         },
@@ -108,7 +108,7 @@ def send_password_reset_email(user):
     sendgrid.send(
         TemplateIds.PASSWORD_RESET,
         user.email,
-        data={
+        {
             "name": user.name,
             "token": _serialize_password_reset_token(user),
             "expiration": _PASSWORD_RESET_TOKEN_EXPIRATION,
@@ -169,7 +169,7 @@ def send_deletion_email(user):
     sendgrid.send(
         TemplateIds.ACCOUNT_DELETION,
         user.email,
-        data={"name": user.name},
+        {"name": user.name},
     )
 
 

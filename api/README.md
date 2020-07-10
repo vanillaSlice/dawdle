@@ -14,6 +14,7 @@ The following properties can be configured:
 
 | Name                    | Purpose                                                          | Default               |
 | ----------------------- | ---------------------------------------------------------------- | --------------------- |
+| `CONTACT_EMAIL`         | The address to send contact emails to.                           | `None`                |
 | `DEBUG`                 | If debug mode is enabled.                                        | `False`               |
 | `ENV`                   | Environment the app is running in.                               | `production`          |
 | `JWT_SECRET_KEY`        | A secret key used for JWT tokens.                                | `default secret key`  |

@@ -81,7 +81,7 @@ class TestUtils(TestBase):
         sendgrid.send.assert_called_with(
             TemplateIds.VERIFICATION,
             self._user.email,
-            data={
+            {
                 "name": self._user.name,
                 "token": token,
             },
@@ -139,7 +139,7 @@ class TestUtils(TestBase):
         sendgrid.send.assert_called_with(
             TemplateIds.PASSWORD_RESET,
             self._user.email,
-            data={
+            {
                 "name": self._user.name,
                 "token": token,
                 "expiration": _PASSWORD_RESET_TOKEN_EXPIRATION,
@@ -209,7 +209,7 @@ class TestUtils(TestBase):
         sendgrid.send.assert_called_with(
             TemplateIds.ACCOUNT_DELETION,
             self._user.email,
-            data={"name": self._user.name},
+            {"name": self._user.name},
         )
 
     #

@@ -31,6 +31,7 @@ def __load_config(app, testing):
         return str(load_env_var(key)).lower() == "true"
 
     app.config.update({
+        "CONTACT_EMAIL": load_env_var("CONTACT_EMAIL"),
         "DEBUG": load_env_var_bool("DEBUG"),
         "ENV": load_env_var("ENV"),
         "JWT_SECRET_KEY": load_env_var("JWT_SECRET_KEY"),

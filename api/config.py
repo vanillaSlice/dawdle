@@ -1,5 +1,6 @@
 class Default:
 
+    CONTACT_EMAIL = None
     DEBUG = False
     ENV = "production"
     JWT_SECRET_KEY = "default secret key"
@@ -13,6 +14,7 @@ class Default:
 
 class Test:
 
+    CONTACT_EMAIL = None
     DEBUG = True
     ENV = "test"
     JWT_SECRET_KEY = "default secret key"

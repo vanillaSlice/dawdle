@@ -6,12 +6,10 @@ info:
 
 servers:
   - url: https://dawdle-api.mikelowe.xyz/api
-  - url: http://127.0.0.1:5000/api
 
 tags:
   - name: auth
   - name: contact
-  - name: proposed-contact
 
 paths:
   /auth/sign-up:
@@ -246,7 +244,7 @@ paths:
     post:
       summary: Sends a contact email
       tags:
-        - proposed-contact
+        - contact
       security: []
       requestBody:
         content:
