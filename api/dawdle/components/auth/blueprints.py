@@ -9,7 +9,7 @@ from dawdle.components.auth.utils import (activate_user,
                                           create_fresh_user_access_token,
                                           create_user_access_token,
                                           create_user_refresh_token,
-                                          get_user_by_auth_id,
+                                          delete_user, get_user_by_auth_id,
                                           get_user_by_email, get_user_by_id,
                                           get_user_from_password_reset_token,
                                           get_user_from_verification_token,
@@ -190,6 +190,24 @@ def reset_password_token_POST(token):
     parsed_schema = password_schema.dump(request.json)
 
     update_user_password(user, parsed_schema["password"])
+
+    return "", 204
+
+
+@auth_bp.route("/users/<user_id>", methods=["DELETE"])
+@fresh_jwt_required
+def users_user_DELETE(user_id):
+    if user_id != get_jwt_claims().get("user_id"):
+        abort(403)
+
+    user = get_user_by_id(user_id)
+
+    if not user:
+        abort(404)
+
+    delete_user(user)
+
+    # send deletion email
 
     return "", 204
 

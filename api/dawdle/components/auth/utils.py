@@ -160,6 +160,10 @@ def get_user_by_id(user_id):
     return User.objects(id=user_id).first()
 
 
+def delete_user(user):
+    user.delete()
+
+
 def update_user_email(user, email):
     user.active = False
     user.auth_id = ObjectId()

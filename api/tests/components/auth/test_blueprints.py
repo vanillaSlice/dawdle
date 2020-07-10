@@ -329,6 +329,63 @@ class TestAuth(TestBase):
         )
 
     #
+    # users_user_DELETE tests.
+    #
+
+    @patch("dawdle.components.auth.blueprints.delete_user")
+    def test_users_user_DELETE_204(self, delete_user):
+        response = self.__send_users_user_DELETE_request(
+            self._user.id,
+            self._fresh_access_token,
+        )
+        self._assert_204(response)
+        delete_user.assert_called_with(self._user)
+
+    def test_users_user_DELETE_400_not_fresh_token(self):
+        response = self.__send_users_user_DELETE_request(
+            self._user.id,
+            self._access_token,
+        )
+        self._assert_400(response, {
+            "token": [
+                "Needs fresh token.",
+            ],
+        })
+
+    def test_users_user_DELETE_401(self):
+        response = self.__send_users_user_DELETE_request(
+            self._user.id,
+        )
+        self._assert_401(response)
+
+    def test_users_user_DELETE_403(self):
+        response = self.__send_users_user_DELETE_request(
+            self._create_user().id,
+            self._fresh_access_token,
+        )
+        self._assert_403(response)
+
+    def test_users_user_DELETE_404(self):
+        user = self._create_user()
+        token = create_fresh_user_access_token(user)
+        user.delete()
+        response = self.__send_users_user_DELETE_request(
+            user.id,
+            token,
+        )
+        self._assert_404(response)
+
+    def __send_users_user_DELETE_request(self, user_id, token=None):
+        headers = {"Content-Type": "application/json"}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
+        return self._client.delete(
+            url_for("auth.users_user_DELETE", user_id=user_id),
+            headers=headers,
+        )
+
+    #
     # users_user_password_POST tests.
     #
 

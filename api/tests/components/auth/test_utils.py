@@ -5,7 +5,8 @@ from bson.objectid import ObjectId
 from dawdle.components.auth.utils import (_PASSWORD_RESET_TOKEN_EXPIRATION,
                                           _serialize_password_reset_token,
                                           _serialize_verification_token,
-                                          activate_user, encrypt_password,
+                                          activate_user, delete_user,
+                                          encrypt_password,
                                           get_user_by_auth_id,
                                           get_user_by_email, get_user_by_id,
                                           get_user_from_password_reset_token,
@@ -188,6 +189,15 @@ class TestUtils(TestBase):
 
     def test_get_user_by_id(self):
         assert get_user_by_id(self._user.id) == self._user
+
+    #
+    # delete_user tests.
+    #
+
+    def test_delete_user(self):
+        user = self._create_user()
+        delete_user(user)
+        assert not get_user_by_id(user.id)
 
     #
     # update_user_email tests.
