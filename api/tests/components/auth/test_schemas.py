@@ -73,6 +73,15 @@ class TestSchemas:
             ],
         }
 
+    def test_SignUpSchema_blank_email(self):
+        body = get_mock_sign_up_body(email=" ")
+        errors = sign_up_schema.validate(body)
+        assert errors == {
+            "email": [
+                "Missing data for required field.",
+            ],
+        }
+
     def test_SignUpSchema_invalid_email(self):
         email = fake.sentence()
         body = get_mock_sign_up_body(email=email)
@@ -82,6 +91,14 @@ class TestSchemas:
                 "Not a valid email address.",
             ],
         }
+
+    def test_SignUpSchema_trims_email(self):
+        email = fake.email()
+        body = get_mock_sign_up_body(email=f"  {email}  ")
+        errors = sign_up_schema.validate(body)
+        assert not errors
+        dumped = sign_up_schema.dump(body)
+        assert dumped["email"] == email
 
     def test_SignUpSchema_no_password(self):
         body = get_mock_sign_up_body()
@@ -160,6 +177,15 @@ class TestSchemas:
             ],
         }
 
+    def test_EmailSchema_blank_email(self):
+        body = get_mock_email_body(email=" ")
+        errors = email_schema.validate(body)
+        assert errors == {
+            "email": [
+                "Missing data for required field.",
+            ],
+        }
+
     def test_EmailSchema_invalid_email(self):
         email = fake.sentence()
         body = get_mock_email_body(email=email)
@@ -169,6 +195,14 @@ class TestSchemas:
                 "Not a valid email address.",
             ],
         }
+
+    def test_EmailSchema_trims_email(self):
+        email = fake.email()
+        body = get_mock_email_body(email=f"  {email}  ")
+        errors = email_schema.validate(body)
+        assert not errors
+        dumped = email_schema.dump(body)
+        assert dumped["email"] == email
 
     def test_EmailSchema_unrecognised_field(self):
         body = get_mock_email_body()
@@ -191,6 +225,15 @@ class TestSchemas:
             ],
         }
 
+    def test_EmailPasswordSchema_blank_email(self):
+        body = get_mock_email_password_body(email=" ")
+        errors = email_password_schema.validate(body)
+        assert errors == {
+            "email": [
+                "Missing data for required field.",
+            ],
+        }
+
     def test_EmailPasswordSchema_invalid_email(self):
         email = fake.sentence()
         body = get_mock_email_password_body(email=email)
@@ -200,6 +243,14 @@ class TestSchemas:
                 "Not a valid email address.",
             ],
         }
+
+    def test_EmailPasswordSchema_trims_email(self):
+        email = fake.email()
+        body = get_mock_email_password_body(email=f"  {email}  ")
+        errors = email_password_schema.validate(body)
+        assert not errors
+        dumped = email_password_schema.dump(body)
+        assert dumped["email"] == email
 
     def test_EmailPasswordSchema_no_password(self):
         body = get_mock_email_password_body()

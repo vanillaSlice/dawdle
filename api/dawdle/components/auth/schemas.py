@@ -27,6 +27,7 @@ class SignUpSchema(Schema):
     @pre_load
     def normalise(self, in_data, **_):
         trim_string(in_data, "name")
+        trim_string(in_data, "email")
         return in_data
 
 
@@ -37,6 +38,11 @@ class EmailSchema(Schema):
 
     email = fields.Email(required=True)
 
+    @pre_load
+    def normalise(self, in_data, **_):
+        trim_string(in_data, "email")
+        return in_data
+
 
 class EmailPasswordSchema(Schema):
 
@@ -45,6 +51,11 @@ class EmailPasswordSchema(Schema):
 
     email = fields.Email(required=True)
     password = fields.Str(required=True)
+
+    @pre_load
+    def normalise(self, in_data, **_):
+        trim_string(in_data, "email")
+        return in_data
 
 
 class PasswordSchema(Schema):
