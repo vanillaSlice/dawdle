@@ -11,7 +11,7 @@ from dawdle.components.auth.utils import (_PASSWORD_RESET_TOKEN_EXPIRATION,
                                           get_user_by_email, get_user_by_id,
                                           get_user_from_password_reset_token,
                                           get_user_from_verification_token,
-                                          save_new_user,
+                                          save_new_user, send_deletion_email,
                                           send_password_reset_email,
                                           send_verification_email,
                                           update_user_email,
@@ -196,8 +196,21 @@ class TestUtils(TestBase):
 
     def test_delete_user(self):
         user = self._create_user()
-        delete_user(user)
+        user = delete_user(user)
         assert not get_user_by_id(user.id)
+
+    #
+    # send_password_reset_email tests.
+    #
+
+    @patch("dawdle.components.auth.utils.sendgrid")
+    def test_send_deletion_email(self, sendgrid):
+        send_deletion_email(self._user)
+        sendgrid.send.assert_called_with(
+            TemplateIds.DELETION,
+            self._user.email,
+            data={"name": self._user.name},
+        )
 
     #
     # update_user_email tests.

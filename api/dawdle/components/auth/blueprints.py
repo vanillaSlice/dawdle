@@ -13,7 +13,7 @@ from dawdle.components.auth.utils import (activate_user,
                                           get_user_by_email, get_user_by_id,
                                           get_user_from_password_reset_token,
                                           get_user_from_verification_token,
-                                          save_new_user,
+                                          save_new_user, send_deletion_email,
                                           send_password_reset_email,
                                           send_verification_email,
                                           update_user_email,
@@ -205,9 +205,9 @@ def users_user_DELETE(user_id):
     if not user:
         abort(404)
 
-    delete_user(user)
+    user = delete_user(user)
 
-    # send deletion email
+    send_deletion_email(user)
 
     return "", 204
 

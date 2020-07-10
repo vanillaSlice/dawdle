@@ -162,6 +162,15 @@ def get_user_by_id(user_id):
 
 def delete_user(user):
     user.delete()
+    return user
+
+
+def send_deletion_email(user):
+    sendgrid.send(
+        TemplateIds.DELETION,
+        user.email,
+        data={"name": user.name},
+    )
 
 
 def update_user_email(user, email):

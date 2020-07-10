@@ -332,14 +332,17 @@ class TestAuth(TestBase):
     # users_user_DELETE tests.
     #
 
+    @patch("dawdle.components.auth.blueprints.send_deletion_email")
     @patch("dawdle.components.auth.blueprints.delete_user")
-    def test_users_user_DELETE_204(self, delete_user):
+    def test_users_user_DELETE_204(self, delete_user, send_deletion_email):
+        delete_user.return_value = self._user
         response = self.__send_users_user_DELETE_request(
             self._user.id,
             self._fresh_access_token,
         )
         self._assert_204(response)
         delete_user.assert_called_with(self._user)
+        send_deletion_email.assert_called_with(self._user)
 
     def test_users_user_DELETE_400_not_fresh_token(self):
         response = self.__send_users_user_DELETE_request(
