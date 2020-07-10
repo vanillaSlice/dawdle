@@ -83,7 +83,7 @@ def activate_user(user):
     user.auth_id = ObjectId()
     user.last_updated = datetime.utcnow()
     user.updated_by = user
-    user.save()
+    return user.save()
 
 
 def create_fresh_user_access_token(user):
@@ -153,7 +153,7 @@ def update_user_password(user, password):
     user.last_updated = datetime.utcnow()
     user.password = encrypt_password(password)
     user.updated_by = user
-    user.save()
+    return user.save()
 
 
 def get_user_by_id(user_id):
@@ -166,4 +166,4 @@ def update_user_email(user, email):
     user.email = email
     user.last_updated = datetime.utcnow()
     user.updated_by = user
-    user.save()
+    return user.save()

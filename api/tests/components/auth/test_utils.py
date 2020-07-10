@@ -119,7 +119,7 @@ class TestUtils(TestBase):
     def test_activate_user(self):
         user = self._create_user(active=False)
         old_user = get_user_by_email(user.email)
-        activate_user(user)
+        user = activate_user(user)
         assert user.active
         assert user.auth_id != old_user.auth_id
         assert user.last_updated != old_user.last_updated
@@ -173,7 +173,7 @@ class TestUtils(TestBase):
         user = self._create_user()
         old_user = get_user_by_email(user.email)
         password = fake.password()
-        update_user_password(user, password)
+        user = update_user_password(user, password)
         assert user.auth_id != old_user.auth_id
         assert user.last_updated != old_user.last_updated
         assert verify_password(user.password, password)
@@ -197,7 +197,7 @@ class TestUtils(TestBase):
         user = self._create_user()
         old_user = get_user_by_email(user.email)
         email = fake.email()
-        update_user_email(user, email)
+        user = update_user_email(user, email)
         assert not user.active
         assert user.auth_id != old_user.auth_id
         assert user.email == email

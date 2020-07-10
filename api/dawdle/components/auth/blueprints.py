@@ -244,7 +244,7 @@ def users_user_email_POST(user_id):
     if not user:
         abort(404)
 
-    update_user_email(user, parsed_schema["email"])
+    user = update_user_email(user, parsed_schema["email"])
 
     send_verification_email(user)
 

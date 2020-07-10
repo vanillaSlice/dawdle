@@ -425,6 +425,7 @@ class TestAuth(TestBase):
     def test_users_user_email_POST_204(self,
                                        update_user_email,
                                        send_verification_email):
+        update_user_email.return_value = self._user
         email = fake.email()
         body = get_mock_email_body(email=email)
         response = self.__send_users_user_email_POST_request(
