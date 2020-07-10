@@ -28,3 +28,6 @@ def trim_string(in_data, key):
         return
 
     in_data[key] = trimmed
+
+
+DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S%Z"

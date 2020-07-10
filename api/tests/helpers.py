@@ -32,7 +32,7 @@ class TestBase:
         user.email = kwargs.get("email", fake.email())
         user.initials = kwargs.get(
             "initials",
-            fake.pystr(Limits.MAX_USER_INITIALS_LENGTH),
+            fake.pystr(max_chars=Limits.MAX_USER_INITIALS_LENGTH),
         ).upper()
         user.name = kwargs.get("name", fake.name())
         user.password = encrypt_password(

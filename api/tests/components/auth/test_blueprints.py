@@ -379,9 +379,7 @@ class TestAuth(TestBase):
         self._assert_404(response)
 
     def __send_users_user_DELETE_request(self, user_id, token=None):
-        headers = {"Content-Type": "application/json"}
-        if token:
-            headers["Authorization"] = f"Bearer {token}"
+        headers = {"Authorization": f"Bearer {token}"} if token else {}
 
         return self._client.delete(
             url_for("auth.users_user_DELETE", user_id=user_id),

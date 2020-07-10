@@ -295,7 +295,7 @@ paths:
     get:
       summary: Returns user's info
       tags:
-        - proposed-users
+        - users
       parameters:
         - $ref: '#/components/parameters/UserId'
       responses:
@@ -305,6 +305,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/400'
         401:
           $ref: '#/components/responses/401'
         403:

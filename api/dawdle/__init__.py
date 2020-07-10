@@ -75,6 +75,9 @@ def __register_blueprints(app):
     from dawdle.components.swagger.blueprints import swagger_bp
     app.register_blueprint(swagger_bp)
 
+    from dawdle.components.users.blueprints import users_bp
+    app.register_blueprint(users_bp)
+
 
 def __attach_error_handlers(app):
     @app.errorhandler(Exception)
