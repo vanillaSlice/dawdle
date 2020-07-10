@@ -10,6 +10,8 @@ servers:
 
 tags:
   - name: auth
+  - name: contact
+  - name: proposed-contact
 
 paths:
   /auth/sign-up:
@@ -237,6 +239,36 @@ paths:
           $ref: '#/components/responses/403'
         404:
           $ref: '#/components/responses/404'
+        415:
+          $ref: '#/components/responses/415'
+
+  /contact:
+    post:
+      summary: Sends a contact email
+      tags:
+        - proposed-contact
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                subject:
+                  type: string
+                message:
+                  type: string
+              required:
+                - email
+                - subject
+                - message
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
         415:
           $ref: '#/components/responses/415'
 
