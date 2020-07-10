@@ -5,7 +5,7 @@ from dawdle.components.auth.utils import (create_fresh_user_access_token,
                                           create_user_access_token,
                                           create_user_refresh_token,
                                           encrypt_password)
-from dawdle.components.user.models import User
+from dawdle.components.users.models import User
 from dawdle.extensions.marshmallow import Limits
 
 fake = Faker()

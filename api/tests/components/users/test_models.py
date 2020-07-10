@@ -2,7 +2,7 @@ from datetime import datetime
 
 from bson.objectid import ObjectId
 
-from dawdle.components.user.models import User
+from dawdle.components.users.models import User
 
 
 class TestModels:

@@ -7,7 +7,7 @@ from itsdangerous import (BadSignature, TimedJSONWebSignatureSerializer,
                           URLSafeSerializer)
 from passlib.hash import sha256_crypt
 
-from dawdle.components.user.models import User
+from dawdle.components.users.models import User
 from dawdle.extensions.marshmallow import Limits
 from dawdle.extensions.mongoengine import to_ObjectId
 from dawdle.extensions.sendgrid import TemplateIds, sendgrid
