@@ -57,11 +57,12 @@ class TestSchemas:
         }
 
     def test_SignUpSchema_trims_name(self):
-        body = get_mock_sign_up_body(name="  John  Smith  ")
+        name = fake.name()
+        body = get_mock_sign_up_body(name=f"  {name}  ")
         errors = sign_up_schema.validate(body)
         assert not errors
         dumped = sign_up_schema.dump(body)
-        assert dumped["name"] == "John Smith"
+        assert dumped["name"] == name
 
     def test_SignUpSchema_no_email(self):
         body = get_mock_sign_up_body()
