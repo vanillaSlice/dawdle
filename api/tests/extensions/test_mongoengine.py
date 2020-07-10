@@ -1,6 +1,6 @@
 from bson.objectid import ObjectId
 
-from dawdle.utils.mongoengine import to_ObjectId
+from dawdle.extensions.mongoengine import to_ObjectId
 
 
 class TestMongoengine:

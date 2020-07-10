@@ -1,7 +1,7 @@
 from marshmallow import EXCLUDE, Schema, fields, pre_load
 from marshmallow.validate import Length
 
-from dawdle.utils.schemas import Limits, trim_string
+from dawdle.extensions.marshmallow import Limits, trim_string
 
 
 class SignUpSchema(Schema):

@@ -8,10 +8,10 @@ from itsdangerous import (BadSignature, TimedJSONWebSignatureSerializer,
 from passlib.hash import sha256_crypt
 
 from dawdle.components.user.models import User
+from dawdle.extensions.marshmallow import Limits
+from dawdle.extensions.mongoengine import to_ObjectId
 from dawdle.extensions.sendgrid import TemplateIds, sendgrid
 from dawdle.utils import remove_extra_whitespace
-from dawdle.utils.mongoengine import to_ObjectId
-from dawdle.utils.schemas import Limits
 
 _PASSWORD_RESET_TOKEN_EXPIRATION = 900
 

@@ -1,7 +1,7 @@
 from dawdle.components.auth.schemas import (email_password_schema,
                                             email_schema, password_schema,
                                             sign_up_schema)
-from dawdle.utils.schemas import Limits
+from dawdle.extensions.marshmallow import Limits
 from tests.components.auth.helpers import (get_mock_email_body,
                                            get_mock_email_password_body,
                                            get_mock_password_body,

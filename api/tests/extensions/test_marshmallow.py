@@ -1,7 +1,7 @@
-from dawdle.utils.schemas import trim_string
+from dawdle.extensions.marshmallow import trim_string
 
 
-class TestSchemas:
+class TestMarshmallow:
 
     def test_trim_string_not_present(self):
         data = {}
