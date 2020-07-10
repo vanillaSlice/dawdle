@@ -8,7 +8,7 @@ from dawdle.utils.errors import build_400_error_response
 contact_bp = Blueprint("contact", __name__, url_prefix="/api/contact")
 
 
-@contact_bp.route("/", methods=["POST"])
+@contact_bp.route("", methods=["POST"])
 @expects_json
 def index_POST():
     errors = contact_schema.validate(request.json)

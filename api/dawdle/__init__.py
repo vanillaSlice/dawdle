@@ -14,7 +14,6 @@ def create_app(testing=False):
     __init_extensions(app)
     __register_blueprints(app)
     __attach_error_handlers(app)
-    __disable_strict_trailing_slashes(app)
 
     return app
 
@@ -91,7 +90,3 @@ def __attach_error_handlers(app):
     @app.errorhandler(500)
     def __handle_error(error):
         return build_error_response(error.code, error.name, error.description)
-
-
-def __disable_strict_trailing_slashes(app):
-    app.url_map.strict_slashes = False
