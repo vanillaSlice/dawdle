@@ -415,3 +415,104 @@ class TestAuth(TestBase):
             headers=headers,
             data=json.dumps(body),
         )
+
+    #
+    # users_user_email_POST tests.
+    #
+
+    @patch("dawdle.components.auth.blueprints.send_verification_email")
+    @patch("dawdle.components.auth.blueprints.update_user_email")
+    def test_users_user_email_POST_204(self,
+                                       update_user_email,
+                                       send_verification_email):
+        email = fake.email()
+        body = get_mock_email_body(email=email)
+        response = self.__send_users_user_email_POST_request(
+            self._user.id,
+            body,
+            self._fresh_access_token,
+        )
+        self._assert_204(response)
+        update_user_email.assert_called_with(self._user, email)
+        send_verification_email.assert_called_with(self._user)
+
+    def test_users_user_email_POST_400_not_fresh_token(self):
+        response = self.__send_users_user_email_POST_request(
+            self._user.id,
+            get_mock_email_body(),
+            self._access_token,
+        )
+        self._assert_400(response, {
+            "token": [
+                "Needs fresh token.",
+            ],
+        })
+
+    def test_users_user_email_POST_400_bad_data(self):
+        body = get_mock_email_body()
+        del body["email"]
+        response = self.__send_users_user_email_POST_request(
+            self._user.id,
+            body,
+            self._fresh_access_token,
+        )
+        self._assert_400(response, {
+            "email": [
+                "Missing data for required field.",
+            ],
+        })
+
+    def test_users_user_email_POST_400_existing(self):
+        response = self.__send_users_user_email_POST_request(
+            self._user.id,
+            get_mock_email_body(email=self._user.email),
+            self._fresh_access_token,
+        )
+        self._assert_400(response, {
+            "email": [
+                "There is already an account with this email.",
+            ],
+        })
+
+    def test_users_user_email_POST_401(self):
+        response = self.__send_users_user_email_POST_request(
+            self._user.id,
+            get_mock_email_body(),
+        )
+        self._assert_401(response)
+
+    def test_users_user_email_POST_403(self):
+        response = self.__send_users_user_email_POST_request(
+            self._create_user().id,
+            get_mock_email_body(),
+            self._fresh_access_token,
+        )
+        self._assert_403(response)
+
+    def test_users_user_email_POST_404(self):
+        user = self._create_user()
+        token = create_fresh_user_access_token(user)
+        user.delete()
+        response = self.__send_users_user_email_POST_request(
+            user.id,
+            get_mock_email_body(),
+            token,
+        )
+        self._assert_404(response)
+
+    def test_users_user_email_POST_415(self):
+        response = self._client.post(
+            url_for("auth.users_user_email_POST", user_id=self._user.id),
+        )
+        self._assert_415(response)
+
+    def __send_users_user_email_POST_request(self, user_id, body, token=None):
+        headers = {"Content-Type": "application/json"}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
+        return self._client.post(
+            url_for("auth.users_user_email_POST", user_id=user_id),
+            headers=headers,
+            data=json.dumps(body),
+        )

@@ -158,3 +158,12 @@ def update_user_password(user, password):
 
 def get_user_by_id(user_id):
     return User.objects(id=user_id).first()
+
+
+def update_user_email(user, email):
+    user.active = False
+    user.auth_id = ObjectId()
+    user.email = email
+    user.last_updated = datetime.utcnow()
+    user.updated_by = user
+    user.save()

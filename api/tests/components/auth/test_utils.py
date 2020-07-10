@@ -13,6 +13,7 @@ from dawdle.components.auth.utils import (_PASSWORD_RESET_TOKEN_EXPIRATION,
                                           save_new_user,
                                           send_password_reset_email,
                                           send_verification_email,
+                                          update_user_email,
                                           update_user_password,
                                           verify_password)
 from dawdle.extensions.sendgrid import TemplateIds
@@ -187,3 +188,18 @@ class TestUtils(TestBase):
 
     def test_get_user_by_id(self):
         assert get_user_by_id(self._user.id) == self._user
+
+    #
+    # update_user_email tests.
+    #
+
+    def test_update_user_email(self):
+        user = self._create_user()
+        old_user = get_user_by_email(user.email)
+        email = fake.email()
+        update_user_email(user, email)
+        assert not user.active
+        assert user.auth_id != old_user.auth_id
+        assert user.email == email
+        assert user.last_updated != old_user.last_updated
+        assert user.updated_by == old_user

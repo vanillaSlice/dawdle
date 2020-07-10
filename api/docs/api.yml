@@ -200,7 +200,7 @@ paths:
     post:
       summary: Updates a user's email
       tags:
-        - proposed-auth
+        - auth
       parameters:
         - $ref: '#/components/parameters/UserId'
       requestBody:
@@ -213,6 +213,12 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 

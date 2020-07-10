@@ -16,6 +16,7 @@ from dawdle.components.auth.utils import (activate_user,
                                           save_new_user,
                                           send_password_reset_email,
                                           send_verification_email,
+                                          update_user_email,
                                           update_user_password,
                                           verify_password)
 from dawdle.utils.decorators import expects_json
@@ -213,5 +214,38 @@ def users_user_password_POST(user_id):
         abort(404)
 
     update_user_password(user, parsed_schema["password"])
+
+    return "", 204
+
+
+@auth_bp.route("/users/<user_id>/email", methods=["POST"])
+@expects_json
+@fresh_jwt_required
+def users_user_email_POST(user_id):
+    if user_id != get_jwt_claims().get("user_id"):
+        abort(403)
+
+    errors = email_schema.validate(request.json)
+
+    if errors:
+        return build_400_error_response(errors)
+
+    parsed_schema = email_schema.dump(request.json)
+
+    if get_user_by_email(parsed_schema["email"]):
+        return build_400_error_response({
+            "email": [
+                "There is already an account with this email.",
+            ],
+        })
+
+    user = get_user_by_id(user_id)
+
+    if not user:
+        abort(404)
+
+    update_user_email(user, parsed_schema["email"])
+
+    send_verification_email(user)
 
     return "", 204
