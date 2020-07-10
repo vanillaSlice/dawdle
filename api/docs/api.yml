@@ -10,6 +10,8 @@ servers:
 tags:
   - name: auth
   - name: contact
+  - name: users
+  - name: proposed-users
 
 paths:
   /auth/sign-up:
@@ -102,7 +104,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  refresh_token:
+                    type: string
+                  user_id:
+                    type: string
+                required:
+                  - access_token
+                  - refresh_token
+                  - user_id
         400:
           $ref: '#/components/responses/400'
         404:
@@ -121,7 +134,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Token'
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  user_id:
+                    type: string
+                required:
+                  - access_token
+                  - user_id
         400:
           $ref: '#/components/responses/400'
         401:
@@ -270,6 +291,56 @@ paths:
         415:
           $ref: '#/components/responses/415'
 
+  /users/{user_id}/info:
+    get:
+      summary: Returns user's info
+      tags:
+        - proposed-users
+      parameters:
+        - $ref: '#/components/parameters/UserId'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+    post:
+      summary: Updates user's info
+      tags:
+        - proposed-users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                initials:
+                  type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/401'
+        403:
+          $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
+        415:
+          $ref: '#/components/responses/415'
+
 components:
   parameters:
     Token:
@@ -359,18 +430,23 @@ components:
       required:
         - password
 
-    Token:
+    User:
       type: object
       properties:
-        access_token:
+        created:
           type: string
-        refresh_token:
+          format: date-time
+        email:
           type: string
-        user_id:
+        initials:
+          type: string
+        name:
           type: string
       required:
-        - access_token
-        - user_id
+        - created
+        - email
+        - initials
+        - name
 
   securitySchemes:
     bearerAuth:
