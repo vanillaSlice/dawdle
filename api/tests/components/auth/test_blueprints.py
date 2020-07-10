@@ -87,15 +87,6 @@ class TestAuth(TestBase):
             ],
         })
 
-    def test_verify_POST_400_not_existing(self):
-        body = get_mock_email_body()
-        response = self.__send_verify_POST_request(body)
-        self._assert_400(response, {
-            "email": [
-                "There is no account with this email.",
-            ],
-        })
-
     def test_verify_POST_400_verified(self):
         body = get_mock_email_body(email=self._user.email)
         response = self.__send_verify_POST_request(body)
@@ -104,6 +95,11 @@ class TestAuth(TestBase):
                 "This email has already been verified.",
             ],
         })
+
+    def test_verify_POST_404(self):
+        body = get_mock_email_body()
+        response = self.__send_verify_POST_request(body)
+        self._assert_404(response)
 
     def test_verify_POST_415(self):
         response = self._client.post(url_for("auth.verify_POST"))
@@ -166,25 +162,10 @@ class TestAuth(TestBase):
             ],
         })
 
-    def test_token_POST_400_not_existing(self):
-        body = get_mock_email_password_body()
-        response = self.__send_token_POST_request(body)
-        self._assert_400(response, {
-            "email": [
-                "Incorrect email.",
-            ],
-            "password": [
-                "Incorrect password.",
-            ],
-        })
-
     def test_token_POST_400_wrong_password(self):
         body = get_mock_email_password_body(email=self._user.email)
         response = self.__send_token_POST_request(body)
         self._assert_400(response, {
-            "email": [
-                "Incorrect email.",
-            ],
             "password": [
                 "Incorrect password.",
             ],
@@ -202,6 +183,11 @@ class TestAuth(TestBase):
                 "This email has not been verified.",
             ],
         })
+
+    def test_token_POST_404(self):
+        body = get_mock_email_password_body()
+        response = self.__send_token_POST_request(body)
+        self._assert_404(response)
 
     def test_token_POST_415(self):
         response = self._client.post(url_for("auth.token_POST"))
@@ -266,7 +252,7 @@ class TestAuth(TestBase):
         self._assert_204(response)
         send_password_reset_email.assert_called_with(self._user)
 
-    def test_reset_password_POST_400_bad_data(self):
+    def test_reset_password_POST_400(self):
         body = get_mock_email_body()
         del body["email"]
         response = self.__send_reset_password_POST_request(body)
@@ -276,14 +262,10 @@ class TestAuth(TestBase):
             ],
         })
 
-    def test_reset_password_POST_400_not_existing(self):
+    def test_reset_password_POST_404(self):
         body = get_mock_email_body()
         response = self.__send_reset_password_POST_request(body)
-        self._assert_400(response, {
-            "email": [
-                "There is no account with this email.",
-            ],
-        })
+        self._assert_404(response)
 
     def test_reset_password_POST_415(self):
         response = self._client.post(
@@ -388,21 +370,6 @@ class TestAuth(TestBase):
             ],
         })
 
-    def test_users_user_password_POST_400_not_existing(self):
-        user = self._create_user()
-        token = create_fresh_user_access_token(user)
-        user.delete()
-        response = self.__send_users_user_password_POST_request(
-            user.id,
-            get_mock_password_body(),
-            token,
-        )
-        self._assert_400(response, {
-            "user_id": [
-                "There is no account with this user ID.",
-            ],
-        })
-
     def test_users_user_password_POST_401(self):
         response = self.__send_users_user_password_POST_request(
             self._user.id,
@@ -417,6 +384,17 @@ class TestAuth(TestBase):
             self._fresh_access_token,
         )
         self._assert_403(response)
+
+    def test_users_user_password_POST_404(self):
+        user = self._create_user()
+        token = create_fresh_user_access_token(user)
+        user.delete()
+        response = self.__send_users_user_password_POST_request(
+            user.id,
+            get_mock_password_body(),
+            token,
+        )
+        self._assert_404(response)
 
     def test_users_user_password_POST_415(self):
         response = self._client.post(

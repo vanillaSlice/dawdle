@@ -59,6 +59,8 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -104,6 +106,8 @@ paths:
                 $ref: '#/components/schemas/Token'
         400:
           $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -140,6 +144,8 @@ paths:
           $ref: '#/components/responses/204'
         400:
           $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -185,6 +191,8 @@ paths:
           $ref: '#/components/responses/401'
         403:
           $ref: '#/components/responses/403'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
 
@@ -256,6 +264,12 @@ components:
             $ref: '#/components/schemas/Error'
     403:
       description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    404:
+      description: Not Found
       content:
         application/json:
           schema:

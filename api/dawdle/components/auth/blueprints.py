@@ -65,11 +65,7 @@ def verify_POST():
     user = get_user_by_email(parsed_schema["email"])
 
     if not user:
-        return build_400_error_response({
-            "email": [
-                "There is no account with this email.",
-            ],
-        })
+        abort(404)
 
     if user.active:
         return build_400_error_response({
@@ -111,12 +107,11 @@ def token_POST():
 
     user = get_user_by_email(parsed_schema["email"])
 
-    if not user or \
-       not verify_password(user.password, parsed_schema["password"]):
+    if not user:
+        abort(404)
+
+    if not verify_password(user.password, parsed_schema["password"]):
         return build_400_error_response({
-            "email": [
-                "Incorrect email.",
-            ],
             "password": [
                 "Incorrect password.",
             ],
@@ -167,11 +162,7 @@ def reset_password_POST():
     user = get_user_by_email(parsed_schema["email"])
 
     if not user:
-        return build_400_error_response({
-            "email": [
-                "There is no account with this email.",
-            ],
-        })
+        abort(404)
 
     send_password_reset_email(user)
 
@@ -219,11 +210,7 @@ def users_user_password_POST(user_id):
     user = get_user_by_id(user_id)
 
     if not user:
-        return build_400_error_response({
-            "user_id": [
-                "There is no account with this user ID.",
-            ],
-        })
+        abort(404)
 
     update_user_password(user, parsed_schema["password"])
 
