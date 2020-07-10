@@ -207,7 +207,7 @@ class TestUtils(TestBase):
     def test_send_deletion_email(self, sendgrid):
         send_deletion_email(self._user)
         sendgrid.send.assert_called_with(
-            TemplateIds.DELETION,
+            TemplateIds.ACCOUNT_DELETION,
             self._user.email,
             data={"name": self._user.name},
         )

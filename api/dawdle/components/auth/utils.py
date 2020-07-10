@@ -167,7 +167,7 @@ def delete_user(user):
 
 def send_deletion_email(user):
     sendgrid.send(
-        TemplateIds.DELETION,
+        TemplateIds.ACCOUNT_DELETION,
         user.email,
         data={"name": user.name},
     )

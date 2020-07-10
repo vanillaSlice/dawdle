@@ -32,6 +32,6 @@ sendgrid = SendGrid()
 
 class TemplateIds:
 
-    DELETION = "d-412a7cabd3cf48379be544be8dcd7823"  # update this
+    ACCOUNT_DELETION = "d-6b5f1b5d0a774653a1463814b34b2631"
     PASSWORD_RESET = "d-de72675553af4e1ba8ff10237ed680ab"
     VERIFICATION = "d-412a7cabd3cf48379be544be8dcd7823"
