@@ -26,7 +26,7 @@ class TestUsers(TestBase):
         )
         self._assert_400(response, {
             "token": [
-                "Invalid token."
+                "Invalid token.",
             ],
         })
 

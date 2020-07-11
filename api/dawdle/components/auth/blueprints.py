@@ -1,6 +1,5 @@
 from flask import Blueprint, abort, jsonify, request
-from flask_jwt_extended import (fresh_jwt_required, get_jwt_claims,
-                                get_jwt_identity, jwt_refresh_token_required)
+from flask_jwt_extended import get_jwt_identity, jwt_refresh_token_required
 
 from dawdle.components.auth.schemas import (email_password_schema,
                                             email_schema, password_schema,
@@ -19,7 +18,7 @@ from dawdle.components.auth.utils import (activate_user,
                                           update_user_email,
                                           update_user_password,
                                           verify_password)
-from dawdle.utils.decorators import expects_json
+from dawdle.utils.decorators import expects_json, user_admin_required
 from dawdle.utils.errors import build_400_error_response
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -195,11 +194,8 @@ def reset_password_token_POST(token):
 
 
 @auth_bp.route("/users/<user_id>", methods=["DELETE"])
-@fresh_jwt_required
+@user_admin_required
 def users_user_DELETE(user_id):
-    if user_id != get_jwt_claims().get("user_id"):
-        abort(403)
-
     user = get_user_by_id(user_id)
 
     if not user:
@@ -214,11 +210,8 @@ def users_user_DELETE(user_id):
 
 @auth_bp.route("/users/<user_id>/password", methods=["POST"])
 @expects_json
-@fresh_jwt_required
+@user_admin_required
 def users_user_password_POST(user_id):
-    if user_id != get_jwt_claims().get("user_id"):
-        abort(403)
-
     errors = password_schema.validate(request.json)
 
     if errors:
@@ -238,11 +231,8 @@ def users_user_password_POST(user_id):
 
 @auth_bp.route("/users/<user_id>/email", methods=["POST"])
 @expects_json
-@fresh_jwt_required
+@user_admin_required
 def users_user_email_POST(user_id):
-    if user_id != get_jwt_claims().get("user_id"):
-        abort(403)
-
     errors = email_schema.validate(request.json)
 
     if errors:
