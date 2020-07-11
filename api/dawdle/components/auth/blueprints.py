@@ -9,7 +9,7 @@ from dawdle.components.auth.utils import (activate_user,
                                           create_user_access_token,
                                           create_user_refresh_token,
                                           delete_user, get_user_by_auth_id,
-                                          get_user_by_email, get_user_by_id,
+                                          get_user_by_email,
                                           get_user_from_password_reset_token,
                                           get_user_from_verification_token,
                                           save_new_user, send_deletion_email,
@@ -18,7 +18,8 @@ from dawdle.components.auth.utils import (activate_user,
                                           update_user_email,
                                           update_user_password,
                                           verify_password)
-from dawdle.utils.decorators import expects_json, user_admin_required
+from dawdle.utils.decorators import (expects_json, user_admin_required,
+                                     user_by_id_required)
 from dawdle.utils.errors import build_400_error_response
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
@@ -195,15 +196,11 @@ def reset_password_token_POST(token):
 
 @auth_bp.route("/users/<user_id>", methods=["DELETE"])
 @user_admin_required
-def users_user_DELETE(user_id):
-    user = get_user_by_id(user_id)
+@user_by_id_required
+def users_user_DELETE(user, **_):
+    deleted_user = delete_user(user)
 
-    if not user:
-        abort(404)
-
-    user = delete_user(user)
-
-    send_deletion_email(user)
+    send_deletion_email(deleted_user)
 
     return "", 204
 
@@ -211,18 +208,14 @@ def users_user_DELETE(user_id):
 @auth_bp.route("/users/<user_id>/password", methods=["POST"])
 @expects_json
 @user_admin_required
-def users_user_password_POST(user_id):
+@user_by_id_required
+def users_user_password_POST(user, **_):
     errors = password_schema.validate(request.json)
 
     if errors:
         return build_400_error_response(errors)
 
     parsed_schema = password_schema.dump(request.json)
-
-    user = get_user_by_id(user_id)
-
-    if not user:
-        abort(404)
 
     update_user_password(user, parsed_schema["password"])
 
@@ -232,7 +225,8 @@ def users_user_password_POST(user_id):
 @auth_bp.route("/users/<user_id>/email", methods=["POST"])
 @expects_json
 @user_admin_required
-def users_user_email_POST(user_id):
+@user_by_id_required
+def users_user_email_POST(user, **_):
     errors = email_schema.validate(request.json)
 
     if errors:
@@ -247,13 +241,8 @@ def users_user_email_POST(user_id):
             ],
         })
 
-    user = get_user_by_id(user_id)
+    updated_user = update_user_email(user, parsed_schema["email"])
 
-    if not user:
-        abort(404)
-
-    user = update_user_email(user, parsed_schema["email"])
-
-    send_verification_email(user)
+    send_verification_email(updated_user)
 
     return "", 204
