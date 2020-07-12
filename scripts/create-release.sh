@@ -10,18 +10,19 @@ if [[ "$#" -ne 1 ]]; then
 fi
 
 VERSION="$1"
+[[ "$VERSION" == v* ]] || VERSION="v$VERSION"
 
 git reset --hard HEAD
 git checkout master
 git pull
 
-echo "v$VERSION" > version.txt
+echo "$VERSION" > version.txt
 CREATE_RELEASE_SCRIPT=true ./api/scripts/local/update-version.sh "$VERSION"
 
-BRANCH="release-v$VERSION"
+BRANCH="releases/$VERSION"
 git checkout -b "$BRANCH"
 git add .
-git commit -m "release: v$VERSION"
+git commit -m "release: $VERSION"
 PUSH_OUTPUT=$(git push --set-upstream origin "$BRANCH" 2>&1)
 PR_URL=$(echo "$PUSH_OUTPUT" | grep https://github.com | sed "s/  //" | sed "s/remote: //" | xargs)
 open "$PR_URL"

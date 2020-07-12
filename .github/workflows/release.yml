@@ -4,7 +4,7 @@ on:
     branches: master
 jobs:
   buildApi:
-    if: "startsWith(github.event.head_commit.message, 'release: v')"
+    if: "startsWith(github.event.head_commit.message, 'release:')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
