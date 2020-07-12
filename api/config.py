@@ -4,7 +4,7 @@ class Default:
     DEBUG = False
     ENV = "production"
     JWT_SECRET_KEY = "default secret key"
-    MONGODB_HOST = "127.0.0.1"
+    MONGODB_HOST = "mongodb://127.0.0.1:27017/dawdle"
     SECRET_KEY = "default secret key"
     SENDER_EMAIL = None
     SENDGRID_API_KEY = None

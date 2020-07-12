@@ -1,5 +1,10 @@
 version: '3'
 services:
+  mongodb:
+    image: mongo:4.1.9-xenial
+    volumes:
+      - ./docker/mongodb/setup.js:/docker-entrypoint-initdb.d/setup.js
+      - ./docker/mongodb/data:/data/db
   dawdle-api:
     build:
       context: .
@@ -7,6 +12,7 @@ services:
     ports:
       - 5000:8000
     environment:
+      - MONGODB_HOST=mongodb://dawdle:dawdle@mongodb:27017/dawdle
       - SERVER_NAME=127.0.0.1:5000
       - SESSION_COOKIE_DOMAIN=127.0.0.1:5000
     volumes:
@@ -14,4 +20,4 @@ services:
       - ./config.py:/opt/app/config.py
       - ./run.py:/opt/app/run.py
       - ./instance:/opt/app/instance
-      - ./docs/api.yml/opt/app/docs/api.yml
+      - ./docs/api.yml:/opt/app/docs/api.yml

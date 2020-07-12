@@ -12,18 +12,18 @@ to wake up).
 
 The following properties can be configured:
 
-| Name                    | Purpose                                                          | Default               |
-| ----------------------- | ---------------------------------------------------------------- | --------------------- |
-| `CONTACT_EMAIL`         | The address to send contact emails to.                           | `None`                |
-| `DEBUG`                 | If debug mode is enabled.                                        | `False`               |
-| `ENV`                   | Environment the app is running in.                               | `production`          |
-| `JWT_SECRET_KEY`        | A secret key used for JWT tokens.                                | `default secret key`  |
-| `MONGODB_HOST`          | The MongoDB host name.                                           | `127.0.0.1`           |
-| `SECRET_KEY`            | A secret key used for security.                                  | `default secret key`  |
-| `SENDER_EMAIL`          | The email address to send emails from.                           | `None`                |
-| `SENDGRID_API_KEY`      | The SendGrid API key.                                            | `None`                |
-| `SERVER_NAME`           | The host and port of the server.                                 | `127.0.0.1:5000`      |
-| `SESSION_COOKIE_DOMAIN` | The domain match rule that the session cookie will be valid for. | `127.0.0.1:5000`      |
+| Name                    | Purpose                                                          | Default                            |
+| ----------------------- | ---------------------------------------------------------------- | ---------------------------------- |
+| `CONTACT_EMAIL`         | The address to send contact emails to.                           | `None`                             |
+| `DEBUG`                 | If debug mode is enabled.                                        | `False`                            |
+| `ENV`                   | Environment the app is running in.                               | `production`                       |
+| `JWT_SECRET_KEY`        | A secret key used for JWT tokens.                                | `default secret key`               |
+| `MONGODB_HOST`          | The MongoDB host name.                                           | `mongodb://127.0.0.1:27017/dawdle` |
+| `SECRET_KEY`            | A secret key used for security.                                  | `default secret key`               |
+| `SENDER_EMAIL`          | The email address to send emails from.                           | `None`                             |
+| `SENDGRID_API_KEY`      | The SendGrid API key.                                            | `None`                             |
+| `SERVER_NAME`           | The host and port of the server.                                 | `127.0.0.1:5000`                   |
+| `SESSION_COOKIE_DOMAIN` | The domain match rule that the session cookie will be valid for. | `127.0.0.1:5000`                   |
 
 To change these properties you can export them as environment variables or create a file `instance/config.py` (note
 that environment variables take precedence).

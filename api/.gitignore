@@ -176,4 +176,7 @@ dmypy.json
 # Ignore all local history of files
 .history
 
+### MongoDB ###
+docker/mongodb/data
+
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode,macos
