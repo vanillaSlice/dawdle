@@ -6,7 +6,7 @@ from dawdle.utils.errors import build_error_response
 
 # DO NOT UPDATE THIS MANUALLY
 # (releases are created by calling ./scripts/create-release.sh)
-__VERSION__ = "v0.1.1"
+__VERSION__ = "v0.1.0"
 
 
 def create_app(testing=False):

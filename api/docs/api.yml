@@ -4,7 +4,7 @@ info:
   title: Dawdle API
   # DO NOT UPDATE THIS MANUALLY
   # (releases are created by calling ./scripts/create-release.sh)
-  version: v0.1.1
+  version: v0.1.0
 
 servers:
   - url: https://dawdle-api.mikelowe.xyz/api
