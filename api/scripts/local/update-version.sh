@@ -12,4 +12,4 @@ fi
 VERSION="$1"
 
 sed -i "" -e "s/  version.*/  version: $VERSION/g" ./docs/api.yml
-sed -i "" -e "s/__VERSION__ = .*/__VERSION__ = \"$VERSION\"/g" ./dawdle/__init__.py
+sed -i "" -e "s/__VERSION = .*/__VERSION = \"$VERSION\"/g" ./dawdle/__init__.py

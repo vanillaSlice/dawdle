@@ -1,12 +1,13 @@
 import os
 
 from flask import Flask, abort
+from werkzeug.exceptions import default_exceptions
 
 from dawdle.utils.errors import build_error_response
 
 # DO NOT UPDATE THIS MANUALLY
 # (releases are created by calling ./scripts/create-release.sh)
-__VERSION__ = "v0.1.0"
+__VERSION = "v0.1.0"
 
 
 def create_app(testing=False):
@@ -49,6 +50,8 @@ def __load_config(app, testing):
     if testing:
         app.config.from_object("config.Test")
 
+    app.config.update({"VERSION": __VERSION})
+
 
 def __init_extensions(app):
     from dawdle.extensions.jwt import jwt
@@ -82,16 +85,8 @@ def __register_blueprints(app):
 
 
 def __attach_error_handlers(app):
-    @app.errorhandler(Exception)
-    def __handle_exception(_):
-        abort(500)
-
-    @app.errorhandler(400)
-    @app.errorhandler(401)
-    @app.errorhandler(403)
-    @app.errorhandler(404)
-    @app.errorhandler(405)
-    @app.errorhandler(415)
-    @app.errorhandler(500)
     def __handle_error(error):
         return build_error_response(error.code, error.name, error.description)
+
+    for code in default_exceptions:
+        app.errorhandler(code)(__handle_error)
