@@ -4,6 +4,8 @@ from flask import Flask, abort
 
 from dawdle.utils.errors import build_error_response
 
+# DO NOT UPDATE THIS MANUALLY
+# (releases are created by calling ./scripts/create-release.sh)
 __VERSION__ = "v0.1.0"
 
 

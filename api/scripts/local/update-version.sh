@@ -4,8 +4,8 @@ set -e
 
 cd $(dirname $0)/../..
 
-if [ "$#" -ne 1 ]; then
-  echo "Need version parameter"
+if [[ -z "$CREATE_RELEASE_SCRIPT" ]]; then
+  echo "Must be run by create release script"
   exit 1
 fi
 

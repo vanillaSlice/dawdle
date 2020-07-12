@@ -16,7 +16,7 @@ git checkout master
 git pull
 
 echo "v$VERSION" > version.txt
-./api/scripts/local/update-version.sh "$VERSION"
+CREATE_RELEASE_SCRIPT=true ./api/scripts/local/update-version.sh "$VERSION"
 
 BRANCH="release-v$VERSION"
 git checkout -b "$BRANCH"
