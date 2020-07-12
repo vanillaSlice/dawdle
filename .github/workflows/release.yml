@@ -1,11 +1,10 @@
 name: Release
 on:
   push:
-    branches:
-      - master
+    branches: master
 jobs:
   buildApi:
-    if: "startsWith(github.event.commits[0].message, 'release: v')"
+    if: "startsWith(github.event.head_commit.message, 'release: v')"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -24,7 +23,7 @@ jobs:
           flags: api
           fail_ci_if_error: true
   deployApi:
-    needs: [buildApi]
+    needs: buildApi
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +32,7 @@ jobs:
           HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
         run: ./api/scripts/ci/deploy.sh
   release:
-    needs: [deployApi]
+    needs: deployApi
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

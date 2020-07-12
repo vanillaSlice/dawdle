@@ -2,10 +2,10 @@
 
 set -e
 
-cd $(dirname $0)/..
+cd $(dirname "$0")/..
 
-if [ "$#" -ne 1 ]; then
-  echo "Need version parameter"
+if [[ "$#" -ne 1 ]]; then
+  echo "Needs version parameter."
   exit 1
 fi
 
@@ -23,5 +23,5 @@ git checkout -b "$BRANCH"
 git add .
 git commit -m "release: v$VERSION"
 PUSH_OUTPUT=$(git push --set-upstream origin "$BRANCH" 2>&1)
-PR_URL=$(echo "$PUSH_OUTPUT" | grep https://github.com | sed 's/  //' | sed 's/remote: //' | xargs)
+PR_URL=$(echo "$PUSH_OUTPUT" | grep https://github.com | sed "s/  //" | sed "s/remote: //" | xargs)
 open "$PR_URL"

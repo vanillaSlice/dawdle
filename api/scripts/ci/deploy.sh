@@ -2,7 +2,12 @@
 
 set -e
 
-cd $(dirname $0)/../..
+cd $(dirname "$0")/../..
+
+if [[ -z "$CI" ]]; then
+  echo "Must be run by CI server."
+  exit 1
+fi
 
 docker login --username=_ --password="$HEROKU_API_KEY" registry.heroku.com
 docker build -t registry.heroku.com/dawdle-api/web -f ./docker/prod.Dockerfile .
