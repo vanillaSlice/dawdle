@@ -1,8 +1,8 @@
 Flask==1.1.2
-Flask-JWT-Extended==3.24.1
-flask-marshmallow==0.13.0
+Flask-JWT-Extended==3.25.0
+flask-marshmallow==0.14.0
 flask-mongoengine==0.9.5
-flask-swagger-ui==3.25.0
+flask-swagger-ui==3.36.0
 gunicorn==20.0.4
-passlib==1.7.2
-sendgrid==6.4.3
+passlib==1.7.4
+sendgrid==6.5.0
